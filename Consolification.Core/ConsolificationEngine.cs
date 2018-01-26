@@ -10,15 +10,8 @@ namespace Consolification.Core
 {
     public class ConsolificationEngine
     {
-        private class ArgumentInfo
-        {
-            public PropertyInfo PInfo { get; set; }
-            public AppArgumentAttribute Argument { get; set; }
-            public AppMandatoryArgumentAttribute MandatoryArguments { get; set; }
-            public bool MandatoryFound { get; set; }
-        }
 
-        private Dictionary<string, ArgumentInfo> argumentsInfo = new Dictionary<string, ArgumentInfo>();
+        private AppArgumentCollection argumentsInfo = new AppArgumentCollection();
         
         /// <summary>
         /// 
@@ -44,8 +37,8 @@ namespace Consolification.Core
                 if (caa.Names.Length == 0)
                     throw new InvalidOperationException(string.Format("No argument associated with the property {0}.", pinfo.Name));
 
-                // If the dictionary already contains one the of arguments specified in the current AppArgumentAttribute
-                if (caa.Names.Any() && caa.Names.All(key => argumentsInfo.ContainsKey(key)))
+                // If the collection already contains one the of arguments specified in the current AppArgumentAttribute
+                if (argumentsInfo.Contains(caa.Names))
                 {
                     throw new InvalidOperationException(string.Format("One of the argument specified for the property {0} has been already registered.", pinfo.Name));
                 }
@@ -60,35 +53,21 @@ namespace Consolification.Core
                 AppMandatoryArgumentAttribute cmaa = pinfo.GetCustomAttribute<AppMandatoryArgumentAttribute>();
                 if (cmaa != null)
                 {
-                    ArgumentInfo mainfo = new ArgumentInfo()
-                    {
-                        PInfo = pinfo,
-                        MandatoryArguments = cmaa
-                    };
-
-                    utiliser MandatoryFound
-
-                    mandatoryArguments.Add(caa.Name, mainfo);
+                    ainfo.MandatoryArguments = cmaa;
                 }
 
 
-                foreach (string argName in caa.Names)
-                {
-                    argumentsInfo.Add(argName, ainfo);
-                }
-
+                argumentsInfo.Add(ainfo);
             }
 
             int index = 0;
             while (index < args.Length)
             {
                 string arg = args[index];
-                if (mandatoryArguments.Contains<string>(arg))
-                    mandatoryArguments.Remove(arg);
 
-                ArgumentInfo currentInfo = null;
-                if (argumentsInfo.TryGetValue(arg, out currentInfo))
-                {
+                ArgumentInfo currentInfo = argumentsInfo.FromName(arg);
+                currentInfo.Found = true;
+
                     switch (Type.GetTypeCode(currentInfo.PInfo.PropertyType))
                     {
 
@@ -123,15 +102,15 @@ namespace Consolification.Core
                             break;
 
                     }
-                }
+                
 
                 index++;
             }
 
-            if (mandatoryArguments.Count > 0)
+            string argNotFound = argumentsInfo.MandatoryNotFound();
+            if (argNotFound != null)
             {
-                string firstMissingArgument = mandatoryArguments[0];
-                throw new MissingArgumentException(firstMissingArgument);
+                throw new MissingArgumentException(argNotFound);
             }
         }
 

@@ -1,0 +1,7 @@
+.metadata
+.settings/
+.vs
+**/bin
+**/obj
+**/packages
+

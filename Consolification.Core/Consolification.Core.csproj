@@ -42,7 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppArgumentAttribute.cs" />
+    <Compile Include="AppArgumentCollection.cs" />
     <Compile Include="AppMandatoryArgumentAttribute.cs" />
+    <Compile Include="ArgumentInfo.cs" />
     <Compile Include="ConsolificationEngine.cs" />
     <Compile Include="IArgumentsContainer.cs" />
     <Compile Include="MissingArgumentException.cs" />
