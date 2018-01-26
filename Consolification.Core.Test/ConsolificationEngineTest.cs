@@ -17,7 +17,7 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsFalse(data.MyBoolean1);
 
-            ConsolificationEngine engine = new ConsolificationEngine(args, data);
+            data.Initialize(args);
             Assert.IsTrue(data.MyBoolean1);
         }
 
@@ -32,7 +32,7 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyDouble1 == 0);
 
-            ConsolificationEngine engine = new ConsolificationEngine(args, data);
+            data.Initialize(args);
             Assert.IsTrue(data.MyByte1 == argValue);
         }
 
@@ -47,7 +47,19 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyShort1 == 0);
 
-            ConsolificationEngine engine = new ConsolificationEngine(args, data);
+            data.Initialize(args);
+            Assert.IsTrue(data.MyShort1 == argValue);
+
+
+            argValue = 658;
+            args = new string[2];
+            args[0] = "/SHORT";
+            args[1] = argValue.ToString();
+
+            data = new SimpleDataMock();
+            Assert.IsTrue(data.MyShort1 == 0);
+
+            data.Initialize(args);
             Assert.IsTrue(data.MyShort1 == argValue);
         }
 
@@ -62,7 +74,7 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyInteger1 == 0);
 
-            ConsolificationEngine engine = new ConsolificationEngine(args, data);
+            data.Initialize(args);
             Assert.IsTrue(data.MyInteger1 == argValue);
         }
 
@@ -77,7 +89,7 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyLong1 == 0);
 
-            ConsolificationEngine engine = new ConsolificationEngine(args, data);
+            data.Initialize(args);
             Assert.IsTrue(data.MyLong1 == argValue);
         }
 
@@ -92,7 +104,7 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyDouble1 == 0);
 
-            ConsolificationEngine engine = new ConsolificationEngine(args, data);
+            data.Initialize(args);
             Assert.IsTrue(data.MyDouble1 == argValue);
         }
 
@@ -106,7 +118,7 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyDouble1 == 0);
 
-            ConsolificationEngine engine = new ConsolificationEngine(args, data);
+            data.Initialize(args);
             Assert.IsTrue(data.MyString1 == args[1]);
         }
 
@@ -121,7 +133,7 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyByte2 == 0);
 
-            ConsolificationEngine engine = new ConsolificationEngine(args, data);
+            data.Initialize(args);
             Assert.IsTrue(data.MyByte2 == argValue);
         }
 
@@ -137,7 +149,7 @@ namespace Consolification.Core.Test
 
             try
             {
-                ConsolificationEngine engine = new ConsolificationEngine(args, data);
+                data.Initialize(args);
                 Assert.Fail("An exception must be thrown!");
             }
             catch (ArgumentException e)
@@ -158,7 +170,7 @@ namespace Consolification.Core.Test
 
             try
             {
-                ConsolificationEngine engine = new ConsolificationEngine(args, data);
+                data.Initialize(args);
                 Assert.Fail("An exception must be thrown!");
             }
             catch (ArgumentException e)
@@ -175,7 +187,7 @@ namespace Consolification.Core.Test
 
             try
             {
-                ConsolificationEngine engine = new ConsolificationEngine(args, data);
+                data.Initialize(args);
                 Assert.Fail("An exception must be thrown!");
             }
             catch (MissingArgumentException e)

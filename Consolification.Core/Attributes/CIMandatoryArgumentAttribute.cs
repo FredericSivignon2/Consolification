@@ -4,30 +4,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Consolification.Core
+namespace Consolification.Core.Attributes
 {
-    public class AppMandatoryArgumentAttribute : Attribute
+    public class CIMandatoryArgumentAttribute : Attribute
     {
         public bool PromptUser { get; private set; }
         public bool Password { get; private set; }
         public char PasswordChar { get; private set; } = '*';
 
-        public AppMandatoryArgumentAttribute()
+        public CIMandatoryArgumentAttribute()
         {
         }
 
-        public AppMandatoryArgumentAttribute(bool promptUser)
+        public CIMandatoryArgumentAttribute(bool promptUser)
         {
             PromptUser = promptUser;
         }
 
-        public AppMandatoryArgumentAttribute(bool promptUser, bool password)
+        public CIMandatoryArgumentAttribute(bool promptUser, bool password)
         {
             PromptUser = promptUser;
             Password = password;
         }
 
-        public AppMandatoryArgumentAttribute(bool promptUser, bool password, char passwordChar)
+        public CIMandatoryArgumentAttribute(bool promptUser, bool password, char passwordChar)
         {
             PromptUser = promptUser;
             Password = password;

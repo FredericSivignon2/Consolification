@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core
 {
-    public interface IArgumentsContainer
+    public interface IJob
     {
+        //ArgumentsContainer Container { get; }
+
+        void Run(ArgumentsContainer Container);
     }
 }

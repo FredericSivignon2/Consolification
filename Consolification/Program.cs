@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Consolification.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,11 @@ namespace Consolification
     {
         static void Main(string[] args)
         {
+            RequestData data = new RequestData();
+            data.Initialize(args);
+
+            ConsolificationEngine engine = new ConsolificationEngine(data);
+            engine.Start();
         }
     }
 }

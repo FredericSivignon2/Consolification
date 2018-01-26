@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core
 {
-    public class AppArgumentCollection : List<ArgumentInfo>
+    public class ArgumentInfoCollection : List<ArgumentInfo>
     {
         public ArgumentInfo FromName(string name)
         {

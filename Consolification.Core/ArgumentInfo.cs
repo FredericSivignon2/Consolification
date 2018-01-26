@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Consolification.Core.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -10,8 +11,10 @@ namespace Consolification.Core
     public class ArgumentInfo
     {
         public PropertyInfo PInfo { get; set; }
-        public AppArgumentAttribute Argument { get; set; }
-        public AppMandatoryArgumentAttribute MandatoryArguments { get; set; }
+        public CIArgumentAttribute Argument { get; set; }
+        public CIMandatoryArgumentAttribute MandatoryArguments { get; set; }
+        public CIArgumentBoundaryAttribute ArgumentBoundary { get; set; }
+        public CIJobAttribute Job { get; set; }
         public bool Found { get; set; }
     }
 }

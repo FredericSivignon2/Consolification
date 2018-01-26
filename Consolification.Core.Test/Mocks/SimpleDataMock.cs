@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Consolification.Core.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,30 +7,31 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core.Test.Mocks
 {
-    public class SimpleDataMock : IArgumentsContainer
+    public class SimpleDataMock : ArgumentsContainer
     {
-        [AppArgument("/A")]
+        [CIArgument("/A")]
         public bool MyBoolean1 { get; set; }
 
-        [AppArgument("/B")]
+        [CIArgument("/B")]
         public byte MyByte1 { get; set; }
 
-        [AppArgument("/B2", "10", "40")]
+        [CIArgument("/B2")]
+        [CIArgumentBoundary("10", "40")]
         public byte MyByte2 { get; set; }
 
-        [AppArgument("/I16")]
+        [CIArgument(new string[] { "/I16", "/SHORT" })]
         public int MyShort1 { get; set; }
         
-        [AppArgument("/I32")]
+        [CIArgument("/I32")]
         public int MyInteger1 { get; set; }
 
-        [AppArgument("/I64")]
+        [CIArgument("/I64")]
         public long MyLong1 { get; set; }
 
-        [AppArgument("/D")]
+        [CIArgument("/D")]
         public double MyDouble1 { get; set; }
         
-        [AppArgument("/S")]
+        [CIArgument("/S")]
         public string MyString1 { get; set; }
     }
 }

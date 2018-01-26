@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Consolification.Core.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core.Test.Mocks
 {
-    public class UserCredetentialDataMock : IArgumentsContainer
+    public class UserCredetentialDataMock : ArgumentsContainer
     {
-        [AppArgument("/U")]
-        [AppMandatoryArgument]
+        [CIArgument("/U")]
+        [CIMandatoryArgument]
         public string UserName { get; set; }
 
-        [AppArgument("/S")]
+        [CIArgument("/S")]
         public string UserPassword { get; set; }
     }
 }

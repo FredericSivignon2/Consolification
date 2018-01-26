@@ -41,12 +41,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppArgumentAttribute.cs" />
-    <Compile Include="AppArgumentCollection.cs" />
-    <Compile Include="AppMandatoryArgumentAttribute.cs" />
+    <Compile Include="Attributes\CIArgumentAttribute.cs" />
+    <Compile Include="ArgumentInfoCollection.cs" />
+    <Compile Include="Attributes\CIArgumentBoundaryAttribute.cs" />
+    <Compile Include="Attributes\CIJob.cs" />
+    <Compile Include="Attributes\CIMandatoryArgumentAttribute.cs" />
     <Compile Include="ArgumentInfo.cs" />
     <Compile Include="ConsolificationEngine.cs" />
-    <Compile Include="IArgumentsContainer.cs" />
+    <Compile Include="ArgumentsContainer.cs" />
+    <Compile Include="IJob.cs" />
     <Compile Include="MissingArgumentException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
