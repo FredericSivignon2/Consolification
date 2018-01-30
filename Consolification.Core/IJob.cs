@@ -10,6 +10,6 @@ namespace Consolification.Core
     {
         //ArgumentsContainer Container { get; }
 
-        void Run(ArgumentsContainer Container);
+        void Run(ArgumentsContainer container);
     }
 }
