@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{197364F2-5018-4E55-9C6A-8CA9A4C1BD75}</ProjectGuid>
+    <ProjectGuid>{920190FF-DD5F-4020-A3C9-255F41F7A57D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Consolification.Core</RootNamespace>
-    <AssemblyName>Consolification.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <RootNamespace>Consolification.Ext</RootNamespace>
+    <AssemblyName>Consolification.Ext</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -41,19 +43,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\CIArgumentAttribute.cs" />
-    <Compile Include="ArgumentInfoCollection.cs" />
-    <Compile Include="Attributes\CIArgumentBoundaryAttribute.cs" />
-    <Compile Include="Attributes\CIJob.cs" />
-    <Compile Include="Attributes\CIMandatoryArgumentAttribute.cs" />
-    <Compile Include="ArgumentInfo.cs" />
-    <Compile Include="ConsolificationEngine.cs" />
-    <Compile Include="ArgumentsContainer.cs" />
-    <Compile Include="IConsoleReader.cs" />
-    <Compile Include="ILogWriter.cs" />
-    <Compile Include="IJob.cs" />
-    <Compile Include="MissingArgumentException.cs" />
+    <Compile Include="Class1.cs" />
+    <Compile Include="Log4NetWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Consolification.Core\Consolification.Core.csproj">
+      <Project>{197364f2-5018-4e55-9c6a-8ca9a4c1bd75}</Project>
+      <Name>Consolification.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

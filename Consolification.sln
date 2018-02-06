@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Consolification.Core", "Con
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Consolification.Core.Test", "Consolification.Core.Test\Consolification.Core.Test.csproj", "{AC3C4384-2316-4FDE-B6EA-41CBBA26ACD4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Consolification.Ext", "Consolification.Ext\Consolification.Ext.csproj", "{920190FF-DD5F-4020-A3C9-255F41F7A57D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{AC3C4384-2316-4FDE-B6EA-41CBBA26ACD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC3C4384-2316-4FDE-B6EA-41CBBA26ACD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC3C4384-2316-4FDE-B6EA-41CBBA26ACD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{920190FF-DD5F-4020-A3C9-255F41F7A57D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{920190FF-DD5F-4020-A3C9-255F41F7A57D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{920190FF-DD5F-4020-A3C9-255F41F7A57D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{920190FF-DD5F-4020-A3C9-255F41F7A57D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
