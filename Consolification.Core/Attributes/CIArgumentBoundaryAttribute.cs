@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core.Attributes
 {
+    [AttributeUsage(AttributeTargets.Property)]
     public class CIArgumentBoundaryAttribute : Attribute
     {
         public string MinValue { get; private set; } = null;

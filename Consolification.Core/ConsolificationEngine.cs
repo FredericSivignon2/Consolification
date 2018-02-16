@@ -48,6 +48,18 @@ namespace Consolification.Core
 
         public void Start()
         {
+            if (this.container.MustDisplayHelp)
+            {
+                HelpBuilder builder = new HelpBuilder(this.container.ArgumentsInfo);
+                string[] lines = builder.GetHelpLines();
+
+                foreach (String line in lines)
+                {
+                    this.Logger.Info(line);
+                }
+                return;
+            }
+
             foreach (ArgumentInfo argInfo in this.container.ArgumentsInfo)
             {
                 if (argInfo.Job != null)

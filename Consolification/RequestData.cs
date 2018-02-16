@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Consolification
 {
+    [CIHelpArgument("-help", "Display this help.")]
     public class RequestData : ArgumentsContainer
     {
         [CIArgument("-url", "The URL of the request to perform.")]

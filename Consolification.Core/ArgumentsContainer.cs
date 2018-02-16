@@ -18,6 +18,8 @@ namespace Consolification.Core
             get { return this.argumentsInfo; }
         }
 
+        public bool MustDisplayHelp { get; private set; } = false;
+
         /// <summary>
         /// 
         /// </summary>
@@ -29,6 +31,71 @@ namespace Consolification.Core
                 throw new ArgumentNullException("args");
             
             Type type = this.GetType();
+
+            ProcessClassAttributes(type, args);
+            RegisterAttributesFromClassProperties(type);
+            SetPropertiesValuesFromAttributes(args);
+            
+            string argNotFound = argumentsInfo.MandatoryNotFound();
+            if (argNotFound != null)
+            {
+                throw new MissingArgumentException(argNotFound);
+            }
+        }
+
+
+        private T GetValue<T>(string[] args, ref int index, ArgumentInfo info, Func<string, T> convertor) where T : IComparable
+        {
+            index++;
+
+            if (index >= args.Length)
+                throw new ArgumentException("Missing value for the argument {0}", args[index - 1]);
+            T val = default(T);
+            try
+            {
+                val = convertor(args[index]);
+            }
+            catch (Exception e)
+            {
+                throw new ArgumentException(string.Format("Invalid specified value for the argument {0}.", e));
+            }
+
+            if (info.ArgumentBoundary != null && !string.IsNullOrWhiteSpace(info.ArgumentBoundary.MinValue))
+            {
+                T minVal = convertor(info.ArgumentBoundary.MinValue);
+                if (val.CompareTo(minVal) < 0)
+                    throw new ArgumentException(string.Format("The value of the argument {0} cannot be lower than {1}", args[index - 1], minVal));
+
+            }
+
+            if (info.ArgumentBoundary != null && !string.IsNullOrWhiteSpace(info.ArgumentBoundary.MaxValue))
+            {
+                T maxVal = convertor(info.ArgumentBoundary.MaxValue);
+                if (val.CompareTo(maxVal) > 0)
+                    throw new ArgumentException(string.Format("The value of the argument {0} cannot be greater than {1}", args[index - 1], maxVal));
+
+            }
+
+            return val;
+
+        }
+
+        private void ProcessClassAttributes(Type type, string[] args)
+        {
+            CIHelpArgumentAttribute chta = type.GetCustomAttribute<CIHelpArgumentAttribute>();
+            if (chta != null)
+            {
+                MustDisplayHelp = !args.All(name => !chta.Names.Contains<string>(name));
+                ArgumentInfo ainfo = new ArgumentInfo()
+                {
+                    Argument = chta
+                };
+                argumentsInfo.Add(ainfo);
+            }
+        }
+
+        private void RegisterAttributesFromClassProperties(Type type)
+        {
             PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
             foreach (PropertyInfo pinfo in properties)
@@ -73,13 +140,21 @@ namespace Consolification.Core
 
                 argumentsInfo.Add(ainfo);
             }
+        }
 
+        private void SetPropertiesValuesFromAttributes(string[] args)
+        {
             int index = 0;
             while (index < args.Length)
             {
                 string arg = args[index];
 
                 ArgumentInfo currentInfo = argumentsInfo.FromName(arg);
+                if (currentInfo.PInfo == null)
+                {
+                    index++;
+                    continue;
+                }
                 currentInfo.Found = true;
 
                 switch (Type.GetTypeCode(currentInfo.PInfo.PropertyType))
@@ -120,49 +195,6 @@ namespace Consolification.Core
 
                 index++;
             }
-
-            string argNotFound = argumentsInfo.MandatoryNotFound();
-            if (argNotFound != null)
-            {
-                throw new MissingArgumentException(argNotFound);
-            }
-        }
-
-
-        private T GetValue<T>(string[] args, ref int index, ArgumentInfo info, Func<string, T> convertor) where T : IComparable
-        {
-            index++;
-
-            if (index >= args.Length)
-                throw new ArgumentException("Missing value for the argument {0}", args[index - 1]);
-            T val = default(T);
-            try
-            {
-                val = convertor(args[index]);
-            }
-            catch (Exception e)
-            {
-                throw new ArgumentException(string.Format("Invalid specified value for the argument {0}.", e));
-            }
-
-            if (info.ArgumentBoundary != null && !string.IsNullOrWhiteSpace(info.ArgumentBoundary.MinValue))
-            {
-                T minVal = convertor(info.ArgumentBoundary.MinValue);
-                if (val.CompareTo(minVal) < 0)
-                    throw new ArgumentException(string.Format("The value of the argument {0} cannot be lower than {1}", args[index - 1], minVal));
-
-            }
-
-            if (info.ArgumentBoundary != null && !string.IsNullOrWhiteSpace(info.ArgumentBoundary.MaxValue))
-            {
-                T maxVal = convertor(info.ArgumentBoundary.MaxValue);
-                if (val.CompareTo(maxVal) > 0)
-                    throw new ArgumentException(string.Format("The value of the argument {0} cannot be greater than {1}", args[index - 1], maxVal));
-
-            }
-
-            return val;
-
         }
     }
 }

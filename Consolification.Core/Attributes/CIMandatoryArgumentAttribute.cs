@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core.Attributes
 {
+    [AttributeUsage(AttributeTargets.Property)]
     public class CIMandatoryArgumentAttribute : Attribute
     {
         public bool PromptUser { get; private set; }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core.Attributes
 {
+    [AttributeUsage(AttributeTargets.Property)]
     public class CIArgumentAttribute : Attribute
     {
         public string[] Names { get; private set; }
