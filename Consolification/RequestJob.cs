@@ -11,9 +11,9 @@ namespace Consolification
 {
     public class RequestJob : IJob
     {
-        public void Run(ArgumentsContainer container)
+        public void Run(JobContext context)
         {
-            RequestData data = container as RequestData;
+            RequestData data = context.Container as RequestData;
 
             Stream dataStream = null;
             StreamReader reader = null;
@@ -30,11 +30,12 @@ namespace Consolification
                 reader = new StreamReader(response.GetResponseStream());
                 string content = reader.ReadToEnd();
 
-                Console.WriteLine(content);
+                context.Logger.InfoFormat("Content: {0}...",content.Substring(0, 64));
+                context.Logger.Info("Request successful!");
             }
             catch (Exception exp)
             {
-
+                context.Logger.Error("Failed to execute HTTP request.", exp);
             }
         }
     }

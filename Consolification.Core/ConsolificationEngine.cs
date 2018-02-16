@@ -12,10 +12,38 @@ namespace Consolification.Core
     public class ConsolificationEngine
     {
         private ArgumentsContainer container;
+        private ILogWriter log;
+        private IConsoleReader reader;
 
         public ConsolificationEngine(ArgumentsContainer container)
         {
             this.container = container;
+            this.log = new DefaultLogWriter();
+            this.reader = new DefaultConsoleReader();
+        }
+
+        public ILogWriter Logger
+        {
+            get
+            {
+                return this.log;
+            }
+            set
+            {
+                this.log = value;
+            }
+        }
+
+        public IConsoleReader Reader
+        {
+            get
+            {
+                return this.reader;
+            }
+            set
+            {
+                this.reader = value;
+            }
         }
 
         public void Start()
@@ -31,17 +59,23 @@ namespace Consolification.Core
                     }
                     catch (Exception exp)
                     {
-
+                        this.log.Error("Cannot create Job instance.", exp);
                     }
-
-
+                    
                     try
                     {
-                        job.Run(this.container);
+                        JobContext context = new JobContext()
+                        {
+                            Container = this.container,
+                            Logger = this.log,
+                            Reader = this.reader
+                        };
+                        
+                        job.Run(context);
                     }
                     catch (Exception exp)
                     {
-
+                        this.log.Error("Cannot run job instance.", exp);
                     }
                 }
             }

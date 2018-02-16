@@ -8,8 +8,6 @@ namespace Consolification.Core
 {
     public interface IJob
     {
-        //ArgumentsContainer Container { get; }
-
-        void Run(ArgumentsContainer container);
+        void Run(JobContext context);
     }
 }

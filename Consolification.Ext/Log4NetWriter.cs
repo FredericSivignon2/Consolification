@@ -1,4 +1,8 @@
 ﻿using log4net;
+using log4net.Appender;
+using log4net.Core;
+using log4net.Layout;
+using log4net.Repository.Hierarchy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +20,7 @@ namespace Consolification.Core
         #region Constructors
         public Log4NetWriter(string name)
         {
+            Setup();
             log = LogManager.GetLogger(name);
         }
         #endregion
@@ -109,7 +114,7 @@ namespace Consolification.Core
 
         public void FatalFormat(string message, object[] args)
         {
-            log.FatalFormat(message, argss);
+            log.FatalFormat(message, args);
         }
 
         public void Info(string message)
@@ -170,6 +175,39 @@ namespace Consolification.Core
         public void WarnFormat(string message, object[] args)
         {
             log.WarnFormat(message, args);
+        }
+        #endregion
+
+        #region Private Methods
+        private void Setup()
+        {
+            Hierarchy hierarchy = (Hierarchy)LogManager.GetRepository();
+
+            PatternLayout filePatternLayout = new PatternLayout();
+            filePatternLayout.ConversionPattern = "%date [%thread] %-5level %logger - %message%newline";
+            filePatternLayout.ActivateOptions();
+            PatternLayout consolePatternLayout = new PatternLayout();
+            consolePatternLayout.ConversionPattern = "%-5level %logger - %message%newline";
+            consolePatternLayout.ActivateOptions();
+
+            RollingFileAppender roller = new RollingFileAppender();
+            roller.AppendToFile = false;
+            roller.File = @"Logs\EventLog.txt";
+            roller.Layout = filePatternLayout;
+            roller.MaxSizeRollBackups = 5;
+            roller.MaximumFileSize = "1GB";
+            roller.RollingStyle = RollingFileAppender.RollingMode.Size;
+            roller.StaticLogFileName = true;
+            roller.ActivateOptions();
+            hierarchy.Root.AddAppender(roller);
+
+            ColoredConsoleAppender console = new ColoredConsoleAppender();
+            console.Layout = consolePatternLayout;
+            console.ActivateOptions();
+            hierarchy.Root.AddAppender(console);
+
+            hierarchy.Root.Level = Level.Info;
+            hierarchy.Configured = true;
         }
         #endregion
     }

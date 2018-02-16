@@ -10,5 +10,6 @@ namespace Consolification.Core
     public interface IConsoleReader
     {
         SecureString GetPassword();
+        SecureString GetPassword(char passwordChar);
     }
 }

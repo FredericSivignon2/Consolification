@@ -56,6 +56,10 @@
       <Project>{197364f2-5018-4e55-9c6a-8ca9a4c1bd75}</Project>
       <Name>Consolification.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Consolification.Ext\Consolification.Ext.csproj">
+      <Project>{920190ff-dd5f-4020-a3c9-255f41f7a57d}</Project>
+      <Name>Consolification.Ext</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

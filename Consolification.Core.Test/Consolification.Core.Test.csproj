@@ -52,6 +52,7 @@
     <Compile Include="ArgumentsContainerTest.cs" />
     <Compile Include="Mocks\DataJobMock.cs" />
     <Compile Include="Mocks\JobMock.cs" />
+    <Compile Include="Mocks\LogWriterMock.cs" />
     <Compile Include="Mocks\SimpleDataMock.cs" />
     <Compile Include="Mocks\UserCredetentialDataMock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

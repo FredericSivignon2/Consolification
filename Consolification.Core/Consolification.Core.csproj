@@ -44,14 +44,18 @@
     <Compile Include="Attributes\CIArgumentAttribute.cs" />
     <Compile Include="ArgumentInfoCollection.cs" />
     <Compile Include="Attributes\CIArgumentBoundaryAttribute.cs" />
+    <Compile Include="Attributes\CIHelpTrigger.cs" />
     <Compile Include="Attributes\CIJob.cs" />
     <Compile Include="Attributes\CIMandatoryArgumentAttribute.cs" />
     <Compile Include="ArgumentInfo.cs" />
     <Compile Include="ConsolificationEngine.cs" />
     <Compile Include="ArgumentsContainer.cs" />
+    <Compile Include="DefaultConsoleReader.cs" />
+    <Compile Include="DefaultLogWriter.cs" />
     <Compile Include="IConsoleReader.cs" />
     <Compile Include="ILogWriter.cs" />
     <Compile Include="IJob.cs" />
+    <Compile Include="JobContext.cs" />
     <Compile Include="MissingArgumentException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
