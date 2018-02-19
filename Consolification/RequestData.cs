@@ -15,5 +15,8 @@ namespace Consolification
         [CIMandatoryArgument]
         [CIJob(typeof(RequestJob))]
         public string URL { get; private set; }
+
+        [CIArgument(new string[] { "/tata", "/TATA" }, "This is the tata argument.")]
+        public string Toto { get; set; }
     }
 }

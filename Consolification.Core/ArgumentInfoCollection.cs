@@ -14,6 +14,25 @@ namespace Consolification.Core
         }
 
         /// <summary>
+        /// Gets the maximum length of argument names (the length of the string composed of all name associated with one argument
+        /// where each argument is separated by a comman then a space) found in this collection.
+        /// </summary>
+        public int MaxArgumentsStringLength
+        {
+            get
+            {
+                int max = 0;
+                foreach (ArgumentInfo argInfo in this)
+                {
+                    if (argInfo.Argument.NamesLength > max)
+                        max = argInfo.Argument.NamesLength;
+                }
+                return max;
+            }
+        }
+
+
+        /// <summary>
         /// Checks if a mandatory argument is marked as found or not.
         /// </summary>
         /// <returns>The name of the first mandatory element that has not been found.</returns>
@@ -39,5 +58,6 @@ namespace Consolification.Core
             }
             return false;
         }
+
     }
 }

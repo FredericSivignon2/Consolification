@@ -9,9 +9,7 @@ namespace Consolification.Core.Attributes
     [AttributeUsage(AttributeTargets.Property)]
     public class CIArgumentAttribute : Attribute
     {
-        public string[] Names { get; private set; }
-        public string Description { get; private set; }
-
+        #region Constructors
         public CIArgumentAttribute(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -39,5 +37,33 @@ namespace Consolification.Core.Attributes
         {
             this.Description = description;
         }
+        #endregion
+
+        #region Public Properties
+        public string[] Names { get; private set; }
+        public string Description { get; private set; }
+        public int NamesLength
+        {
+            get
+            {
+                return NamesToString().Length;
+            }
+        }
+        #endregion
+
+        #region Public Methods
+        public string NamesToString()
+        {
+            StringBuilder names = new StringBuilder();
+            foreach (string name in this.Names)
+            {
+                if (names.Length > 0)
+                    names.Append(", ");
+                names.Append(name);
+            }
+            return names.ToString();
+        }
+        
+        #endregion
     }
 }
