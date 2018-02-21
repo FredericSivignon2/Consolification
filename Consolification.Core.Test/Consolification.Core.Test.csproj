@@ -51,12 +51,15 @@
   <ItemGroup>
     <Compile Include="ArgumentsContainerTest.cs" />
     <Compile Include="Mocks\DataJobMock.cs" />
+    <Compile Include="Mocks\HelpDataMock.cs" />
+    <Compile Include="Mocks\HierarchyDataMock.cs" />
     <Compile Include="Mocks\JobMock.cs" />
     <Compile Include="Mocks\LogWriterMock.cs" />
     <Compile Include="Mocks\SimpleDataMock.cs" />
     <Compile Include="Mocks\UserCredetentialDataMock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ConsolificationEngineTest.cs" />
+    <Compile Include="HelpBuilderTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

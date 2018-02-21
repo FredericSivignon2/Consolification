@@ -16,7 +16,7 @@ namespace Consolification
 
             ConsolificationEngine engine = new ConsolificationEngine(data);
             DefaultLogWriter writer = engine.Logger as DefaultLogWriter;
-            writer.ShowLevelPrefix = true;
+            writer.ShowLevelPrefix = false;
 
             engine.Start();
         }

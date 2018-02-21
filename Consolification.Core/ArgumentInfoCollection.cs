@@ -10,7 +10,8 @@ namespace Consolification.Core
     {
         public ArgumentInfo FromName(string name)
         {
-            return this.Single<ArgumentInfo>(argInfo => argInfo.Argument.Names.Contains<string>(name));
+            return this.Single<ArgumentInfo>(argInfo => 
+                argInfo.Argument.Names.Contains<string>(name));
         }
 
         /// <summary>
@@ -59,5 +60,12 @@ namespace Consolification.Core
             return false;
         }
 
+        public ArgumentInfo GetParent(int parentId)
+        {
+            return Find((argumentInfo) =>
+            {
+                return argumentInfo.ParentArgument != null && argumentInfo.ParentArgument.ParentId == parentId;
+            });
+        }
     }
 }

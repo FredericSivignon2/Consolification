@@ -9,11 +9,17 @@ namespace Consolification.Core
 {
     public class HelpBuilder
     {
-        private ArgumentInfoCollection argInfos;
+        private ArgumentsContainer container;
 
-        public HelpBuilder(ArgumentInfoCollection argInfos)
+        public HelpBuilder(ArgumentsContainer container)
         {
-            this.argInfos = argInfos;
+            if (container == null)
+                throw new ArgumentNullException("container");
+            // Paranoiac test, as it should not happen!
+            if (container.ArgumentsInfo == null)
+                throw new InvalidOperationException("The given ArgumentsContainer has not been initialized.");
+
+            this.container = container;
         }
 
         public string[] GetHelpLines()
@@ -28,14 +34,24 @@ namespace Consolification.Core
             return lines.ToArray();
         }
 
+
         private string[] GetHeaderLines()
         {
             List<string> lines = new List<string>();
             
-            StringBuilder usage = new StringBuilder("Usage:");
+            StringBuilder usage = new StringBuilder();
+
+            if (!string.IsNullOrWhiteSpace(this.container.CommandDescription))
+            {
+                lines.Add(this.container.CommandDescription);
+                lines.Add(string.Empty);
+            }
+
+
+            usage.Append("Usage: ");
             usage.Append(GetExeName());
 
-            foreach (ArgumentInfo argInfo in this.argInfos)
+            foreach (ArgumentInfo argInfo in this.container.ArgumentsInfo)
             {
                 usage.Append(" ");
                 if (argInfo.MandatoryArguments != null)
@@ -48,21 +64,30 @@ namespace Consolification.Core
                 }
             }
             lines.Add(usage.ToString());
+            lines.Add(string.Empty);
 
             return lines.ToArray();
         }
 
         private string GetExeName()
         {
-            return Assembly.GetEntryAssembly().GetName().Name;
+            Assembly assembly = Assembly.GetEntryAssembly();
+            if (assembly == null)
+            {
+                assembly = Assembly.GetCallingAssembly();
+            }
+            return assembly.GetName().Name;
         }
 
         private string[] GetArgumentsDescriptionLines()
         {
             List<string> lines = new List<string>();
-            int maxArgNamesLength = this.argInfos.MaxArgumentsStringLength;
-            foreach (ArgumentInfo argInfo in this.argInfos)
+            int maxArgNamesLength = this.container.ArgumentsInfo.MaxArgumentsStringLength;
+            foreach (ArgumentInfo argInfo in this.container.ArgumentsInfo)
             {
+                if (string.IsNullOrWhiteSpace(argInfo.Argument.Description))
+                    continue;
+
                 string line = GetHelpLineFromArgument(argInfo, maxArgNamesLength);
                 lines.Add(line);
             }

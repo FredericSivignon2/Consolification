@@ -19,7 +19,7 @@ namespace Consolification.Core.Test.Mocks
         [CIArgumentBoundary("10", "40")]
         public byte MyByte2 { get; set; }
 
-        [CIArgument(new string[] { "/I16", "/SHORT" })]
+        [CIShortcutArgument("/INTEGER16", "/I16")]
         public int MyShort1 { get; set; }
         
         [CIArgument("/I32")]

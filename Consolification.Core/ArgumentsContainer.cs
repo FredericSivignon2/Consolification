@@ -12,14 +12,18 @@ namespace Consolification.Core
     public abstract class ArgumentsContainer
     {
         private ArgumentInfoCollection argumentsInfo = new ArgumentInfoCollection();
-        
+
+        #region Public Properties
         public ArgumentInfoCollection ArgumentsInfo
         {
             get { return this.argumentsInfo; }
         }
 
         public bool MustDisplayHelp { get; private set; } = false;
+        public string CommandDescription { get; private set; }
+        #endregion
 
+        #region Public Methods
         /// <summary>
         /// 
         /// </summary>
@@ -35,15 +39,14 @@ namespace Consolification.Core
             ProcessClassAttributes(type, args);
             RegisterAttributesFromClassProperties(type);
             SetPropertiesValuesFromAttributes(args);
-            
-            string argNotFound = argumentsInfo.MandatoryNotFound();
-            if (argNotFound != null)
-            {
-                throw new MissingArgumentException(argNotFound);
-            }
+
+            ArgumentsContainerValidator validator = new ArgumentsContainerValidator(this);
+            validator.Validate();
         }
 
+        #endregion
 
+        #region Private Methods
         private T GetValue<T>(string[] args, ref int index, ArgumentInfo info, Func<string, T> convertor) where T : IComparable
         {
             index++;
@@ -92,6 +95,12 @@ namespace Consolification.Core
                 };
                 argumentsInfo.Add(ainfo);
             }
+
+            CICommandDescriptionAttribute cda = type.GetCustomAttribute<CICommandDescriptionAttribute>();
+            if (cda != null)
+            {
+                CommandDescription = cda.Description;
+            }
         }
 
         private void RegisterAttributesFromClassProperties(Type type)
@@ -119,24 +128,11 @@ namespace Consolification.Core
                     Argument = caa
                 };
 
-
-                CIMandatoryArgumentAttribute cmaa = pinfo.GetCustomAttribute<CIMandatoryArgumentAttribute>();
-                if (cmaa != null)
-                {
-                    ainfo.MandatoryArguments = cmaa;
-                }
-
-                CIArgumentBoundaryAttribute aba = pinfo.GetCustomAttribute<CIArgumentBoundaryAttribute>();
-                if (aba != null)
-                {
-                    ainfo.ArgumentBoundary = aba;
-                }
-
-                CIJobAttribute ja = pinfo.GetCustomAttribute<CIJobAttribute>();
-                if (ja != null)
-                {
-                    ainfo.Job = ja;
-                }
+                ainfo.MandatoryArguments = pinfo.GetCustomAttribute<CIMandatoryArgumentAttribute>();
+                ainfo.ArgumentBoundary = pinfo.GetCustomAttribute<CIArgumentBoundaryAttribute>();
+                ainfo.Job = pinfo.GetCustomAttribute<CIJobAttribute>();
+                ainfo.ChildArgument = pinfo.GetCustomAttribute<CIChildArgumentAttribute>();
+                ainfo.ParentArgument = pinfo.GetCustomAttribute<CIParentArgumentAttribute>();
 
                 argumentsInfo.Add(ainfo);
             }
@@ -149,7 +145,15 @@ namespace Consolification.Core
             {
                 string arg = args[index];
 
-                ArgumentInfo currentInfo = argumentsInfo.FromName(arg);
+                ArgumentInfo currentInfo = null;
+                try
+                {
+                    currentInfo = argumentsInfo.FromName(arg);
+                }
+                catch (InvalidOperationException)
+                {
+                    throw new UnknownArgumentException(arg);
+                }
                 if (currentInfo.PInfo == null)
                 {
                     index++;
@@ -196,5 +200,6 @@ namespace Consolification.Core
                 index++;
             }
         }
+        #endregion
     }
 }

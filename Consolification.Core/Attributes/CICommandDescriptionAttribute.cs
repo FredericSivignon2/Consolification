@@ -7,14 +7,13 @@ using System.Threading.Tasks;
 namespace Consolification.Core.Attributes
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class CIHelpArgumentAttribute : CIArgumentAttribute
+    public class CICommandDescriptionAttribute : Attribute
     {
-        public CIHelpArgumentAttribute(string name) : base(name)
+        public CICommandDescriptionAttribute(string description)
         {
+            this.Description = description;
         }
 
-        public CIHelpArgumentAttribute(string name, string description) : base(name, description)
-        {
-        }
+        public string Description { get; private set; }
     }
 }

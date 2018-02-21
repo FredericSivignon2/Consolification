@@ -15,12 +15,11 @@ namespace Consolification
         {
             RequestData data = context.Container as RequestData;
 
-            Stream dataStream = null;
             StreamReader reader = null;
             WebResponse response = null;
             try
             {
-
+                var watch = System.Diagnostics.Stopwatch.StartNew();
                 //String encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes("i051238" + ":" + "Amiga920!"));
                 HttpWebRequest request = WebRequest.CreateHttp(data.URL);
                 request.Method = "GET";
@@ -30,8 +29,13 @@ namespace Consolification
                 reader = new StreamReader(response.GetResponseStream());
                 string content = reader.ReadToEnd();
 
-                context.Logger.InfoFormat("Content: {0}...",content.Substring(0, 64));
-                context.Logger.Info("Request successful!");
+                watch.Stop();
+                var elapsedMs = watch.ElapsedMilliseconds;
+                TimeSpan span = TimeSpan.FromMilliseconds(elapsedMs);
+                context.Logger.InfoFormat("Request executed in: {0}", span.ToString(@"hh\:mm\:ss\:fff"));
+                context.Logger.InfoFormat("Response size:       {0} octet(s)", content.Length);
+                context.Logger.InfoFormat("Content:             {0}...",content.Substring(0, 64));
+                context.Logger.Info("");
             }
             catch (Exception exp)
             {

@@ -15,55 +15,40 @@ namespace Consolification.Core.Attributes
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException("name");
 
+            this.Name = this.NamesString = name;
             this.Names = new string[] { name };
+            this.NamesLength = name.Length;
         }
 
         public CIArgumentAttribute(string name, string description) : this(name)
         {
             this.Description = description;
         }
-
-        public CIArgumentAttribute(string[] names)
-        {
-            if (names == null)
-                throw new ArgumentNullException("names");
-            if (names.Length == 0)
-                throw new ArgumentException("The given names array must contains at least one element.");
-
-            this.Names = names;
-        }
-
-        public CIArgumentAttribute(string[] names, string description) : this(names)
-        {
-            this.Description = description;
-        }
+        
         #endregion
 
         #region Public Properties
-        public string[] Names { get; private set; }
+        /// <summary>
+        /// Gets the argument name.
+        /// </summary>
+        public string Name { get; private set; }
+        /// <summary>
+        /// Gets the argument description
+        /// </summary>
         public string Description { get; private set; }
-        public int NamesLength
-        {
-            get
-            {
-                return NamesToString().Length;
-            }
-        }
-        #endregion
-
-        #region Public Methods
-        public string NamesToString()
-        {
-            StringBuilder names = new StringBuilder();
-            foreach (string name in this.Names)
-            {
-                if (names.Length > 0)
-                    names.Append(", ");
-                names.Append(name);
-            }
-            return names.ToString();
-        }
-        
+        /// <summary>
+        /// If the argument has got several name (a 'main' name and a shortcut for example),
+        /// gets an array of all those names.
+        /// </summary>
+        public string[] Names { get; protected set; }
+        /// <summary>
+        /// Gets the length of the string that display all argument names.
+        /// </summary>
+        public int NamesLength { get; protected set; }
+        /// <summary>
+        /// Gets a string to display all argument names.
+        /// </summary>
+        public string NamesString { get; protected set; }
         #endregion
     }
 }

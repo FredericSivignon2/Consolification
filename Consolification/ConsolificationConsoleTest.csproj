@@ -7,7 +7,7 @@
     <ProjectGuid>{E9AA6434-102F-481E-8963-DC994E244423}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Consolification</RootNamespace>
-    <AssemblyName>cct</AssemblyName>
+    <AssemblyName>httpstat</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -55,10 +55,12 @@
     <ProjectReference Include="..\Consolification.Core\Consolification.Core.csproj">
       <Project>{197364f2-5018-4e55-9c6a-8ca9a4c1bd75}</Project>
       <Name>Consolification.Core</Name>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </ProjectReference>
     <ProjectReference Include="..\Consolification.Ext\Consolification.Ext.csproj">
       <Project>{920190ff-dd5f-4020-a3c9-255f41f7a57d}</Project>
       <Name>Consolification.Ext</Name>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

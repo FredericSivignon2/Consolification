@@ -50,7 +50,7 @@ namespace Consolification.Core
         {
             if (this.container.MustDisplayHelp)
             {
-                HelpBuilder builder = new HelpBuilder(this.container.ArgumentsInfo);
+                HelpBuilder builder = new HelpBuilder(this.container);
                 string[] lines = builder.GetHelpLines();
 
                 foreach (String line in lines)

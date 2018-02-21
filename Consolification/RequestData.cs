@@ -8,15 +8,16 @@ using System.Threading.Tasks;
 
 namespace Consolification
 {
-    [CIHelpArgument("-help", "Display this help.")]
+    [CIHelpArgument("/?")]
+    [CICommandDescription("Performs an HTTP request and get some result statistics.")]
     public class RequestData : ArgumentsContainer
     {
-        [CIArgument("-url", "The URL of the request to perform.")]
+        [CIArgument("/url", "The URL of the request to perform.")]
         [CIMandatoryArgument]
         [CIJob(typeof(RequestJob))]
         public string URL { get; private set; }
 
-        [CIArgument(new string[] { "/tata", "/TATA" }, "This is the tata argument.")]
-        public string Toto { get; set; }
+        [CIArgument("", "This is the tata argument.")]
+        public bool Authentication { get; set; }
     }
 }

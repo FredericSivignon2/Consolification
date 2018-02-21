@@ -9,7 +9,7 @@ namespace Consolification.Core.Test
     public class ArgumentsContainerTest
     {
         [TestMethod]
-        public void ConsolificationEngine_BooleanArgument()
+        public void ArgumentsContainer_BooleanArgument()
         {
             string[] args = new string[1];
             args[0] = "/A";
@@ -22,7 +22,7 @@ namespace Consolification.Core.Test
         }
 
         [TestMethod]
-        public void ConsolificationEngine_ByteArgument()
+        public void ArgumentsContainer_ByteArgument()
         {
             byte argValue = 128;
             string[] args = new string[2];
@@ -37,7 +37,7 @@ namespace Consolification.Core.Test
         }
 
         [TestMethod]
-        public void ConsolificationEngine_Int16Argument()
+        public void ArgumentsContainer_Int16Argument()
         {
             short argValue = 12350;
             string[] args = new string[2];
@@ -53,7 +53,7 @@ namespace Consolification.Core.Test
 
             argValue = 658;
             args = new string[2];
-            args[0] = "/SHORT";
+            args[0] = "/INTEGER16";
             args[1] = argValue.ToString();
 
             data = new SimpleDataMock();
@@ -64,7 +64,7 @@ namespace Consolification.Core.Test
         }
 
         [TestMethod]
-        public void ConsolificationEngine_Int32Argument()
+        public void ArgumentsContainer_Int32Argument()
         {
             int argValue = 6532067;
             string[] args = new string[2];
@@ -79,7 +79,7 @@ namespace Consolification.Core.Test
         }
 
         [TestMethod]
-        public void ConsolificationEngine_Int64Argument()
+        public void ArgumentsContainer_Int64Argument()
         {
             long argValue = 856498763251;
             string[] args = new string[2];
@@ -94,7 +94,7 @@ namespace Consolification.Core.Test
         }
 
         [TestMethod]
-        public void ConsolificationEngine_DoubleArgument()
+        public void ArgumentsContainer_DoubleArgument()
         {
             double argValue = 65877065.654904;
             string[] args = new string[2];
@@ -109,7 +109,7 @@ namespace Consolification.Core.Test
         }
 
         [TestMethod]
-        public void ConsolificationEngine_StringArgument()
+        public void ArgumentsContainer_StringArgument()
         {
             string[] args = new string[2];
             args[0] = "/S";
@@ -123,7 +123,7 @@ namespace Consolification.Core.Test
         }
 
         [TestMethod]
-        public void ConsolificationEngine_MinMaxArgument_OK()
+        public void ArgumentsContainer_MinMaxArgument_OK()
         {
             byte argValue = 12;
             string[] args = new string[2];
@@ -138,7 +138,7 @@ namespace Consolification.Core.Test
         }
 
         [TestMethod]
-        public void ConsolificationEngine_MinMaxArgument_MaxExceed()
+        public void ArgumentsContainer_MinMaxArgument_MaxExceed()
         {
             string[] args = new string[2];
             args[0] = "/B2";
@@ -159,7 +159,7 @@ namespace Consolification.Core.Test
         }
 
         [TestMethod]
-        public void ConsolificationEngine_MinMaxArgument_MinExceed()
+        public void ArgumentsContainer_MinMaxArgument_MinExceed()
         {
             string[] args = new string[2];
             args[0] = "/B2";
@@ -180,7 +180,7 @@ namespace Consolification.Core.Test
         }
 
         [TestMethod]
-        public void ConsolificationEngine_MandatoryArgument_Missing()
+        public void ArgumentsContainer_MandatoryArgument_Missing()
         {
             string[] args = new string[0];
             UserCredetentialDataMock data = new UserCredetentialDataMock();
@@ -194,6 +194,17 @@ namespace Consolification.Core.Test
             {
                 Assert.IsTrue(e.Message.Contains("is missing"));
             }
+        }
+
+        [TestMethod]
+        public void ArgumentsContainer_Hierarchy_NoArg()
+        {
+            string[] args = new string[0];
+            HierarchyDataMock data = new HierarchyDataMock();
+
+            // We must not have any exception as the mandatory argument is 
+            // a child of a parent argument that is itself not mandatory.
+            data.Initialize(args);
         }
     }
 }

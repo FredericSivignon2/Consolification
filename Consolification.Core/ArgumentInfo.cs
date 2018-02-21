@@ -15,6 +15,8 @@ namespace Consolification.Core
         public CIMandatoryArgumentAttribute MandatoryArguments { get; set; }
         public CIArgumentBoundaryAttribute ArgumentBoundary { get; set; }
         public CIJobAttribute Job { get; set; }
+        public CIChildArgumentAttribute ChildArgument { get; set; }
+        public CIParentArgumentAttribute ParentArgument { get; set; }
         public bool Found { get; set; }
     }
 }
