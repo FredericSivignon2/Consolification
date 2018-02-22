@@ -190,7 +190,7 @@ namespace Consolification.Core.Test
                 data.Initialize(args);
                 Assert.Fail("An exception must be thrown!");
             }
-            catch (MissingArgumentException e)
+            catch (MissingMandatoryArgumentException e)
             {
                 Assert.IsTrue(e.Message.Contains("is missing"));
             }
@@ -203,8 +203,120 @@ namespace Consolification.Core.Test
             HierarchyDataMock data = new HierarchyDataMock();
 
             // We must not have any exception as the mandatory argument is 
-            // a child of a parent argument that is itself not mandatory.
+            // a child of a parent argument that is itself not mandatory and not present.
             data.Initialize(args);
+        }
+
+        [TestMethod]
+        public void ArgumentsContainer_Hierarchy_TopParentArgOnly()
+        {
+            string[] args = new string[] { "/TOP", "1" };
+
+            HierarchyDataMock data = new HierarchyDataMock();
+            
+            // We must not have any exception as the mandatory argument is 
+            // a child of a parent argument that is itself not mandatory and not present.
+            data.Initialize(args);
+        }
+
+        [TestMethod]
+        public void ArgumentsContainer_Hierarchy_TopAndMidParentsArgOnly()
+        {
+            string[] args = new string[] { "/TOP", "1", "/MID", "2" };
+
+            HierarchyDataMock data = new HierarchyDataMock();
+
+            try
+            {
+                data.Initialize(args);
+                Assert.Fail("A MissingArgumentException exception must be thrown as /MID is present and there is a child mandatory argument.");
+            }
+            catch (MissingMandatoryArgumentException e)
+            {
+                Assert.IsTrue(e.Message.Contains("The mandatory argument /CHILD2 is missing."));
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsContainer_Hierarchy_MidParentArgOnly()
+        {
+            string[] args = new string[] { "/MID", "2" };
+
+            HierarchyDataMock data = new HierarchyDataMock();
+
+            try
+            {
+                data.Initialize(args);
+                Assert.Fail("A MissingArgumentException exception must be thrown as /MID is present but its parent is not present.");
+            }
+            catch (MissingParentArgumentException e)
+            {
+                Assert.IsTrue(e.Message.Contains("The parent argument /TOP is missing."));
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsContainer_Hierarchy_Child2ArgOnly()
+        {
+            string[] args = new string[] { "/CHILD2", "22" };
+
+            HierarchyDataMock data = new HierarchyDataMock();
+
+            try
+            {
+                data.Initialize(args);
+                Assert.Fail("A MissingArgumentException exception must be thrown as /MID & /TOP are not present.");
+            }
+            catch (MissingParentArgumentException e)
+            {
+                Assert.IsTrue(e.Message.Contains("The parent argument /MID is missing."));
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsContainer_Hierarchy_TopAndChild1ParentArgOnly()
+        {
+            string[] args = new string[] { "/TOP", "1", "/CHILD1", "C1" };
+
+            HierarchyDataMock data = new HierarchyDataMock();
+
+            // We must not have any exception as the mandatory argument is 
+            // a child of a parent argument that is itself not mandatory and not present.
+            data.Initialize(args);
+        }
+
+        [TestMethod]
+        public void ArgumentsContainer_Hierarchy_AllArgs()
+        {
+            string[] args = new string[] { "/TOP", "1", "/CHILD1", "C1", "/MID", "32", "/CHILD1", "C1", "/CHILD2", "C2", "/CHILD3", "C3" };
+
+            HierarchyDataMock data = new HierarchyDataMock();
+
+            // Everything must be fine!
+            data.Initialize(args);
+
+            Assert.IsTrue(data.TopArg == "1");
+            Assert.IsTrue(data.MidArg == "32");
+            Assert.IsTrue(data.ChildArg1 == "C1");
+            Assert.IsTrue(data.ChildArg2 == "C2");
+            Assert.IsTrue(data.ChildArg3 == "C3");
+        }
+
+        [TestMethod]
+        public void ArgumentsContainer_DuplicateArgument()
+        {
+            string[] args = new string[] { "/DUP", "1" };
+            DuplicateDataMock data = new DuplicateDataMock();
+
+            try
+            {
+                data.Initialize(args);
+                Assert.Fail("A InvalidArgumentDefinitionException as '/DUP' argument is specified 2 times in DuplicateDataMock.");
+            }
+            catch (InvalidArgumentDefinitionException e)
+            {
+                Assert.IsTrue(e.Message.Contains("One of the argument specified with the property Duplicated2 has been already registered."));
+            }
         }
     }
 }

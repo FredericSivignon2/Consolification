@@ -37,7 +37,7 @@ namespace Consolification.Core
         /// Checks if a mandatory argument is marked as found or not.
         /// </summary>
         /// <returns>The name of the first mandatory element that has not been found.</returns>
-        public string MandatoryNotFound()
+        /*public string MandatoryNotFound()
         {
 
             ArgumentInfo argInfo = this.FirstOrDefault<ArgumentInfo>(arg => arg.Found == false && arg.MandatoryArguments != null);
@@ -46,7 +46,7 @@ namespace Consolification.Core
                 return argInfo.Argument.Names[0];
             }
             return null;
-        }
+        }*/
 
         public bool Contains(string[] names)
         {
@@ -64,7 +64,7 @@ namespace Consolification.Core
         {
             return Find((argumentInfo) =>
             {
-                return argumentInfo.ParentArgument != null && argumentInfo.ParentArgument.ParentId == parentId;
+                return argumentInfo.ParentArgument != null && argumentInfo.ParentArgument.Id == parentId;
             });
         }
     }

@@ -15,18 +15,7 @@ namespace Consolification.Core.Attributes
                 throw new ArgumentException("The argument id must be equal or greater than 1.");
             this.Id = id;
         }
-
-        public CIParentArgumentAttribute(int id, int parentId)
-        {
-            if (id < 1)
-                throw new ArgumentException("The argument id must be equal or greater than 1.");
-            if (parentId < 1)
-                throw new ArgumentException("The argument parentId must be equal or greater than 1.");
-            this.Id = id;
-            this.ParentId = parentId;
-        }
-
+        
         public int Id { get; private set; }
-        public int ParentId { get; private set; }
     }
 }

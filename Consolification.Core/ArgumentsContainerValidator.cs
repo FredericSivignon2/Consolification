@@ -16,34 +16,74 @@ namespace Consolification.Core
             this.container = container;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Validate()
         {
             ArgumentInfoCollection argumentsInfo = container.ArgumentsInfo;
+            ValidateParentChildrenArguments(argumentsInfo);
+            ValidateMandatoryArguments(argumentsInfo);
+        }
 
+        private void ValidateParentChildrenArguments(ArgumentInfoCollection argumentsInfo)
+        {
             foreach (ArgumentInfo argumentInfo in argumentsInfo)
             {
-                if (argumentInfo.Argument == null)
-                    continue;
+                ArgumentInfo curArgInfo = argumentInfo;
+                if (curArgInfo.Found == true)
+                {
+                    // While the current argument is a child argument
+                    while (curArgInfo.ChildArgument != null)
+                    {
+                        ArgumentInfo parentArgInfo = GetParent(argumentsInfo, curArgInfo);
+                        if (parentArgInfo.Found == false)
+                            throw new MissingParentArgumentException(parentArgInfo.Argument.Name);
 
+                        curArgInfo = parentArgInfo;
+                    }
+                }
+            }
+        }
+
+        private void ValidateMandatoryArguments(ArgumentInfoCollection argumentsInfo)
+        {
+            foreach (ArgumentInfo argumentInfo in argumentsInfo)
+            {
                 if (argumentInfo.Found == false)
                 {
                     if (argumentInfo.ChildArgument != null)
                     {
-                        ArgumentInfo parentArgInfo = argumentsInfo.GetParent(argumentInfo.ChildArgument.ParentId);
-                        if (parentArgInfo == null)
+                        ArgumentInfo parentArgInfo = GetParent(argumentsInfo, argumentInfo);
+                        // If the parent has been found,
+                        if (parentArgInfo.Found && argumentInfo.MandatoryArguments != null)
                         {
-                            throw new MissingParentArgumentAttributeException(string.Format("The parent argument identifier '{0}' specified for the property '{1}' does not exist.", 
-                                argumentInfo.ChildArgument.ParentId, argumentInfo.PInfo.Name));
+                            throw new MissingMandatoryArgumentException(argumentInfo.Argument.Name);
+                        }
+                    }
+                    else // The current argument is not a child argument
+                    {
+                        if (argumentInfo.Found == false && argumentInfo.MandatoryArguments != null)
+                        {
+                            throw new MissingMandatoryArgumentException(argumentInfo.Argument.Name);
                         }
                     }
                 }
             }
-            string argNotFound = argumentsInfo.MandatoryNotFound();
-            if (argNotFound != null)
-            {
-                throw new MissingArgumentException(argNotFound);
-            }
-
         }
+
+        private ArgumentInfo GetParent(ArgumentInfoCollection argumentsInfo, ArgumentInfo argumentInfo)
+        {
+            if (argumentInfo.ChildArgument == null)
+                throw new InvalidOperationException("argumentInfo.ChildArgument could not be null for this method!");
+
+            ArgumentInfo parentArgInfo = argumentsInfo.GetParent(argumentInfo.ChildArgument.ParentId);
+            if (parentArgInfo == null)
+            {
+                throw new MissingParentArgumentAttributeException(string.Format("The parent argument identifier '{0}' specified in the property '{1}' does not exist.",
+                    argumentInfo.ChildArgument.ParentId, argumentInfo.PInfo.Name));
+            }
+            return parentArgInfo;
+        }        
     }
 }

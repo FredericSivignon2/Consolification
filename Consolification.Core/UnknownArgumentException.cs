@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core
 {
+    [Serializable]
     public class UnknownArgumentException : Exception
     {
         public UnknownArgumentException(string argument)

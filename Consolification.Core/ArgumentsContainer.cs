@@ -89,10 +89,7 @@ namespace Consolification.Core
             if (chta != null)
             {
                 MustDisplayHelp = !args.All(name => !chta.Names.Contains<string>(name));
-                ArgumentInfo ainfo = new ArgumentInfo()
-                {
-                    Argument = chta
-                };
+                ArgumentInfo ainfo = new ArgumentInfo(chta);
                 argumentsInfo.Add(ainfo);
             }
 
@@ -114,19 +111,16 @@ namespace Consolification.Core
                     continue; // Not a field associated with a console argument
 
                 if (caa.Names.Length == 0)
-                    throw new InvalidOperationException(string.Format("No argument associated with the property {0}.", pinfo.Name));
+                    throw new InvalidArgumentDefinitionException(string.Format("No argument associated with the property {0}.", pinfo.Name));
 
                 // If the collection already contains one the of arguments specified in the current AppArgumentAttribute
                 if (argumentsInfo.Contains(caa.Names))
                 {
-                    throw new InvalidOperationException(string.Format("One of the argument specified for the property {0} has been already registered.", pinfo.Name));
+                    throw new InvalidArgumentDefinitionException(string.Format("One of the argument specified with the property {0} has been already registered.", pinfo.Name));
                 }
 
-                ArgumentInfo ainfo = new ArgumentInfo()
-                {
-                    PInfo = pinfo,
-                    Argument = caa
-                };
+                ArgumentInfo ainfo = new ArgumentInfo(caa);
+                ainfo.PInfo = pinfo;
 
                 ainfo.MandatoryArguments = pinfo.GetCustomAttribute<CIMandatoryArgumentAttribute>();
                 ainfo.ArgumentBoundary = pinfo.GetCustomAttribute<CIArgumentBoundaryAttribute>();

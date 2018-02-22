@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core
 {
+    [Serializable]
     public class MissingParentArgumentAttributeException : Exception
     {
         public MissingParentArgumentAttributeException(string message) : base(message)

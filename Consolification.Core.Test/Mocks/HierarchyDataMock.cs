@@ -14,7 +14,8 @@ namespace Consolification.Core.Test.Mocks
         public string TopArg { get; private set; }
 
         [CIArgument("/MID")]
-        [CIParentArgument(2, 1)]
+        [CIParentArgument(2)]
+        [CIChildArgument(1)]
         public string MidArg { get; private set; }
 
         [CIArgument("/CHILD1")]

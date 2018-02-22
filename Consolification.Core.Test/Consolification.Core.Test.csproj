@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="ArgumentsContainerTest.cs" />
     <Compile Include="Mocks\DataJobMock.cs" />
+    <Compile Include="Mocks\DuplicateDataMock.cs" />
     <Compile Include="Mocks\HelpDataMock.cs" />
     <Compile Include="Mocks\HierarchyDataMock.cs" />
     <Compile Include="Mocks\JobMock.cs" />

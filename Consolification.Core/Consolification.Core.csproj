@@ -61,8 +61,11 @@
     <Compile Include="IConsoleReader.cs" />
     <Compile Include="ILogWriter.cs" />
     <Compile Include="IJob.cs" />
+    <Compile Include="InvalidArgumentDefinitionException.cs" />
     <Compile Include="JobContext.cs" />
-    <Compile Include="MissingArgumentException.cs" />
+    <Compile Include="MissingParentArgumentException.cs" />
+    <Compile Include="MissingMandatoryArgumentException.cs" />
+    <Compile Include="MissingParentArgumentAttributeException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnknownArgumentException.cs" />
   </ItemGroup>

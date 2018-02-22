@@ -7,14 +7,15 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core
 {
-    public class MissingArgumentException : Exception
+    [Serializable]
+    public class MissingMandatoryArgumentException : Exception
     {
-        public MissingArgumentException(string argument) 
+        public MissingMandatoryArgumentException(string argument) 
             : base(string.Format("The mandatory argument {0} is missing.", argument))
         {
         }
 
-        protected MissingArgumentException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected MissingMandatoryArgumentException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }
