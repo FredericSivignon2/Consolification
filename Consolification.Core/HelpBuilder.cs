@@ -64,10 +64,13 @@ namespace Consolification.Core
                 if (argInfo.MandatoryArguments != null)
                 {
                     usage.Append(argInfo.Argument.Names[0]);
+                    AppendHeaderArgs(usage, argInfo.Children.ToArray<ArgumentInfo>());
                 }
                 else
                 {
-                    usage.AppendFormat("[{0}]", argInfo.Argument.Names[0]);
+                    usage.AppendFormat("[{0}", argInfo.Argument.Names[0]);
+                    AppendHeaderArgs(usage, argInfo.Children.ToArray<ArgumentInfo>());
+                    usage.Append("]");
                 }
             }
             
@@ -86,17 +89,29 @@ namespace Consolification.Core
         private string[] GetArgumentsDescriptionLines()
         {
             List<string> lines = new List<string>();
+            
+            AddArgumentDescriptionLines(lines, this.container.ArgumentsInfo.Hierarchy);
+
+            return lines.ToArray();
+        }
+
+        private void AddArgumentDescriptionLines(List<string> lines, ArgumentInfo[] argsInfo)
+        {
+            if (argsInfo.Length == 0)
+                return;
+
             int maxArgNamesLength = this.container.ArgumentsInfo.MaxArgumentsStringLength;
-            foreach (ArgumentInfo argInfo in this.container.ArgumentsInfo)
+            foreach (ArgumentInfo argInfo in argsInfo)
             {
                 if (string.IsNullOrWhiteSpace(argInfo.Argument.Description))
                     continue;
 
                 string line = GetHelpLineFromArgument(argInfo, maxArgNamesLength);
-                lines.Add(line);
-            }
 
-            return lines.ToArray();
+                lines.Add(line);
+                AddArgumentDescriptionLines(lines, argInfo.Children.ToArray<ArgumentInfo>());
+            }
+            
         }
 
         private string GetHelpLineFromArgument(ArgumentInfo argInfo, int maxArgNamesLength)

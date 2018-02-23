@@ -10,9 +10,7 @@ namespace Consolification.Core.Test
         [TestMethod]
         public void HelpBuilder_GetHelpLines()
         {
-            string[] args = new string[2];
-            args[0] = "-data2";
-            args[1] = "123";
+            string[] args = new string[] { "-data2", "1" };
 
             HelpDataMock data = new HelpDataMock();
             data.Initialize(args);
@@ -28,6 +26,19 @@ namespace Consolification.Core.Test
             Assert.IsTrue(lines[3] == "");
             Assert.IsTrue(lines[4] == "-data1 This is the data1 parameter.");
             Assert.IsTrue(lines[5] == "-data2 This is the data2 parameter.");
+        }
+
+        [TestMethod]
+        public void HelpBuilder_GetHelpLines_OnComplexHierarchy()
+        {
+            string[] args = new string[] { "/?" };
+            ComplexHierarchyDataMock data = new ComplexHierarchyDataMock();
+            data.Initialize(args);
+
+            HelpBuilder builder = new HelpBuilder(data);
+            string[] lines = builder.GetHelpLines();
+
+            Assert.IsNotNull(lines);
         }
     }
 }

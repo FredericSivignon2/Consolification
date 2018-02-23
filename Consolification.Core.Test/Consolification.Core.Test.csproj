@@ -49,7 +49,6 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArgumentInfoCollectionTest.cs" />
     <Compile Include="ArgumentsContainerTest.cs" />
     <Compile Include="Mocks\ComplexHierarchyDataMock.cs" />
     <Compile Include="Mocks\DataJobMock.cs" />
