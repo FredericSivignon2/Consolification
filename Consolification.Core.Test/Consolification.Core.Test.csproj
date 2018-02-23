@@ -49,11 +49,13 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArgumentInfoCollectionTest.cs" />
     <Compile Include="ArgumentsContainerTest.cs" />
+    <Compile Include="Mocks\ComplexHierarchyDataMock.cs" />
     <Compile Include="Mocks\DataJobMock.cs" />
     <Compile Include="Mocks\DuplicateDataMock.cs" />
     <Compile Include="Mocks\HelpDataMock.cs" />
-    <Compile Include="Mocks\HierarchyDataMock.cs" />
+    <Compile Include="Mocks\SimpleHierarchyDataMock.cs" />
     <Compile Include="Mocks\JobMock.cs" />
     <Compile Include="Mocks\LogWriterMock.cs" />
     <Compile Include="Mocks\SimpleDataMock.cs" />

@@ -80,8 +80,7 @@ namespace Consolification.Core
             ArgumentInfo parentArgInfo = argumentsInfo.GetParent(argumentInfo.ChildArgument.ParentId);
             if (parentArgInfo == null)
             {
-                throw new MissingParentArgumentAttributeException(string.Format("The parent argument identifier '{0}' specified in the property '{1}' does not exist.",
-                    argumentInfo.ChildArgument.ParentId, argumentInfo.PInfo.Name));
+                throw new UnknownParentArgumentAttributeException(argumentInfo.ChildArgument.ParentId, argumentInfo.PInfo.Name);
             }
             return parentArgInfo;
         }        

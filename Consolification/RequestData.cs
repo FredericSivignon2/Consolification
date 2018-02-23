@@ -3,6 +3,7 @@ using Consolification.Core.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,7 +18,12 @@ namespace Consolification
         [CIJob(typeof(RequestJob))]
         public string URL { get; private set; }
 
-        [CIArgument("", "This is the tata argument.")]
-        public bool Authentication { get; set; }
+        [CIShortcutArgument("/user", "/u", "The user to authenticate the request.")]
+        [CIParentArgument(1)]
+        public string User { get; private set; }
+
+        [CIShortcutArgument("/password", "/p", "This user password to authenticate the request.")]
+        [CIChildArgument(1)]
+        public SecureString Password { get; private set; }
     }
 }

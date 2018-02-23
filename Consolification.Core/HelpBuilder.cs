@@ -10,14 +10,11 @@ namespace Consolification.Core
     public class HelpBuilder
     {
         private ArgumentsContainer container;
-
+        
         public HelpBuilder(ArgumentsContainer container)
         {
             if (container == null)
                 throw new ArgumentNullException("container");
-            // Paranoiac test, as it should not happen!
-            if (container.ArgumentsInfo == null)
-                throw new InvalidOperationException("The given ArgumentsContainer has not been initialized.");
 
             this.container = container;
         }
@@ -38,7 +35,7 @@ namespace Consolification.Core
         private string[] GetHeaderLines()
         {
             List<string> lines = new List<string>();
-            
+
             StringBuilder usage = new StringBuilder();
 
             if (!string.IsNullOrWhiteSpace(this.container.CommandDescription))
@@ -51,7 +48,17 @@ namespace Consolification.Core
             usage.Append("Usage: ");
             usage.Append(GetExeName());
 
-            foreach (ArgumentInfo argInfo in this.container.ArgumentsInfo)
+            AppendHeaderArgs(usage, this.container.ArgumentsInfo.Hierarchy);
+
+            lines.Add(usage.ToString());
+            lines.Add(string.Empty);
+
+            return lines.ToArray();
+        }
+
+        private void AppendHeaderArgs(StringBuilder usage, ArgumentInfo[] hierarchy)
+        { 
+            foreach (ArgumentInfo argInfo in hierarchy)
             {
                 usage.Append(" ");
                 if (argInfo.MandatoryArguments != null)
@@ -63,10 +70,7 @@ namespace Consolification.Core
                     usage.AppendFormat("[{0}]", argInfo.Argument.Names[0]);
                 }
             }
-            lines.Add(usage.ToString());
-            lines.Add(string.Empty);
-
-            return lines.ToArray();
+            
         }
 
         private string GetExeName()

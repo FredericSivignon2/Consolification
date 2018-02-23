@@ -200,7 +200,7 @@ namespace Consolification.Core.Test
         public void ArgumentsContainer_Hierarchy_NoArg()
         {
             string[] args = new string[0];
-            HierarchyDataMock data = new HierarchyDataMock();
+            SimpleHierarchyDataMock data = new SimpleHierarchyDataMock();
 
             // We must not have any exception as the mandatory argument is 
             // a child of a parent argument that is itself not mandatory and not present.
@@ -212,7 +212,7 @@ namespace Consolification.Core.Test
         {
             string[] args = new string[] { "/TOP", "1" };
 
-            HierarchyDataMock data = new HierarchyDataMock();
+            SimpleHierarchyDataMock data = new SimpleHierarchyDataMock();
             
             // We must not have any exception as the mandatory argument is 
             // a child of a parent argument that is itself not mandatory and not present.
@@ -224,7 +224,7 @@ namespace Consolification.Core.Test
         {
             string[] args = new string[] { "/TOP", "1", "/MID", "2" };
 
-            HierarchyDataMock data = new HierarchyDataMock();
+            SimpleHierarchyDataMock data = new SimpleHierarchyDataMock();
 
             try
             {
@@ -242,7 +242,7 @@ namespace Consolification.Core.Test
         {
             string[] args = new string[] { "/MID", "2" };
 
-            HierarchyDataMock data = new HierarchyDataMock();
+            SimpleHierarchyDataMock data = new SimpleHierarchyDataMock();
 
             try
             {
@@ -260,7 +260,7 @@ namespace Consolification.Core.Test
         {
             string[] args = new string[] { "/CHILD2", "22" };
 
-            HierarchyDataMock data = new HierarchyDataMock();
+            SimpleHierarchyDataMock data = new SimpleHierarchyDataMock();
 
             try
             {
@@ -278,7 +278,7 @@ namespace Consolification.Core.Test
         {
             string[] args = new string[] { "/TOP", "1", "/CHILD1", "C1" };
 
-            HierarchyDataMock data = new HierarchyDataMock();
+            SimpleHierarchyDataMock data = new SimpleHierarchyDataMock();
 
             // We must not have any exception as the mandatory argument is 
             // a child of a parent argument that is itself not mandatory and not present.
@@ -290,7 +290,7 @@ namespace Consolification.Core.Test
         {
             string[] args = new string[] { "/TOP", "1", "/CHILD1", "C1", "/MID", "32", "/CHILD1", "C1", "/CHILD2", "C2", "/CHILD3", "C3" };
 
-            HierarchyDataMock data = new HierarchyDataMock();
+            SimpleHierarchyDataMock data = new SimpleHierarchyDataMock();
 
             // Everything must be fine!
             data.Initialize(args);
@@ -317,6 +317,60 @@ namespace Consolification.Core.Test
             {
                 Assert.IsTrue(e.Message.Contains("One of the argument specified with the property Duplicated2 has been already registered."));
             }
+        }
+
+        [TestMethod]
+        public void ArgumentsContainer_ComplexHierarchy()
+        {
+            string[] args = new string[] { "/ARG1", "/TOPA", "topa" };
+            ComplexHierarchyDataMock data = new ComplexHierarchyDataMock();
+
+            data.Initialize(args);
+            ArgumentInfo[] argsInfo = data.ArgumentsInfo.Hierarchy;
+
+            /// ARG1
+            /// TOPA (1)
+            ///     CHILDTOPA1
+            ///     MID (2)
+            ///         CHILDMID1
+            ///         CHILDMID2
+            ///         BACK (3)
+            ///             CHILDBACK2
+            ///             CHILDBACK1
+            /// TOPB (4)
+            ///     MIDB (5)
+            ///         CHILDMIDB2
+            ///         CHILDMIDB1
+            ///     CHILDTOPB1
+            ///     CHILDTOPB2
+            /// ARG2
+            /// 
+
+            Assert.IsTrue(argsInfo.Length == 4);
+            Assert.IsTrue(argsInfo[0].Argument.Name == "/ARG1");
+            Assert.IsTrue(argsInfo[1].Argument.Name == "/TOPA");
+            Assert.IsTrue(argsInfo[1].Children.Count == 2);
+            Assert.IsTrue(argsInfo[1].Children[0].Argument.Name == "/CHILDTOPA1");
+            Assert.IsTrue(argsInfo[1].Children[1].Argument.Name == "/MID");
+            Assert.IsTrue(argsInfo[1].Children[1].Children.Count == 3);
+            Assert.IsTrue(argsInfo[1].Children[1].Children[0].Argument.Name == "/CHILDMID1");
+            Assert.IsTrue(argsInfo[1].Children[1].Children[1].Argument.Name == "/CHILDMID2");
+            Assert.IsTrue(argsInfo[1].Children[1].Children[2].Argument.Name == "/BACK");
+            Assert.IsTrue(argsInfo[1].Children[1].Children[2].Children.Count == 2);
+            Assert.IsTrue(argsInfo[1].Children[1].Children[2].Children[0].Argument.Name == "/CHILDBACK2");
+            Assert.IsTrue(argsInfo[1].Children[1].Children[2].Children[1].Argument.Name == "/CHILDBACK1");
+
+            Assert.IsTrue(argsInfo[2].Argument.Name == "/TOPB");
+            Assert.IsTrue(argsInfo[2].Children.Count == 3);
+            Assert.IsTrue(argsInfo[2].Children[0].Argument.Name == "/MIDB");
+            Assert.IsTrue(argsInfo[2].Children[0].Children.Count == 2);
+            Assert.IsTrue(argsInfo[2].Children[0].Children[0].Argument.Name == "/CHILDMIDB2");
+            Assert.IsTrue(argsInfo[2].Children[0].Children[1].Argument.Name == "/CHILDMIDB1");
+
+            Assert.IsTrue(argsInfo[2].Children[1].Argument.Name == "/CHILDTOPB1");
+            Assert.IsTrue(argsInfo[2].Children[2].Argument.Name == "/CHILDTOPB2");
+
+            Assert.IsTrue(argsInfo[3].Argument.Name == "/ARG2");
         }
     }
 }

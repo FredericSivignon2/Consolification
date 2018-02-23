@@ -28,6 +28,8 @@ namespace Consolification.Core
         public CIParentArgumentAttribute ParentArgument { get; set; }
         public bool Found { get; set; }
 
+        public List<ArgumentInfo> Children { get; } = new List<ArgumentInfo>();
+
         public override string ToString()
         {
             StringBuilder output = new StringBuilder("Argument: ");

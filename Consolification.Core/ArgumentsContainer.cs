@@ -128,6 +128,8 @@ namespace Consolification.Core
                 ainfo.ChildArgument = pinfo.GetCustomAttribute<CIChildArgumentAttribute>();
                 ainfo.ParentArgument = pinfo.GetCustomAttribute<CIParentArgumentAttribute>();
 
+                //if (ainfo.C)
+
                 argumentsInfo.Add(ainfo);
             }
         }
