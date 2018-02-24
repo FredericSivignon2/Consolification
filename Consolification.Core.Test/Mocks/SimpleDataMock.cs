@@ -33,5 +33,8 @@ namespace Consolification.Core.Test.Mocks
         
         [CIArgument("/S")]
         public string MyString1 { get; set; }
+
+        [CIArgument("/STARTDATE")]
+        public DateTime StartDate { get; set; }
     }
 }

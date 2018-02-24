@@ -109,6 +109,30 @@ namespace Consolification.Core.Test
         }
 
         [TestMethod]
+        public void ArgumentsContainer_DateTimeArgument1()
+        {
+            string[] args = new string[] { "/STARTDATE", "2018/02/24" };
+
+            SimpleDataMock data = new SimpleDataMock();
+            Assert.IsTrue(data.StartDate == DateTime.MinValue);
+
+            data.Initialize(args);
+            Assert.IsTrue(data.StartDate == new DateTime(2018, 02, 24));
+        }
+
+        [TestMethod]
+        public void ArgumentsContainer_DateTimeArgument2()
+        {
+            string[] args = new string[] { "/STARTDATE", "2018/02/24 15:36:20" };
+
+            SimpleDataMock data = new SimpleDataMock();
+            Assert.IsTrue(data.StartDate == DateTime.MinValue);
+
+            data.Initialize(args);
+            Assert.IsTrue(data.StartDate == new DateTime(2018, 02, 24, 15, 36, 20));
+        }
+
+        [TestMethod]
         public void ArgumentsContainer_StringArgument()
         {
             string[] args = new string[2];

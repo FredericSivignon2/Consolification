@@ -190,6 +190,12 @@ namespace Consolification.Core
                         currentInfo.PInfo.SetValue(this, GetValue<string>(args, ref index, currentInfo, (str) => { return str; }));
                         break;
 
+                    case TypeCode.DateTime:
+                        currentInfo.PInfo.SetValue(this, GetValue<DateTime>(args, ref index, currentInfo, (str) => { return Convert.ToDateTime(str, CultureInfo.InvariantCulture); }));
+                        break;
+
+                    default:
+                        throw new NotSupportedException(string.Format("The type '{0}' is not supported.", currentInfo.Argument.Name));
                 }
 
 
