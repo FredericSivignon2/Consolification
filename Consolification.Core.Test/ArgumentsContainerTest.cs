@@ -37,6 +37,54 @@ namespace Consolification.Core.Test
         }
 
         [TestMethod]
+        public void ArgumentsContainer_SByteArgument()
+        {
+            sbyte argValue = 61;
+            string[] args = new string[2];
+            args[0] = "/SB";
+            args[1] = argValue.ToString();
+
+            SimpleDataMock data = new SimpleDataMock();
+            Assert.IsTrue(data.MySByte == 0);
+
+            data.Initialize(args);
+            Assert.IsTrue(data.MySByte == argValue);
+        }
+
+        [TestMethod]
+        public void ArgumentsContainer_CharArgumentValid()
+        {
+            char argValue = 'h';
+            string[] args = new string[] { "/C1", argValue.ToString() };
+
+            SimpleDataMock data = new SimpleDataMock();
+            Assert.IsTrue(data.MyChar == default(char));
+
+            data.Initialize(args);
+            Assert.IsTrue(data.MyChar == argValue);
+        }
+
+        [TestMethod]
+        public void ArgumentsContainer_CharArgumentNotValid()
+        {
+            char argValue = 'T'; // Only low letter alpha char are accepted (see associated attribute)
+            string[] args = new string[] { "/C1", argValue.ToString() };
+
+            SimpleDataMock data = new SimpleDataMock();
+            Assert.IsTrue(data.MyChar == default(char));
+
+            try
+            {
+                data.Initialize(args);
+                Assert.Fail("An exception must be thrown!");
+            }
+            catch (ArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "The value of the argument /C1 cannot be lower than a");
+            }
+        }
+
+        [TestMethod]
         public void ArgumentsContainer_Int16Argument()
         {
             short argValue = 12350;
@@ -94,6 +142,79 @@ namespace Consolification.Core.Test
         }
 
         [TestMethod]
+        public void ArgumentsContainer_UInt16Argument()
+        {
+            ushort argValue = 45963;
+            string[] args = new string[2];
+            args[0] = "/UI16";
+            args[1] = argValue.ToString();
+
+            SimpleDataMock data = new SimpleDataMock();
+            Assert.IsTrue(data.MyUShort == 0);
+
+            data.Initialize(args);
+            Assert.IsTrue(data.MyUShort == argValue);
+        }
+
+        [TestMethod]
+        public void ArgumentsContainer_UInt32Argument()
+        {
+            uint argValue = 4033263035;
+            string[] args = new string[2];
+            args[0] = "/UI32";
+            args[1] = argValue.ToString();
+
+            SimpleDataMock data = new SimpleDataMock();
+            Assert.IsTrue(data.MyUInt == 0);
+
+            data.Initialize(args);
+            Assert.IsTrue(data.MyUInt == argValue);
+        }
+
+        [TestMethod]
+        public void ArgumentsContainer_UInt64Argument()
+        {
+            ulong argValue = 40332630353540;
+            string[] args = new string[2];
+            args[0] = "/UI64";
+            args[1] = argValue.ToString();
+
+            SimpleDataMock data = new SimpleDataMock();
+            Assert.IsTrue(data.MyULong == 0);
+
+            data.Initialize(args);
+            Assert.IsTrue(data.MyULong == argValue);
+        }
+
+        [TestMethod]
+        public void ArgumentsContainer_DecimalArgument()
+        {
+            decimal argValue = 856498763251.65m;
+            string[] args = new string[] { "/DEC", argValue.ToString() };
+
+            SimpleDataMock data = new SimpleDataMock();
+            Assert.IsTrue(data.MyDecimal == 0m);
+
+            data.Initialize(args);
+            Assert.IsTrue(data.MyDecimal == argValue);
+        }
+
+        [TestMethod]
+        public void ArgumentsContainer_SingleArgument()
+        {
+            float argValue = 234.4f;
+            string[] args = new string[2];
+            args[0] = "/SINGLE";
+            args[1] = argValue.ToString(CultureInfo.InvariantCulture);
+
+            SimpleDataMock data = new SimpleDataMock();
+            Assert.IsTrue(data.MySingle == 0);
+
+            data.Initialize(args);
+            Assert.IsTrue(data.MySingle == argValue);
+        }
+
+        [TestMethod]
         public void ArgumentsContainer_DoubleArgument()
         {
             double argValue = 65877065.654904;
@@ -131,7 +252,7 @@ namespace Consolification.Core.Test
             data.Initialize(args);
             Assert.IsTrue(data.StartDate == new DateTime(2018, 02, 24, 15, 36, 20));
         }
-
+        
         [TestMethod]
         public void ArgumentsContainer_StringArgument()
         {

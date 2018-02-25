@@ -170,6 +170,18 @@ namespace Consolification.Core
                         currentInfo.PInfo.SetValue(this, GetValue<byte>(args, ref index, currentInfo, (str) => { return Convert.ToByte(str); }));
                         break;
 
+                    case TypeCode.SByte:
+                        currentInfo.PInfo.SetValue(this, GetValue<sbyte>(args, ref index, currentInfo, (str) => { return Convert.ToSByte(str); }));
+                        break;
+
+                    case TypeCode.Char:
+                        currentInfo.PInfo.SetValue(this, GetValue<char>(args, ref index, currentInfo, (str) => { return Convert.ToChar(str); }));
+                        break;
+
+                    case TypeCode.Decimal:
+                        currentInfo.PInfo.SetValue(this, GetValue<decimal>(args, ref index, currentInfo, (str) => { return Convert.ToDecimal(str); }));
+                        break;
+                        
                     case TypeCode.Int16:
                         currentInfo.PInfo.SetValue(this, GetValue<short>(args, ref index, currentInfo, (str) => { return Convert.ToInt16(str); }));
                         break;
@@ -180,6 +192,22 @@ namespace Consolification.Core
 
                     case TypeCode.Int64:
                         currentInfo.PInfo.SetValue(this, GetValue<long>(args, ref index, currentInfo, (str) => { return Convert.ToInt64(str); }));
+                        break;
+
+                    case TypeCode.UInt16:
+                        currentInfo.PInfo.SetValue(this, GetValue<ushort>(args, ref index, currentInfo, (str) => { return Convert.ToUInt16(str); }));
+                        break;
+
+                    case TypeCode.UInt32:
+                        currentInfo.PInfo.SetValue(this, GetValue<uint>(args, ref index, currentInfo, (str) => { return Convert.ToUInt32(str); }));
+                        break;
+
+                    case TypeCode.UInt64:
+                        currentInfo.PInfo.SetValue(this, GetValue<ulong>(args, ref index, currentInfo, (str) => { return Convert.ToUInt64(str); }));
+                        break;
+
+                    case TypeCode.Single:
+                        currentInfo.PInfo.SetValue(this, GetValue<float>(args, ref index, currentInfo, (str) => { return Convert.ToSingle(str, CultureInfo.InvariantCulture); }));
                         break;
 
                     case TypeCode.Double:
@@ -193,6 +221,7 @@ namespace Consolification.Core
                     case TypeCode.DateTime:
                         currentInfo.PInfo.SetValue(this, GetValue<DateTime>(args, ref index, currentInfo, (str) => { return Convert.ToDateTime(str, CultureInfo.InvariantCulture); }));
                         break;
+
 
                     default:
                         throw new NotSupportedException(string.Format("The type '{0}' is not supported.", currentInfo.Argument.Name));
