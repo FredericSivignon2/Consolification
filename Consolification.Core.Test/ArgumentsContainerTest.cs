@@ -252,7 +252,31 @@ namespace Consolification.Core.Test
             data.Initialize(args);
             Assert.IsTrue(data.StartDate == new DateTime(2018, 02, 24, 15, 36, 20));
         }
-        
+
+        [TestMethod]
+        public void ArgumentsContainer_UriArgument()
+        {
+            string[] args = new string[] { "/URI", "http://www.google.com" };
+
+            SimpleDataMock data = new SimpleDataMock();
+            Assert.IsTrue(data.MyUri == default(Uri));
+
+            data.Initialize(args);
+            Assert.IsTrue(data.MyUri.AbsoluteUri == "http://www.google.com/");
+        }
+
+        [TestMethod]
+        public void ArgumentsContainer_VersionArgument()
+        {
+            string[] args = new string[] { "/VERSION", "1.5.2" };
+
+            SimpleDataMock data = new SimpleDataMock();
+            Assert.IsTrue(data.MyVersion == default(Version));
+
+            data.Initialize(args);
+            Assert.IsTrue(data.MyVersion.ToString() == "1.5.2");
+        }
+
         [TestMethod]
         public void ArgumentsContainer_StringArgument()
         {

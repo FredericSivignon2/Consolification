@@ -11,14 +11,11 @@ namespace Consolification
     {
         static void Main(string[] args)
         {
-            RequestData data = new RequestData();
-            data.Initialize(args);
-
-            ConsolificationEngine engine = new ConsolificationEngine(data);
+            ConsolificationEngine<RequestData> engine = new ConsolificationEngine<RequestData>();
             DefaultLogWriter writer = engine.Logger as DefaultLogWriter;
             writer.ShowLevelPrefix = false;
 
-            engine.Start();
+            engine.Start(args);
         }
     }
 }

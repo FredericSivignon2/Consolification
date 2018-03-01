@@ -36,18 +36,26 @@ namespace Consolification.Core
             
             Type type = this.GetType();
 
-            ProcessClassAttributes(type, args);
-            RegisterAttributesFromClassProperties(type);
-            SetPropertiesValuesFromAttributes(args);
+            try
+            {
+                ProcessClassAttributes(type, args);
+                RegisterAttributesFromClassProperties(type);
+                SetPropertiesValuesFromAttributes(args);
 
-            ArgumentsContainerValidator validator = new ArgumentsContainerValidator(this);
-            validator.Validate();
+                ArgumentsContainerValidator validator = new ArgumentsContainerValidator(this);
+                validator.Validate();
+            }
+            catch
+            {
+                MustDisplayHelp = true;
+                throw;
+            }
         }
 
         #endregion
 
         #region Private Methods
-        private T GetValue<T>(string[] args, ref int index, ArgumentInfo info, Func<string, T> convertor) where T : IComparable
+        private T GetComparableValue<T>(string[] args, ref int index, ArgumentInfo info, Func<string, T> convertor) where T : IComparable
         {
             index++;
 
@@ -81,6 +89,24 @@ namespace Consolification.Core
 
             return val;
 
+        }
+
+        private T GetObjectValue<T>(string[] args, ref int index, ArgumentInfo info, Func<string, T> convertor)
+        {
+            index++;
+
+            if (index >= args.Length)
+                throw new ArgumentException("Missing value for the argument {0}", args[index - 1]);
+            T val = default(T);
+            try
+            {
+                val = convertor(args[index]);
+            }
+            catch (Exception e)
+            {
+                throw new ArgumentException(string.Format("Invalid specified value for the argument {0}.", e));
+            }
+            return val;
         }
 
         private void ProcessClassAttributes(Type type, string[] args)
@@ -157,7 +183,8 @@ namespace Consolification.Core
                 }
                 currentInfo.Found = true;
 
-                switch (Type.GetTypeCode(currentInfo.PInfo.PropertyType))
+                TypeCode code = Type.GetTypeCode(currentInfo.PInfo.PropertyType);
+                switch (code)
                 {
 
                     // Boolean values arguments do not have associated string values; if specified,
@@ -167,68 +194,91 @@ namespace Consolification.Core
                         break;
 
                     case TypeCode.Byte:
-                        currentInfo.PInfo.SetValue(this, GetValue<byte>(args, ref index, currentInfo, (str) => { return Convert.ToByte(str); }));
+                        currentInfo.PInfo.SetValue(this, GetComparableValue<byte>(args, ref index, currentInfo, (str) => { return Convert.ToByte(str); }));
                         break;
 
                     case TypeCode.SByte:
-                        currentInfo.PInfo.SetValue(this, GetValue<sbyte>(args, ref index, currentInfo, (str) => { return Convert.ToSByte(str); }));
+                        currentInfo.PInfo.SetValue(this, GetComparableValue<sbyte>(args, ref index, currentInfo, (str) => { return Convert.ToSByte(str); }));
                         break;
 
                     case TypeCode.Char:
-                        currentInfo.PInfo.SetValue(this, GetValue<char>(args, ref index, currentInfo, (str) => { return Convert.ToChar(str); }));
+                        currentInfo.PInfo.SetValue(this, GetComparableValue<char>(args, ref index, currentInfo, (str) => { return Convert.ToChar(str); }));
                         break;
 
                     case TypeCode.Decimal:
-                        currentInfo.PInfo.SetValue(this, GetValue<decimal>(args, ref index, currentInfo, (str) => { return Convert.ToDecimal(str); }));
+                        currentInfo.PInfo.SetValue(this, GetComparableValue<decimal>(args, ref index, currentInfo, (str) => { return Convert.ToDecimal(str); }));
                         break;
                         
                     case TypeCode.Int16:
-                        currentInfo.PInfo.SetValue(this, GetValue<short>(args, ref index, currentInfo, (str) => { return Convert.ToInt16(str); }));
+                        currentInfo.PInfo.SetValue(this, GetComparableValue<short>(args, ref index, currentInfo, (str) => { return Convert.ToInt16(str); }));
                         break;
 
                     case TypeCode.Int32:
-                        currentInfo.PInfo.SetValue(this, GetValue<int>(args, ref index, currentInfo, (str) => { return Convert.ToInt32(str); }));
+                        currentInfo.PInfo.SetValue(this, GetComparableValue<int>(args, ref index, currentInfo, (str) => { return Convert.ToInt32(str); }));
                         break;
 
                     case TypeCode.Int64:
-                        currentInfo.PInfo.SetValue(this, GetValue<long>(args, ref index, currentInfo, (str) => { return Convert.ToInt64(str); }));
+                        currentInfo.PInfo.SetValue(this, GetComparableValue<long>(args, ref index, currentInfo, (str) => { return Convert.ToInt64(str); }));
                         break;
 
                     case TypeCode.UInt16:
-                        currentInfo.PInfo.SetValue(this, GetValue<ushort>(args, ref index, currentInfo, (str) => { return Convert.ToUInt16(str); }));
+                        currentInfo.PInfo.SetValue(this, GetComparableValue<ushort>(args, ref index, currentInfo, (str) => { return Convert.ToUInt16(str); }));
                         break;
 
                     case TypeCode.UInt32:
-                        currentInfo.PInfo.SetValue(this, GetValue<uint>(args, ref index, currentInfo, (str) => { return Convert.ToUInt32(str); }));
+                        currentInfo.PInfo.SetValue(this, GetComparableValue<uint>(args, ref index, currentInfo, (str) => { return Convert.ToUInt32(str); }));
                         break;
 
                     case TypeCode.UInt64:
-                        currentInfo.PInfo.SetValue(this, GetValue<ulong>(args, ref index, currentInfo, (str) => { return Convert.ToUInt64(str); }));
+                        currentInfo.PInfo.SetValue(this, GetComparableValue<ulong>(args, ref index, currentInfo, (str) => { return Convert.ToUInt64(str); }));
                         break;
 
                     case TypeCode.Single:
-                        currentInfo.PInfo.SetValue(this, GetValue<float>(args, ref index, currentInfo, (str) => { return Convert.ToSingle(str, CultureInfo.InvariantCulture); }));
+                        currentInfo.PInfo.SetValue(this, GetComparableValue<float>(args, ref index, currentInfo, (str) => { return Convert.ToSingle(str, CultureInfo.InvariantCulture); }));
                         break;
 
                     case TypeCode.Double:
-                        currentInfo.PInfo.SetValue(this, GetValue<double>(args, ref index, currentInfo, (str) => { return Convert.ToDouble(str, CultureInfo.InvariantCulture); }));
+                        currentInfo.PInfo.SetValue(this, GetComparableValue<double>(args, ref index, currentInfo, (str) => { return Convert.ToDouble(str, CultureInfo.InvariantCulture); }));
                         break;
 
                     case TypeCode.String:
-                        currentInfo.PInfo.SetValue(this, GetValue<string>(args, ref index, currentInfo, (str) => { return str; }));
+                        currentInfo.PInfo.SetValue(this, GetComparableValue<string>(args, ref index, currentInfo, (str) => { return str; }));
                         break;
 
                     case TypeCode.DateTime:
-                        currentInfo.PInfo.SetValue(this, GetValue<DateTime>(args, ref index, currentInfo, (str) => { return Convert.ToDateTime(str, CultureInfo.InvariantCulture); }));
+                        currentInfo.PInfo.SetValue(this, GetComparableValue<DateTime>(args, ref index, currentInfo, (str) => { return Convert.ToDateTime(str, CultureInfo.InvariantCulture); }));
                         break;
 
+                    case TypeCode.Object:
+                        SetValueForObjects(args, ref index, currentInfo);
+                        break;
 
                     default:
-                        throw new NotSupportedException(string.Format("The type '{0}' is not supported.", currentInfo.Argument.Name));
+                        throw new NotSupportedException(string.Format("The type of the argument '{0}' is not supported.", currentInfo.Argument.Name));
                 }
 
 
                 index++;
+            }
+        }
+
+        private void SetValueForObjects(string[] args, ref int index, ArgumentInfo currentInfo)
+        {
+            switch (currentInfo.PInfo.PropertyType.FullName)
+            {
+                case "System.Uri":
+                    currentInfo.PInfo.SetValue(this, GetObjectValue<Uri>(args, ref index, currentInfo, 
+                        (str) => { return new Uri(str); }));
+                    break;
+
+                case "System.Version":
+                    currentInfo.PInfo.SetValue(this, GetComparableValue<Version>(args, ref index, currentInfo,
+                        (str) => { return new Version(str); }));
+                    break;
+
+                default:
+                    throw new NotSupportedException(string.Format("The type of the argument '{0}' is not supported.", currentInfo.Argument.Name));
+
             }
         }
         #endregion

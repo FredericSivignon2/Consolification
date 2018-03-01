@@ -56,5 +56,11 @@ namespace Consolification.Core.Test.Mocks
 
         [CIArgument("/STARTDATE")]
         public DateTime StartDate { get; set; }
+
+        [CIArgument("/URI")]
+        public Uri MyUri { get; set; }
+
+        [CIArgument("/VERSION")]
+        public Version MyVersion { get; set; }
     }
 }

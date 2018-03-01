@@ -19,6 +19,8 @@ namespace Consolification
             WebResponse response = null;
             try
             {
+                
+
                 var watch = System.Diagnostics.Stopwatch.StartNew();
                 //String encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes("i051238" + ":" + "Amiga920!"));
                 HttpWebRequest request = WebRequest.CreateHttp(data.URL);

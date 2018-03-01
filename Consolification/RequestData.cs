@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,7 +17,7 @@ namespace Consolification
         [CIArgument("/url", "The URL of the request to perform.")]
         [CIMandatoryArgument]
         [CIJob(typeof(RequestJob))]
-        public string URL { get; private set; }
+        public Uri URL { get; private set; }
 
         [CIShortcutArgument("/user", "/u", "The user to authenticate the request.")]
         [CIParentArgument(1)]

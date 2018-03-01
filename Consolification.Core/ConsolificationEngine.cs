@@ -9,17 +9,22 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core
 {
-    public class ConsolificationEngine
+    public class ConsolificationEngine<T> where T: ArgumentsContainer, new()
     {
-        private ArgumentsContainer container;
+        private T container;
         private ILogWriter log;
         private IConsoleReader reader;
 
-        public ConsolificationEngine(ArgumentsContainer container)
+        public ConsolificationEngine()
         {
-            this.container = container;
+            this.container = new T();
             this.log = new DefaultLogWriter();
             this.reader = new DefaultConsoleReader();
+        }
+
+        public T Data
+        {
+            get { return container; }
         }
 
         public ILogWriter Logger
@@ -46,8 +51,18 @@ namespace Consolification.Core
             }
         }
 
-        public void Start()
+        public void Start(string[] args)
         {
+            try
+            {
+                this.container.Initialize(args);
+            }
+            catch (Exception e)
+            {
+                this.log.Fatal("", e);
+            }
+            
+            
             if (this.container.MustDisplayHelp)
             {
                 HelpBuilder builder = new HelpBuilder(this.container);

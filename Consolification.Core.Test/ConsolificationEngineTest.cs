@@ -14,19 +14,13 @@ namespace Consolification.Core.Test
             args[0] = "/A";
             args[1] = "123456ABCDEF";
 
+            ConsolificationEngine<DataJobMock> engine = new ConsolificationEngine<DataJobMock>();
+            Assert.IsTrue(string.IsNullOrEmpty(engine.Data.In));
+            Assert.IsTrue(string.IsNullOrEmpty(engine.Data.Out));
 
-            DataJobMock data = new DataJobMock();
-            Assert.IsTrue(string.IsNullOrEmpty(data.In));
-            Assert.IsTrue(string.IsNullOrEmpty(data.Out));
-            
-            data.Initialize(args);
-            Assert.IsTrue(data.In == args[1]);
-            Assert.IsTrue(string.IsNullOrEmpty(data.Out));
+            engine.Start(args);
 
-            ConsolificationEngine engine = new ConsolificationEngine(data);
-            engine.Start();
-
-            Assert.IsTrue(data.Out == data.In);
+            Assert.IsTrue(engine.Data.Out == engine.Data.In);
         }
     }
 }
