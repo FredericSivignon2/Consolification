@@ -18,16 +18,22 @@ namespace Consolification
             StreamReader reader = null;
             WebResponse response = null;
             try
-            {
+            {       
+				var watch = System.Diagnostics.Stopwatch.StartNew();
                 
-
-                var watch = System.Diagnostics.Stopwatch.StartNew();
-                //String encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes("i051238" + ":" + "Amiga920!"));
+				
+				//
                 HttpWebRequest request = WebRequest.CreateHttp(data.URL);
                 request.Method = "GET";
-                //request.Headers.Add("Authorization", "Basic " + encoded);
+				if (!string.IsNullOrEmpty(data.User))
+				{
+					//request.Credentials = new NetworkCredential();
+					String encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(data.User + ":" + data.Password));
+					request.Headers.Add("Authorization", "Basic " + encoded);
+				}
+					
 
-                response = request.GetResponse();
+				response = request.GetResponse();
                 reader = new StreamReader(response.GetResponseStream());
                 string content = reader.ReadToEnd();
 

@@ -19,7 +19,7 @@ namespace Consolification.Core
         {
             this.data = new T();
             this.log = new DefaultLogWriter();
-            this.reader = new DefaultConsoleReader();
+            this.reader = new DefaultConsoleReader(new DefaultConsoleWrapper());
         }
 
         public T Data

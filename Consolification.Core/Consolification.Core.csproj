@@ -56,10 +56,12 @@
     <Compile Include="ConsolificationEngine.cs" />
     <Compile Include="ArgumentsParser.cs" />
     <Compile Include="DefaultConsoleReader.cs" />
+    <Compile Include="DefaultConsoleWrapper.cs" />
     <Compile Include="DefaultLogWriter.cs" />
     <Compile Include="DuplicateParentArgumentAttributeException.cs" />
     <Compile Include="HelpBuilder.cs" />
     <Compile Include="IConsoleReader.cs" />
+    <Compile Include="IConsoleWrapper.cs" />
     <Compile Include="ILogWriter.cs" />
     <Compile Include="IJob.cs" />
     <Compile Include="InvalidArgumentDefinitionException.cs" />

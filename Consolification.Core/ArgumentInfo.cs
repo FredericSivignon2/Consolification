@@ -33,10 +33,7 @@ namespace Consolification.Core
         public override string ToString()
         {
             StringBuilder output = new StringBuilder("Argument: ");
-            if (Argument != null)
-                output.Append(Argument.Name);
-            else
-                output.Append("null");
+            output.Append(Argument.Name);
             output.AppendFormat(" - Found: {0}", Found);
 
             return output.ToString();

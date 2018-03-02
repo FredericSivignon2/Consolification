@@ -10,7 +10,14 @@ namespace Consolification.Core
 {
     public class DefaultConsoleReader : IConsoleReader
     {
-        public SecureString GetPassword()
+		private IConsoleWrapper console;
+
+		public DefaultConsoleReader(IConsoleWrapper wrapper)
+		{
+			this.console = wrapper;
+		}
+
+		public SecureString GetPassword()
         {
             return GetPassword('*');
         }
@@ -22,20 +29,20 @@ namespace Consolification.Core
 
             do
             {
-                key = Console.ReadKey(true);
+                key = this.console.ReadKey(true);
 
                 // Backspace Should Not Work
                 if (key.Key != ConsoleKey.Backspace && key.Key != ConsoleKey.Enter)
                 {
                     pass += key.KeyChar;
-                    Console.Write(passwordChar);
+					this.console.Write(passwordChar);
                 }
                 else
                 {
                     if (key.Key == ConsoleKey.Backspace && pass.Length > 0)
                     {
                         pass = pass.Substring(0, (pass.Length - 1));
-                        Console.Write("\b \b");
+						this.console.Write("\b \b");
                     }
                 }
             }
@@ -43,10 +50,9 @@ namespace Consolification.Core
             while (key.Key != ConsoleKey.Enter);
 
             SecureString spass = new SecureString();
-            int index = 0;
             foreach (char c in pass.ToCharArray())
             {
-                spass.SetAt(index++, c);
+                spass.AppendChar(c);
             }
 
             return spass;
