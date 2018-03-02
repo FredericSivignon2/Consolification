@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Consolification
 {
-    public class RequestJob : IJob
+    public class RequestJob : IJob<RequestData>
     {
-        public void Run(JobContext context)
+        public void Run(JobContext<RequestData> context)
         {
-            RequestData data = context.Container as RequestData;
+            RequestData data = context.Data;
 
             StreamReader reader = null;
             WebResponse response = null;

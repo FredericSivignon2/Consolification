@@ -54,7 +54,7 @@
     <Compile Include="Attributes\CIShortcutArgumentAttribute.cs" />
     <Compile Include="Attributes\CIParentArgumentAttribute.cs" />
     <Compile Include="ConsolificationEngine.cs" />
-    <Compile Include="ArgumentsContainer.cs" />
+    <Compile Include="ArgumentsParser.cs" />
     <Compile Include="DefaultConsoleReader.cs" />
     <Compile Include="DefaultLogWriter.cs" />
     <Compile Include="DuplicateParentArgumentAttributeException.cs" />

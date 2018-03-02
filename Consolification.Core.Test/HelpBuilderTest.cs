@@ -13,9 +13,10 @@ namespace Consolification.Core.Test
             string[] args = new string[] { "-data2", "1" };
 
             HelpDataMock data = new HelpDataMock();
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
 
-            HelpBuilder builder = new HelpBuilder(data);
+            HelpBuilder builder = new HelpBuilder(parser);
             string[] lines = builder.GetHelpLines();
 
             Assert.IsNotNull(lines);
@@ -33,9 +34,9 @@ namespace Consolification.Core.Test
         {
             string[] args = new string[] { "/?" };
             ComplexHierarchyDataMock data = new ComplexHierarchyDataMock();
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
 
-            HelpBuilder builder = new HelpBuilder(data);
+            HelpBuilder builder = new HelpBuilder(parser);
             string[] lines = builder.GetHelpLines();
 
             Assert.IsNotNull(lines);

@@ -9,22 +9,22 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core
 {
-    public class ConsolificationEngine<T> where T: ArgumentsContainer, new()
+    public class ConsolificationEngine<T> where T: new()
     {
-        private T container;
+        private T data;
         private ILogWriter log;
         private IConsoleReader reader;
 
         public ConsolificationEngine()
         {
-            this.container = new T();
+            this.data = new T();
             this.log = new DefaultLogWriter();
             this.reader = new DefaultConsoleReader();
         }
 
         public T Data
         {
-            get { return container; }
+            get { return data; }
         }
 
         public ILogWriter Logger
@@ -53,9 +53,10 @@ namespace Consolification.Core
 
         public void Start(string[] args)
         {
+            ArgumentsParser parser = new ArgumentsParser();
             try
             {
-                this.container.Initialize(args);
+                parser.Parse(this.data, args);
             }
             catch (Exception e)
             {
@@ -63,9 +64,9 @@ namespace Consolification.Core
             }
             
             
-            if (this.container.MustDisplayHelp)
+            if (parser.MustDisplayHelp)
             {
-                HelpBuilder builder = new HelpBuilder(this.container);
+                HelpBuilder builder = new HelpBuilder(parser);
                 string[] lines = builder.GetHelpLines();
 
                 foreach (String line in lines)
@@ -75,14 +76,14 @@ namespace Consolification.Core
                 return;
             }
 
-            foreach (ArgumentInfo argInfo in this.container.ArgumentsInfo)
+            foreach (ArgumentInfo argInfo in parser.ArgumentsInfo)
             {
                 if (argInfo.Job != null)
                 {
-                    IJob job = null;
+                    IJob<T> job = null;
                     try
                     {
-                        job = (IJob)Activator.CreateInstance(argInfo.Job.JobType);
+                        job = (IJob<T>)Activator.CreateInstance(argInfo.Job.JobType);
                     }
                     catch (Exception exp)
                     {
@@ -91,9 +92,9 @@ namespace Consolification.Core
                     
                     try
                     {
-                        JobContext context = new JobContext()
+                        JobContext<T> context = new JobContext<T>()
                         {
-                            Container = this.container,
+                            Data = data,
                             Logger = this.log,
                             Reader = this.reader
                         };

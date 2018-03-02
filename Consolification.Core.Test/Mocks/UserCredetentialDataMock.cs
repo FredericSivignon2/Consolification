@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core.Test.Mocks
 {
-    public class UserCredetentialDataMock : ArgumentsContainer
+    public class UserCredetentialDataMock
     {
         [CIArgument("/U")]
         [CIMandatoryArgument]

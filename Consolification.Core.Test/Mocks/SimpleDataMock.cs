@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core.Test.Mocks
 {
-    public class SimpleDataMock : ArgumentsContainer
+    public class SimpleDataMock
     {
         [CIArgument("/A")]
         public bool MyBoolean1 { get; set; }

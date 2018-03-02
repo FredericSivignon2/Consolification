@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core.Test.Mocks
 {
-    public class DataJobMock : ArgumentsContainer
+    public class DataJobMock
     {
         [CIArgument("/A")]
         [CIJob(typeof(JobMock))]

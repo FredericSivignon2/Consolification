@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core
 {
-    public class ArgumentsContainerValidator
+    class ArgumentsContainerValidator
     {
-        private ArgumentsContainer container;
+        private ArgumentsParser container;
 
-        public ArgumentsContainerValidator(ArgumentsContainer container)
+        public ArgumentsContainerValidator(ArgumentsParser container)
         {
             this.container = container;
         }

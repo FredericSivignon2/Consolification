@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core.Test.Mocks
 {
-    public class SimpleHierarchyDataMock : ArgumentsContainer
+    public class SimpleHierarchyDataMock
     {
         [CIArgument("/TOP")]
         [CIParentArgument(1)]

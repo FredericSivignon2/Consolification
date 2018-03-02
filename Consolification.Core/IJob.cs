@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core
 {
-    public interface IJob
+    public interface IJob<T> where T: new()
     {
-        void Run(JobContext context);
+        void Run(JobContext<T> context);
     }
 }

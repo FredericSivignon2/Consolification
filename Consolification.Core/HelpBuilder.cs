@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core
 {
-    public class HelpBuilder
+    class HelpBuilder
     {
-        private ArgumentsContainer container;
+        private ArgumentsParser container;
         
-        public HelpBuilder(ArgumentsContainer container)
+        public HelpBuilder(ArgumentsParser container)
         {
             if (container == null)
                 throw new ArgumentNullException("container");

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core.Test.Mocks
 {
-    public class DuplicateDataMock : ArgumentsContainer
+    public class DuplicateDataMock
     {
         [CIArgument("/DUP")]
         public string Duplicated1 { get; private set; }

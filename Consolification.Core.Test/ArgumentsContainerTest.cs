@@ -17,7 +17,8 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsFalse(data.MyBoolean1);
 
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
             Assert.IsTrue(data.MyBoolean1);
         }
 
@@ -32,7 +33,8 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyDouble1 == 0);
 
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
             Assert.IsTrue(data.MyByte1 == argValue);
         }
 
@@ -47,7 +49,8 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MySByte == 0);
 
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
             Assert.IsTrue(data.MySByte == argValue);
         }
 
@@ -60,7 +63,8 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyChar == default(char));
 
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
             Assert.IsTrue(data.MyChar == argValue);
         }
 
@@ -75,7 +79,8 @@ namespace Consolification.Core.Test
 
             try
             {
-                data.Initialize(args);
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
                 Assert.Fail("An exception must be thrown!");
             }
             catch (ArgumentException e)
@@ -95,7 +100,8 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyShort1 == 0);
 
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
             Assert.IsTrue(data.MyShort1 == argValue);
 
 
@@ -107,7 +113,8 @@ namespace Consolification.Core.Test
             data = new SimpleDataMock();
             Assert.IsTrue(data.MyShort1 == 0);
 
-            data.Initialize(args);
+            parser = new ArgumentsParser();
+            parser.Parse(data, args);
             Assert.IsTrue(data.MyShort1 == argValue);
         }
 
@@ -122,7 +129,8 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyInteger1 == 0);
 
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
             Assert.IsTrue(data.MyInteger1 == argValue);
         }
 
@@ -137,7 +145,8 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyLong1 == 0);
 
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
             Assert.IsTrue(data.MyLong1 == argValue);
         }
 
@@ -152,7 +161,8 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyUShort == 0);
 
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
             Assert.IsTrue(data.MyUShort == argValue);
         }
 
@@ -167,7 +177,8 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyUInt == 0);
 
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
             Assert.IsTrue(data.MyUInt == argValue);
         }
 
@@ -182,7 +193,8 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyULong == 0);
 
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
             Assert.IsTrue(data.MyULong == argValue);
         }
 
@@ -195,7 +207,8 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyDecimal == 0m);
 
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
             Assert.IsTrue(data.MyDecimal == argValue);
         }
 
@@ -210,7 +223,8 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MySingle == 0);
 
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
             Assert.IsTrue(data.MySingle == argValue);
         }
 
@@ -225,7 +239,8 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyDouble1 == 0);
 
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
             Assert.IsTrue(data.MyDouble1 == argValue);
         }
 
@@ -237,7 +252,8 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.StartDate == DateTime.MinValue);
 
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
             Assert.IsTrue(data.StartDate == new DateTime(2018, 02, 24));
         }
 
@@ -249,7 +265,8 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.StartDate == DateTime.MinValue);
 
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
             Assert.IsTrue(data.StartDate == new DateTime(2018, 02, 24, 15, 36, 20));
         }
 
@@ -261,7 +278,8 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyUri == default(Uri));
 
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
             Assert.IsTrue(data.MyUri.AbsoluteUri == "http://www.google.com/");
         }
 
@@ -273,7 +291,8 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyVersion == default(Version));
 
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
             Assert.IsTrue(data.MyVersion.ToString() == "1.5.2");
         }
 
@@ -287,7 +306,8 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyDouble1 == 0);
 
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
             Assert.IsTrue(data.MyString1 == args[1]);
         }
 
@@ -302,7 +322,8 @@ namespace Consolification.Core.Test
             SimpleDataMock data = new SimpleDataMock();
             Assert.IsTrue(data.MyByte2 == 0);
 
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
             Assert.IsTrue(data.MyByte2 == argValue);
         }
 
@@ -318,7 +339,8 @@ namespace Consolification.Core.Test
 
             try
             {
-                data.Initialize(args);
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
                 Assert.Fail("An exception must be thrown!");
             }
             catch (ArgumentException e)
@@ -339,7 +361,8 @@ namespace Consolification.Core.Test
 
             try
             {
-                data.Initialize(args);
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
                 Assert.Fail("An exception must be thrown!");
             }
             catch (ArgumentException e)
@@ -356,7 +379,8 @@ namespace Consolification.Core.Test
 
             try
             {
-                data.Initialize(args);
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
                 Assert.Fail("An exception must be thrown!");
             }
             catch (MissingMandatoryArgumentException e)
@@ -373,7 +397,8 @@ namespace Consolification.Core.Test
 
             // We must not have any exception as the mandatory argument is 
             // a child of a parent argument that is itself not mandatory and not present.
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
         }
 
         [TestMethod]
@@ -382,10 +407,11 @@ namespace Consolification.Core.Test
             string[] args = new string[] { "/TOP", "1" };
 
             SimpleHierarchyDataMock data = new SimpleHierarchyDataMock();
-            
+
             // We must not have any exception as the mandatory argument is 
             // a child of a parent argument that is itself not mandatory and not present.
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
         }
 
         [TestMethod]
@@ -397,7 +423,8 @@ namespace Consolification.Core.Test
 
             try
             {
-                data.Initialize(args);
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
                 Assert.Fail("A MissingArgumentException exception must be thrown as /MID is present and there is a child mandatory argument.");
             }
             catch (MissingMandatoryArgumentException e)
@@ -415,7 +442,8 @@ namespace Consolification.Core.Test
 
             try
             {
-                data.Initialize(args);
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
                 Assert.Fail("A MissingArgumentException exception must be thrown as /MID is present but its parent is not present.");
             }
             catch (MissingParentArgumentException e)
@@ -433,7 +461,8 @@ namespace Consolification.Core.Test
 
             try
             {
-                data.Initialize(args);
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
                 Assert.Fail("A MissingArgumentException exception must be thrown as /MID & /TOP are not present.");
             }
             catch (MissingParentArgumentException e)
@@ -451,7 +480,8 @@ namespace Consolification.Core.Test
 
             // We must not have any exception as the mandatory argument is 
             // a child of a parent argument that is itself not mandatory and not present.
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
         }
 
         [TestMethod]
@@ -462,7 +492,8 @@ namespace Consolification.Core.Test
             SimpleHierarchyDataMock data = new SimpleHierarchyDataMock();
 
             // Everything must be fine!
-            data.Initialize(args);
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
 
             Assert.IsTrue(data.TopArg == "1");
             Assert.IsTrue(data.MidArg == "32");
@@ -479,7 +510,8 @@ namespace Consolification.Core.Test
 
             try
             {
-                data.Initialize(args);
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
                 Assert.Fail("A InvalidArgumentDefinitionException as '/DUP' argument is specified 2 times in DuplicateDataMock.");
             }
             catch (InvalidArgumentDefinitionException e)
@@ -494,8 +526,9 @@ namespace Consolification.Core.Test
             string[] args = new string[] { "/ARG1", "/TOPA", "topa" };
             ComplexHierarchyDataMock data = new ComplexHierarchyDataMock();
 
-            data.Initialize(args);
-            ArgumentInfo[] argsInfo = data.ArgumentsInfo.Hierarchy;
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+            ArgumentInfo[] argsInfo = parser.ArgumentsInfo.Hierarchy;
 
             /// ARG1
             /// TOPA (1)

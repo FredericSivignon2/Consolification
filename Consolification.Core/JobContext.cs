@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core
 {
-    public class JobContext
+    public class JobContext<T> where T : new()
     {
         public ILogWriter Logger { get; internal set; }
         public IConsoleReader Reader { get; internal set; }
-        public ArgumentsContainer Container { get; internal set; }
+        public T Data { get; internal set; }
     }
 }

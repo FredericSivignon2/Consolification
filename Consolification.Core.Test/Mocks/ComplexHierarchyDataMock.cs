@@ -28,7 +28,7 @@ namespace Consolification.Core.Test.Mocks
     /// ARG2
     /// </summary>
     [CIHelpArgument("/?")]
-    public class ComplexHierarchyDataMock : ArgumentsContainer
+    public class ComplexHierarchyDataMock
     {
         [CIArgument("/ARG1", "This is the ARG1 argument.")]
         public bool Arg1 { get; private set; }

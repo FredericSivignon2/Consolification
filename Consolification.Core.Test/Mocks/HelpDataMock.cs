@@ -9,7 +9,7 @@ namespace Consolification.Core.Test.Mocks
 {
     [CIHelpArgument("--help")]
     [CICommandDescription("This is a dummy class for test purpose.")]
-    public class HelpDataMock : ArgumentsContainer
+    public class HelpDataMock
     {
         [CIArgument("-data1", "This is the data1 parameter.")]
         public string Data1 { get; private set; }

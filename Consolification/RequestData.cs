@@ -12,7 +12,7 @@ namespace Consolification
 {
     [CIHelpArgument("/?")]
     [CICommandDescription("Performs an HTTP request and get some result statistics.")]
-    public class RequestData : ArgumentsContainer
+    public class RequestData
     {
         [CIArgument("/url", "The URL of the request to perform.")]
         [CIMandatoryArgument]
