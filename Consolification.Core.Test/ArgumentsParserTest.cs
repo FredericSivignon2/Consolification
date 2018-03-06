@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Globalization;
+using System.IO;
+using System.Text;
 using Consolification.Core.Test.Mocks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -8,7 +10,12 @@ namespace Consolification.Core.Test
 	[TestClass]
 	public class ArgumentsParserTest
 	{
-		[TestMethod]
+        private const string TextFileContent = "This is the content of a dummy file!\r\n\r\n" +
+                                                "With 3 lines.";
+        private const string TextFileContentUTF8 = "≠";
+        private const string TextFileName = "dummy.txt";
+
+        [TestMethod]
 		public void ArgumentsParser_BooleanArgument()
 		{
 			string[] args = new string[1];
@@ -296,7 +303,37 @@ namespace Consolification.Core.Test
 			Assert.IsTrue(data.MyVersion.ToString() == "1.5.2");
 		}
 
-		[TestMethod]
+        [TestMethod]
+        public void ArgumentsParser_CharArrayArgument()
+        {
+            string[] args = new string[] { "/CHARARRAY", "This is a string!" };
+
+            SimpleDataMock data = new SimpleDataMock();
+            Assert.IsNull(data.CharArray);
+
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+            Assert.IsNotNull(data.CharArray);
+            Assert.IsTrue(data.CharArray.Length == args[1].Length);
+            Assert.IsTrue(data.CharArray[1] == 'h');
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_ByteArrayArgument()
+        {
+            string[] args = new string[] { "/BYTEARRAY", "This is a string!" };
+
+            SimpleDataMock data = new SimpleDataMock();
+            Assert.IsNull(data.ByteArray);
+
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+            Assert.IsNotNull(data.ByteArray);
+            Assert.IsTrue(data.ByteArray.Length == args[1].Length);
+            Assert.IsTrue(data.ByteArray[1] == 'h');
+        }
+
+        [TestMethod]
 		public void ArgumentsParser_StringArgument()
 		{
 			string[] args = new string[2];
@@ -609,5 +646,190 @@ namespace Consolification.Core.Test
 				Assert.IsTrue(e.Message == "Unknown argument /YES.");
 			}
 		}
-	}
+
+        [TestMethod]
+        public void ArgumentsParser_FileContentAttribute_OK()
+        {
+            string filePath = GetDummyTextFilePath();
+            try
+            {
+                File.WriteAllText(filePath, TextFileContent);
+
+                string[] args = new string[] { "/FILE", filePath };
+                FileDataMock data = new FileDataMock();
+
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
+
+                Assert.IsNotNull(data.FileByteArray);
+                Assert.IsTrue(data.FileByteArray.Length == TextFileContent.Length);
+            }
+            finally
+            {
+                File.Delete(filePath);
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_FileContentAttribute_NoFile()
+        {
+            string filePath = GetDummyTextFilePath();
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+
+            string[] args = new string[] { "/FILE", filePath };
+            FileDataMock data = new FileDataMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            try
+            {
+                parser.Parse(data, args);
+                Assert.Fail("An ArgumentException exception must be thrown as the specified file does not exist.");
+            }
+            catch (ArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "Invalid specified value for the argument /FILE.");
+                Assert.IsNotNull(e.InnerException);
+                Assert.IsTrue(e.InnerException.Message == "The file path specified with the argument '/FILE' does not exist.");
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_FileContentAttribute_Lines()
+        {
+            string filePath = GetDummyTextFilePath();
+            try
+            {
+                File.WriteAllText(filePath, TextFileContent);
+
+                string[] args = new string[] { "/FILELINES", filePath };
+                FileDataMock data = new FileDataMock();
+
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
+
+                Assert.IsNotNull(data.FileLines);
+                Assert.IsTrue(data.FileLines.Length == 3);
+                Assert.IsTrue(data.FileLines[1] == "");
+            }
+            finally
+            {
+                File.Delete(filePath);
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_FileContentAttribute_String()
+        {
+            string filePath = GetDummyTextFilePath();
+            try
+            {
+                File.WriteAllText(filePath, TextFileContentUTF8, Encoding.UTF8);
+
+                string[] args = new string[] { "/FILESTRING", filePath };
+                FileDataMock data = new FileDataMock();
+
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
+
+                Assert.IsNotNull(data.FileString);
+                Assert.IsTrue(data.FileString.Length == 1);
+                Assert.IsTrue(data.FileString == TextFileContentUTF8);
+            }
+            finally
+            {
+                File.Delete(filePath);
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_FileContentAttribute_CharArray()
+        {
+            string filePath = GetDummyTextFilePath();
+            try
+            {
+                File.WriteAllText(filePath, TextFileContent);
+
+                string[] args = new string[] { "/FILECHAR", filePath };
+                FileDataMock data = new FileDataMock();
+
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
+
+                Assert.IsNotNull(data.FileCharArray);
+                Assert.IsTrue(data.FileCharArray.Length == TextFileContent.Length);
+            }
+            finally
+            {
+                File.Delete(filePath);
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_FileContentAttribute_FileStream()
+        {
+            string filePath = GetDummyTextFilePath();
+            try
+            {
+                File.WriteAllText(filePath, TextFileContent);
+
+                string[] args = new string[] { "/FILESTREAM", filePath };
+                FileDataMock data = new FileDataMock();
+
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
+
+                Assert.IsNotNull(data.FileStream);
+                data.FileStream.Close();
+            }
+            finally
+            {
+                File.Delete(filePath);
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_MandatoryArg_OK()
+        {
+            string[] args = new string[] { "/D1", "1", "/D2", "2", "/D3", "3", "/D4", "4" };
+            MandatoryDataMock data = new MandatoryDataMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+
+            Assert.IsTrue(data.Data1 == 1);
+            Assert.IsTrue(data.Data2 == 2);
+            Assert.IsTrue(data.Data3 == 3);
+            Assert.IsTrue(data.Data4 == 4);
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_MandatoryArg_MissingD4()
+        {
+            string[] args = new string[] { "/D1", "1", "/D2", "2", "/D3", "3" };
+            MandatoryDataMock data = new MandatoryDataMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+
+            Assert.IsTrue(data.Data1 == 1);
+            Assert.IsTrue(data.Data2 == 2);
+            Assert.IsTrue(data.Data3 == 3);
+            Assert.IsTrue(data.Data4 == 444);
+        }
+
+        #region Private Methods
+        private string GetDummyTextFilePath()
+        {
+            string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Consolification");
+            if (Directory.Exists(dirPath) == false)
+            {
+                Directory.CreateDirectory(dirPath);
+            }
+            return Path.Combine(dirPath, TextFileName);
+        }
+        #endregion
+    }
 }

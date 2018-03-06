@@ -26,6 +26,7 @@ namespace Consolification.Core
         public CIJobAttribute Job { get; set; }
         public CIChildArgumentAttribute ChildArgument { get; set; }
         public CIParentArgumentAttribute ParentArgument { get; set; }
+        public CIFileContentAttribute FileContent { get; set; }
         public bool Found { get; set; }
 
         public List<ArgumentInfo> Children { get; } = new List<ArgumentInfo>();

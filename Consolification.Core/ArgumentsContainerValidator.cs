@@ -9,11 +9,11 @@ namespace Consolification.Core
 {
     class ArgumentsContainerValidator
     {
-        private ArgumentsParser container;
+        private ArgumentsParser parser;
 
-        public ArgumentsContainerValidator(ArgumentsParser container)
+        public ArgumentsContainerValidator(ArgumentsParser parser)
         {
-            this.container = container;
+            this.parser = parser;
         }
 
         /// <summary>
@@ -21,7 +21,7 @@ namespace Consolification.Core
         /// </summary>
         public void Validate()
         {
-            ArgumentInfoCollection argumentsInfo = container.ArgumentsInfo;
+            ArgumentInfoCollection argumentsInfo = parser.ArgumentsInfo;
             ValidateParentChildrenArguments(argumentsInfo);
             ValidateMandatoryArguments(argumentsInfo);
         }
@@ -58,14 +58,15 @@ namespace Consolification.Core
                         // If the parent has been found,
                         if (parentArgInfo.Found && argumentInfo.MandatoryArguments != null)
                         {
-                            throw new MissingMandatoryArgumentException(argumentInfo.Argument.Name);
+                            ProcessMandatoryMissing(argumentInfo);
                         }
                     }
                     else // The current argument is not a child argument
                     {
                         if (argumentInfo.Found == false && argumentInfo.MandatoryArguments != null)
                         {
-                            throw new MissingMandatoryArgumentException(argumentInfo.Argument.Name);
+                            ProcessMandatoryMissing(argumentInfo);
+                            
                         }
                     }
                 }
@@ -83,6 +84,25 @@ namespace Consolification.Core
                 throw new UnknownParentArgumentAttributeException(argumentInfo.ChildArgument.ParentId, argumentInfo.PInfo.Name);
             }
             return parentArgInfo;
-        }        
+        }      
+        
+        private void ProcessMandatoryMissing(ArgumentInfo argumentInfo)
+        {
+            if (argumentInfo.MandatoryArguments.PromptUser)
+            {
+                if (argumentInfo.MandatoryArguments.Password)
+                {
+                    // Comment traiter tous les types de manière générique sans tout refaire
+                    if (argumentInfo.PInfo.PropertyType.FullName == "System.String")
+                    {
+                        //this.parser.PasswordReader.GetPassword
+                    }
+
+                    
+                }
+            }
+
+            throw new MissingMandatoryArgumentException(argumentInfo.Argument.Name);
+        }
     }
 }

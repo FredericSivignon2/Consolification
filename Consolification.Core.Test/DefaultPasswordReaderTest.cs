@@ -6,16 +6,16 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Consolification.Core.Test
 {
 	[TestClass]
-	public class DefaultConsoleReaderTest
+	public class DefaultPasswordReaderTest
 	{
 		[TestMethod]
 		public void DefaultConsoleReader_ValidPassword()
 		{
 			string password = "dummy!pass23";
 			ConsoleWrapperMock console = new ConsoleWrapperMock(password);
-			DefaultConsoleReader reader = new DefaultConsoleReader(console);
+			DefaultPasswordReader reader = new DefaultPasswordReader(console);
 
-			SecureString sstr = reader.GetPassword('*');
+			SecureString sstr = reader.GetSecurePassword('*');
 
 			Assert.IsTrue(console.Output == "************");
 			Assert.IsTrue(sstr.Length == password.Length);

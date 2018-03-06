@@ -54,8 +54,10 @@
     <Compile Include="Mocks\ConsoleWrapperMock.cs" />
     <Compile Include="Mocks\DataJobMock.cs" />
     <Compile Include="Mocks\DuplicateDataMock.cs" />
+    <Compile Include="Mocks\FileDataMock.cs" />
     <Compile Include="Mocks\HelpDataMock.cs" />
     <Compile Include="Mocks\InvalidDataMock.cs" />
+    <Compile Include="Mocks\MandatoryDataMock.cs" />
     <Compile Include="Mocks\SimpleHierarchyDataMock.cs" />
     <Compile Include="Mocks\JobMock.cs" />
     <Compile Include="Mocks\LogWriterMock.cs" />
@@ -65,7 +67,7 @@
     <Compile Include="ConsolificationEngineTest.cs" />
     <Compile Include="HelpBuilderTest.cs" />
     <Compile Include="ArgumentInfoTest.cs" />
-    <Compile Include="DefaultConsoleReaderTest.cs" />
+    <Compile Include="DefaultPasswordReaderTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

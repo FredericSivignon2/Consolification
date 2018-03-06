@@ -18,11 +18,11 @@ namespace Consolification.Core
         };
 
         #region Constructors
-        public DefaultLogWriter()
+        public DefaultLogWriter(IConsoleWrapper console)
         {
             WriteToOutput = (message) =>
             {
-                Console.WriteLine(message);
+                console.WriteLine(message);
             };
         }
 
@@ -33,7 +33,7 @@ namespace Consolification.Core
         #endregion
 
         #region Public Properties
-        public Action<string> WriteToOutput;
+        public Action<string> WriteToOutput { get; private set; }
         public Level LogLevel { get; set; } = DefaultLogWriter.Level.Debug;
         public bool ShowLevelPrefix { get; set; } = false;
         public string PrevixSeparator { get; set; } = " - ";

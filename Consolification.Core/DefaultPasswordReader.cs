@@ -8,24 +8,42 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core
 {
-    public class DefaultConsoleReader : IConsoleReader
+    public class DefaultPasswordReader : IPasswordReader
     {
 		private IConsoleWrapper console;
 
-		public DefaultConsoleReader(IConsoleWrapper wrapper)
+		public DefaultPasswordReader(IConsoleWrapper wrapper)
 		{
 			this.console = wrapper;
 		}
 
-		public SecureString GetPassword()
+		public SecureString GetSecurePassword()
+        {
+            return GetSecurePassword('*');
+        }
+
+        public SecureString GetSecurePassword(char passwordChar)
+        {
+            string pass = GetPassword(passwordChar);
+
+            SecureString spass = new SecureString();
+            foreach (char c in pass.ToCharArray())
+            {
+                spass.AppendChar(c);
+            }
+
+            return spass;
+        }
+
+        public string GetPassword()
         {
             return GetPassword('*');
         }
 
-        public SecureString GetPassword(char passwordChar)
-        {
+        public string GetPassword(char passwordChar)
+        { 
             ConsoleKeyInfo key;
-            string pass = "";
+            string pass = string.Empty;
 
             do
             {
@@ -49,13 +67,7 @@ namespace Consolification.Core
             // Stops Receving Keys Once Enter is Pressed
             while (key.Key != ConsoleKey.Enter);
 
-            SecureString spass = new SecureString();
-            foreach (char c in pass.ToCharArray())
-            {
-                spass.AppendChar(c);
-            }
-
-            return spass;
+            return pass;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -22,7 +23,15 @@ namespace Consolification.Core
 
         public bool MustDisplayHelp { get; private set; } = false;
         public string CommandDescription { get; private set; }
+        public IPasswordReader PasswordReader { get; set; }
+        public IConsoleWrapper Console { get; set; }
         #endregion
+
+        public ArgumentsParser()
+        {
+            Console = new DefaultConsoleWrapper();
+            PasswordReader = new DefaultPasswordReader(Console);
+        }
 
         #region Public Methods
         /// <summary>
@@ -109,7 +118,7 @@ namespace Consolification.Core
             }
             catch (Exception e)
             {
-                throw new ArgumentException(string.Format("Invalid specified value for the argument {0}.", e));
+                throw new ArgumentException(string.Format("Invalid specified value for the argument {0}.", info.Argument.Name), e);
             }
             return val;
         }
@@ -158,8 +167,7 @@ namespace Consolification.Core
                 ainfo.Job = pinfo.GetCustomAttribute<CIJobAttribute>();
                 ainfo.ChildArgument = pinfo.GetCustomAttribute<CIChildArgumentAttribute>();
                 ainfo.ParentArgument = pinfo.GetCustomAttribute<CIParentArgumentAttribute>();
-
-                //if (ainfo.C)
+                ainfo.FileContent = pinfo.GetCustomAttribute<CIFileContentAttribute>();
 
                 argumentsInfo.Add(ainfo);
             }
@@ -188,82 +196,167 @@ namespace Consolification.Core
                 }
                 currentInfo.Found = true;
 
-                TypeCode code = Type.GetTypeCode(currentInfo.PInfo.PropertyType);
-                switch (code)
+                if (currentInfo.FileContent != null)
                 {
-
-                    // Boolean values arguments do not have associated string values; if specified,
-                    // just set to true the associated property.
-                    case TypeCode.Boolean:
-                        currentInfo.PInfo.SetValue(this.data, true);
-                        break;
-
-                    case TypeCode.Byte:
-                        currentInfo.PInfo.SetValue(this.data, GetComparableValue<byte>(args, ref index, currentInfo, (str) => { return Convert.ToByte(str); }));
-                        break;
-
-                    case TypeCode.SByte:
-                        currentInfo.PInfo.SetValue(this.data, GetComparableValue<sbyte>(args, ref index, currentInfo, (str) => { return Convert.ToSByte(str); }));
-                        break;
-
-                    case TypeCode.Char:
-                        currentInfo.PInfo.SetValue(this.data, GetComparableValue<char>(args, ref index, currentInfo, (str) => { return Convert.ToChar(str); }));
-                        break;
-
-                    case TypeCode.Decimal:
-                        currentInfo.PInfo.SetValue(this.data, GetComparableValue<decimal>(args, ref index, currentInfo, (str) => { return Convert.ToDecimal(str); }));
-                        break;
-                        
-                    case TypeCode.Int16:
-                        currentInfo.PInfo.SetValue(this.data, GetComparableValue<short>(args, ref index, currentInfo, (str) => { return Convert.ToInt16(str); }));
-                        break;
-
-                    case TypeCode.Int32:
-                        currentInfo.PInfo.SetValue(this.data, GetComparableValue<int>(args, ref index, currentInfo, (str) => { return Convert.ToInt32(str); }));
-                        break;
-
-                    case TypeCode.Int64:
-                        currentInfo.PInfo.SetValue(this.data, GetComparableValue<long>(args, ref index, currentInfo, (str) => { return Convert.ToInt64(str); }));
-                        break;
-
-                    case TypeCode.UInt16:
-                        currentInfo.PInfo.SetValue(this.data, GetComparableValue<ushort>(args, ref index, currentInfo, (str) => { return Convert.ToUInt16(str); }));
-                        break;
-
-                    case TypeCode.UInt32:
-                        currentInfo.PInfo.SetValue(this.data, GetComparableValue<uint>(args, ref index, currentInfo, (str) => { return Convert.ToUInt32(str); }));
-                        break;
-
-                    case TypeCode.UInt64:
-                        currentInfo.PInfo.SetValue(this.data, GetComparableValue<ulong>(args, ref index, currentInfo, (str) => { return Convert.ToUInt64(str); }));
-                        break;
-
-                    case TypeCode.Single:
-                        currentInfo.PInfo.SetValue(this.data, GetComparableValue<float>(args, ref index, currentInfo, (str) => { return Convert.ToSingle(str, CultureInfo.InvariantCulture); }));
-                        break;
-
-                    case TypeCode.Double:
-                        currentInfo.PInfo.SetValue(this.data, GetComparableValue<double>(args, ref index, currentInfo, (str) => { return Convert.ToDouble(str, CultureInfo.InvariantCulture); }));
-                        break;
-
-                    case TypeCode.String:
-                        currentInfo.PInfo.SetValue(this.data, GetComparableValue<string>(args, ref index, currentInfo, (str) => { return str; }));
-                        break;
-
-                    case TypeCode.DateTime:
-                        currentInfo.PInfo.SetValue(this.data, GetComparableValue<DateTime>(args, ref index, currentInfo, (str) => { return Convert.ToDateTime(str, CultureInfo.InvariantCulture); }));
-                        break;
-
-                    case TypeCode.Object:
-                        SetValueForObjects(args, ref index, currentInfo);
-                        break;
-
-                    default:
-                        throw new NotSupportedException(string.Format("The type of the argument '{0}' is not supported.", currentInfo.Argument.Name));
+                    SetFileContentPropertyValue(currentInfo, args, ref index);
                 }
-
-
+                else
+                {
+                    SetDirectPropertyValue(currentInfo, args, ref index);
+                }
+                
                 index++;
+            }
+        }
+
+        private void SetFileContentPropertyValue(ArgumentInfo currentInfo, string[] args, ref int index)
+        {
+            switch (currentInfo.PInfo.PropertyType.FullName)
+            {
+                case "System.String":
+                    currentInfo.PInfo.SetValue(this.data, GetObjectValue<string>(args, ref index, currentInfo,
+                       (str) =>
+                       {
+                           if (File.Exists(str) == false)
+                           {
+                               throw new FileNotFoundException(string.Format("The file path specified with the argument '{0}' does not exist.", currentInfo.Argument.Name), str);
+                           }
+
+                           return File.ReadAllText(str, currentInfo.FileContent.Encoding);
+                       }));
+                    break;
+
+                case "System.String[]":
+                    currentInfo.PInfo.SetValue(this.data, GetObjectValue<string[]>(args, ref index, currentInfo,
+                       (str) =>
+                       {
+                           if (File.Exists(str) == false)
+                           {
+                               throw new FileNotFoundException(string.Format("The file path specified with the argument '{0}' does not exist.", currentInfo.Argument.Name), str);
+                           }
+
+                           return File.ReadAllLines(str, currentInfo.FileContent.Encoding);
+                       }));
+                    break;
+
+                case "System.Byte[]":
+                    currentInfo.PInfo.SetValue(this.data, GetObjectValue<byte[]>(args, ref index, currentInfo,
+                        (str) => 
+                        { 
+                            if (File.Exists(str) == false)
+                            {
+                                throw new FileNotFoundException(string.Format("The file path specified with the argument '{0}' does not exist.", currentInfo.Argument.Name), str);
+                            }
+                            return File.ReadAllBytes(str);
+                        }));
+                    break;
+
+                case "System.Char[]":
+                    currentInfo.PInfo.SetValue(this.data, GetObjectValue<char[]>(args, ref index, currentInfo,
+                    (str) =>
+                    {
+                        if (File.Exists(str) == false)
+                        {
+                            throw new FileNotFoundException(string.Format("The file path specified with the argument '{0}' does not exist.", currentInfo.Argument.Name), str);
+                        }
+
+                        return File.ReadAllText(str, currentInfo.FileContent.Encoding).ToArray<char>();
+                    }));
+                    break;
+
+                case "System.IO.FileStream":
+                    currentInfo.PInfo.SetValue(this.data, GetObjectValue<FileStream>(args, ref index, currentInfo,
+                    (str) =>
+                    {
+                        if (File.Exists(str) == false)
+                        {
+                            throw new FileNotFoundException(string.Format("The file path specified with the argument '{0}' does not exist.", currentInfo.Argument.Name), str);
+                        }
+
+                        return File.OpenRead(str);
+                    }));
+                    break;
+
+                default:
+                    throw new NotSupportedException(string.Format("The type of the argument '{0}' is not supported when associated with the CIFileContentAttribute attribute.", currentInfo.Argument.Name));
+
+            }
+        }
+
+        private void SetDirectPropertyValue(ArgumentInfo currentInfo, string[] args, ref int index)
+        {
+            TypeCode code = Type.GetTypeCode(currentInfo.PInfo.PropertyType);
+            switch (code)
+            {
+
+                // Boolean values arguments do not have associated string values; if specified,
+                // just set to true the associated property.
+                case TypeCode.Boolean:
+                    currentInfo.PInfo.SetValue(this.data, true);
+                    break;
+
+                case TypeCode.Byte:
+                    currentInfo.PInfo.SetValue(this.data, GetComparableValue<byte>(args, ref index, currentInfo, (str) => { return Convert.ToByte(str); }));
+                    break;
+
+                case TypeCode.SByte:
+                    currentInfo.PInfo.SetValue(this.data, GetComparableValue<sbyte>(args, ref index, currentInfo, (str) => { return Convert.ToSByte(str); }));
+                    break;
+
+                case TypeCode.Char:
+                    currentInfo.PInfo.SetValue(this.data, GetComparableValue<char>(args, ref index, currentInfo, (str) => { return Convert.ToChar(str); }));
+                    break;
+
+                case TypeCode.Decimal:
+                    currentInfo.PInfo.SetValue(this.data, GetComparableValue<decimal>(args, ref index, currentInfo, (str) => { return Convert.ToDecimal(str); }));
+                    break;
+
+                case TypeCode.Int16:
+                    currentInfo.PInfo.SetValue(this.data, GetComparableValue<short>(args, ref index, currentInfo, (str) => { return Convert.ToInt16(str); }));
+                    break;
+
+                case TypeCode.Int32:
+                    currentInfo.PInfo.SetValue(this.data, GetComparableValue<int>(args, ref index, currentInfo, (str) => { return Convert.ToInt32(str); }));
+                    break;
+
+                case TypeCode.Int64:
+                    currentInfo.PInfo.SetValue(this.data, GetComparableValue<long>(args, ref index, currentInfo, (str) => { return Convert.ToInt64(str); }));
+                    break;
+
+                case TypeCode.UInt16:
+                    currentInfo.PInfo.SetValue(this.data, GetComparableValue<ushort>(args, ref index, currentInfo, (str) => { return Convert.ToUInt16(str); }));
+                    break;
+
+                case TypeCode.UInt32:
+                    currentInfo.PInfo.SetValue(this.data, GetComparableValue<uint>(args, ref index, currentInfo, (str) => { return Convert.ToUInt32(str); }));
+                    break;
+
+                case TypeCode.UInt64:
+                    currentInfo.PInfo.SetValue(this.data, GetComparableValue<ulong>(args, ref index, currentInfo, (str) => { return Convert.ToUInt64(str); }));
+                    break;
+
+                case TypeCode.Single:
+                    currentInfo.PInfo.SetValue(this.data, GetComparableValue<float>(args, ref index, currentInfo, (str) => { return Convert.ToSingle(str, CultureInfo.InvariantCulture); }));
+                    break;
+
+                case TypeCode.Double:
+                    currentInfo.PInfo.SetValue(this.data, GetComparableValue<double>(args, ref index, currentInfo, (str) => { return Convert.ToDouble(str, CultureInfo.InvariantCulture); }));
+                    break;
+
+                case TypeCode.String:
+                    currentInfo.PInfo.SetValue(this.data, GetComparableValue<string>(args, ref index, currentInfo, (str) => { return str; }));
+                    break;
+
+                case TypeCode.DateTime:
+                    currentInfo.PInfo.SetValue(this.data, GetComparableValue<DateTime>(args, ref index, currentInfo, (str) => { return Convert.ToDateTime(str, CultureInfo.InvariantCulture); }));
+                    break;
+
+                case TypeCode.Object:
+                    SetValueForObjects(args, ref index, currentInfo);
+                    break;
+
+                default:
+                    throw new NotSupportedException(string.Format("The type of the argument '{0}' is not supported.", currentInfo.Argument.Name));
             }
         }
 
@@ -279,6 +372,16 @@ namespace Consolification.Core
                 case "System.Version":
                     currentInfo.PInfo.SetValue(this.data, GetComparableValue<Version>(args, ref index, currentInfo,
                         (str) => { return new Version(str); }));
+                    break;
+
+                case "System.Byte[]":
+                    currentInfo.PInfo.SetValue(this.data, GetObjectValue<byte[]>(args, ref index, currentInfo,
+                        (str) => { return Encoding.ASCII.GetBytes(str); }));
+                    break;
+
+                case "System.Char[]":
+                    currentInfo.PInfo.SetValue(this.data, GetObjectValue<char[]>(args, ref index, currentInfo,
+                        (str) => { return str.ToArray<char>(); }));
                     break;
 
                 default:

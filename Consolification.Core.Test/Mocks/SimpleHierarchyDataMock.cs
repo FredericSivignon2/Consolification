@@ -24,7 +24,7 @@ namespace Consolification.Core.Test.Mocks
 
         [CIArgument("/CHILD2")]
         [CIChildArgument(2)]
-        [CIMandatoryArgument()]
+        [CIMandatoryArgument]
         public string ChildArg2 { get; private set; }
 
         [CIArgument("/CHILD3")]

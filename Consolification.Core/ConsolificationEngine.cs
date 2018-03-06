@@ -13,13 +13,15 @@ namespace Consolification.Core
     {
         private T data;
         private ILogWriter log;
-        private IConsoleReader reader;
+        private IPasswordReader reader;
+        private IConsoleWrapper console;
 
         public ConsolificationEngine()
         {
             this.data = new T();
-            this.log = new DefaultLogWriter();
-            this.reader = new DefaultConsoleReader(new DefaultConsoleWrapper());
+            this.console = new DefaultConsoleWrapper();
+            this.log = new DefaultLogWriter(this.console);
+            this.reader = new DefaultPasswordReader(this.console);
         }
 
         public T Data
@@ -39,7 +41,7 @@ namespace Consolification.Core
             }
         }
 
-        public IConsoleReader Reader
+        public IPasswordReader Reader
         {
             get
             {
@@ -48,6 +50,18 @@ namespace Consolification.Core
             set
             {
                 this.reader = value;
+            }
+        }
+
+        public IConsoleWrapper Console
+        {
+            get
+            {
+                return this.console;
+            }
+            set
+            {
+                this.console = value;
             }
         }
 

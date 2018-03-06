@@ -62,5 +62,11 @@ namespace Consolification.Core.Test.Mocks
 
         [CIArgument("/VERSION")]
         public Version MyVersion { get; set; }
+
+        [CIArgument("/CHARARRAY")]
+        public char[] CharArray { get; set; }
+
+        [CIArgument("/BYTEARRAY")]
+        public byte[] ByteArray { get; set; }
     }
 }
