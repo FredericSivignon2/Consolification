@@ -12,7 +12,8 @@ namespace Consolification.Core.Test
 		public void DefaultConsoleReader_ValidPassword()
 		{
 			string password = "dummy!pass23";
-			ConsoleWrapperMock console = new ConsoleWrapperMock(password);
+			ConsoleWrapperMock console = new ConsoleWrapperMock();
+            console.PasswordOutput = password;
 			DefaultPasswordReader reader = new DefaultPasswordReader(console);
 
 			SecureString sstr = reader.GetSecurePassword('*');

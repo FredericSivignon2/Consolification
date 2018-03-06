@@ -52,6 +52,7 @@
     <Compile Include="Attributes\CIJobAttribute.cs" />
     <Compile Include="Attributes\CIMandatoryArgumentAttribute.cs" />
     <Compile Include="ArgumentInfo.cs" />
+    <Compile Include="Attributes\CIPasswordAttribute.cs" />
     <Compile Include="Attributes\CIShortcutArgumentAttribute.cs" />
     <Compile Include="Attributes\CIParentArgumentAttribute.cs" />
     <Compile Include="ConsolificationEngine.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="DefaultLogWriter.cs" />
     <Compile Include="DuplicateParentArgumentAttributeException.cs" />
     <Compile Include="HelpBuilder.cs" />
+    <Compile Include="InvalidArgumentTypeException.cs" />
     <Compile Include="IPasswordReader.cs" />
     <Compile Include="IConsoleWrapper.cs" />
     <Compile Include="ILogWriter.cs" />

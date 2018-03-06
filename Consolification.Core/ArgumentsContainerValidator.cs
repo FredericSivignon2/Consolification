@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,10 +11,12 @@ namespace Consolification.Core
     class ArgumentsContainerValidator
     {
         private ArgumentsParser parser;
+        private object data;
 
-        public ArgumentsContainerValidator(ArgumentsParser parser)
+        public ArgumentsContainerValidator(ArgumentsParser parser, object data)
         {
             this.parser = parser;
+            this.data = data;
         }
 
         /// <summary>
@@ -90,15 +93,41 @@ namespace Consolification.Core
         {
             if (argumentInfo.MandatoryArguments.PromptUser)
             {
-                if (argumentInfo.MandatoryArguments.Password)
+                if (!string.IsNullOrEmpty(argumentInfo.MandatoryArguments.PromptMessage))
                 {
-                    // Comment traiter tous les types de manière générique sans tout refaire
-                    if (argumentInfo.PInfo.PropertyType.FullName == "System.String")
-                    {
-                        //this.parser.PasswordReader.GetPassword
-                    }
+                    this.parser.Console.Write(argumentInfo.MandatoryArguments.PromptMessage);
+                }
+                else
+                {
+                    this.parser.Console.Write("? ");
+                }
 
-                    
+                if (argumentInfo.Password != null)
+                {
+                    switch (argumentInfo.PInfo.PropertyType.FullName)
+                    {
+                        case "System.String":
+                            string password = this.parser.PasswordReader.GetPassword(argumentInfo.Password.PasswordChar);
+                            argumentInfo.PInfo.SetValue(this.data, password);
+                            this.parser.Console.WriteLine("");
+                            return;
+
+                        case "System.Security.SecureString":
+                            SecureString spassword = this.parser.PasswordReader.GetSecurePassword(argumentInfo.Password.PasswordChar);
+                            argumentInfo.PInfo.SetValue(this.data, spassword);
+                            this.parser.Console.WriteLine("");
+                            return;
+
+                        default:
+                            throw new InvalidArgumentTypeException(string.Format("The type associated with the argument '{0}' is not valid for a password.", argumentInfo.Argument.Name));
+                    }                    
+                }
+                else
+                {
+                    string line = this.parser.Console.ReadLine();
+                    argumentInfo.SetPropertyValue(this.data, line);
+                    this.parser.Console.WriteLine("");
+                    return;
                 }
             }
 

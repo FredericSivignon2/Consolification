@@ -8,14 +8,14 @@ namespace Consolification.Core.Test.Mocks
 {
 	class ConsoleWrapperMock : IConsoleWrapper
 	{
-		private string password;
 		private int index = 0;
 
 		public string Output { get; private set; }
+        public string ReadLineOutput { get; set; } = "";
+        public string PasswordOutput { get; set; } = "";
 
-		public ConsoleWrapperMock(string password)
+		public ConsoleWrapperMock()
 		{
-			this.password = password;
 		}
 
         public ConsoleKeyInfo ReadKey()
@@ -25,7 +25,7 @@ namespace Consolification.Core.Test.Mocks
 
         public ConsoleKeyInfo ReadKey(bool intercept)
 		{
-			char[] array = password.ToCharArray();
+			char[] array = PasswordOutput.ToCharArray();
 			if (index >= array.Length)
 				return new ConsoleKeyInfo('\r', ConsoleKey.Enter, false, false, false);
 			return new ConsoleKeyInfo(array[index++], ConsoleKey.V, false, false, false);
@@ -33,7 +33,7 @@ namespace Consolification.Core.Test.Mocks
 
         public string ReadLine()
         {
-            return "";
+            return ReadLineOutput;
         }
 
 		public void Write(char value)

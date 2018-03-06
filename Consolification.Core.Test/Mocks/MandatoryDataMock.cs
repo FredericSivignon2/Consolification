@@ -13,15 +13,16 @@ namespace Consolification.Core.Test.Mocks
         public int Data1 { get; set; }
 
         [CIArgument("/D2")]
-        [CIMandatoryArgument(false)]
+        [CIMandatoryArgument]
         public int Data2 { get; set; }
 
         [CIArgument("/D3")]
-        [CIMandatoryArgument(true)]
+        [CIMandatoryArgument(true, "")]
         public int Data3 { get; set; }
 
         [CIArgument("/D4")]
-        [CIMandatoryArgument(true, true, '-')]
-        public int Data4 { get; set; }
+        [CIMandatoryArgument(true, "")]
+        [CIPassword('-')]
+        public string Data4 { get; set; }
     }
 }

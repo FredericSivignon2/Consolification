@@ -616,7 +616,7 @@ namespace Consolification.Core.Test
 		[TestMethod]
 		public void ArgumentsParser_InvalidArgumentType()
 		{
-			string[] args = new string[] { "/H" };
+			string[] args = new string[] { "/H", "123" };
 			InvalidDataMock data = new InvalidDataMock();
 			ArgumentsParser parser = new ArgumentsParser();
 			try
@@ -802,7 +802,7 @@ namespace Consolification.Core.Test
             Assert.IsTrue(data.Data1 == 1);
             Assert.IsTrue(data.Data2 == 2);
             Assert.IsTrue(data.Data3 == 3);
-            Assert.IsTrue(data.Data4 == 4);
+            Assert.IsTrue(data.Data4 == "4");
         }
 
         [TestMethod]
@@ -812,12 +812,87 @@ namespace Consolification.Core.Test
             MandatoryDataMock data = new MandatoryDataMock();
 
             ArgumentsParser parser = new ArgumentsParser();
+            ConsoleWrapperMock console = new ConsoleWrapperMock();
+            console.PasswordOutput = "444";
+            parser.Console = console;
+            parser.PasswordReader = new DefaultPasswordReader(parser.Console);
             parser.Parse(data, args);
 
             Assert.IsTrue(data.Data1 == 1);
             Assert.IsTrue(data.Data2 == 2);
             Assert.IsTrue(data.Data3 == 3);
-            Assert.IsTrue(data.Data4 == 444);
+            Assert.IsTrue(data.Data4 == "444"); // Retrieved via IPasswordReader
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_MandatoryArg_MissingD3()
+        {
+            string[] args = new string[] { "/D1", "1", "/D2", "2", "/D4", "4" };
+            MandatoryDataMock data = new MandatoryDataMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            ConsoleWrapperMock console = new ConsoleWrapperMock();
+            console.ReadLineOutput = "333";
+            parser.Console = console;
+            parser.Parse(data, args);
+
+            Assert.IsTrue(data.Data1 == 1);
+            Assert.IsTrue(data.Data2 == 2);
+            Assert.IsTrue(data.Data3 == 333);
+            Assert.IsTrue(data.Data4 == "4");
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_MandatoryArg_MissingD3AndD4()
+        {
+            string[] args = new string[] { "/D1", "1", "/D2", "2" };
+            MandatoryDataMock data = new MandatoryDataMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            ConsoleWrapperMock console = new ConsoleWrapperMock();
+            console.ReadLineOutput = "699";
+            console.PasswordOutput = "abcght";
+            parser.Console = console;
+            parser.PasswordReader = new DefaultPasswordReader(parser.Console);
+            parser.Parse(data, args);
+
+            Assert.IsTrue(data.Data1 == 1);
+            Assert.IsTrue(data.Data2 == 2);
+            Assert.IsTrue(data.Data3 == 699);
+            Assert.IsTrue(data.Data4 == "abcght");
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_MandatoryArg_MissingD1()
+        {
+            string[] args = new string[] { "/D2", "2", "/D3", "3", "/D4", "4" };
+            MandatoryDataMock data = new MandatoryDataMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+
+            Assert.IsTrue(data.Data1 == 0);
+            Assert.IsTrue(data.Data2 == 2);
+            Assert.IsTrue(data.Data3 == 3);
+            Assert.IsTrue(data.Data4 == "4");
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_MandatoryArg_MissingD2()
+        {
+            string[] args = new string[] { "/D1", "1", "/D3", "3", "/D4", "4" };
+            MandatoryDataMock data = new MandatoryDataMock();
+
+            try
+            {
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
+                Assert.Fail("A MissingMandatoryArgumentException exception must be thrown.");
+            }
+            catch (MissingMandatoryArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "The mandatory argument /D2 is missing.");
+            }
         }
 
         #region Private Methods

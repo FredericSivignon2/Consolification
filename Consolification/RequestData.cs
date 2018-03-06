@@ -25,7 +25,8 @@ namespace Consolification
 
         [CIShortcutArgument("/password", "/p", "This user password to authenticate the request.")]
         [CIChildArgument(1)]
-        [CIMandatoryArgument(true)]
+        [CIMandatoryArgument(true, "User password: ")]
+        [CIPassword]
         public string Password { get; private set; }
     }
 }
