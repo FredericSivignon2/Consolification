@@ -99,7 +99,39 @@ Notes that we have associate the `System.Uri` type to the URL property. But, we 
 
 To view the complete list of supported types, see the section [Supported types](#Consolification-supported-type-of-data-mapping)
 
-- CIShortcutArgumentAttribute: Similar to
+- `CIShortcutArgumentAttribute`: Similar to the `CINamedArgumentAttribute` except that you can also specify a shortcut name for your argument (for example, "/u" in addition to "/user" default argument name).
+
+- `CIArgumentBoundaryAttribute`: Allows you to ensure that a given argument is between specified values. This is especially useful for all types like byte, short, int, long, float, double, decimal etc.
+
+- `CIMandatoryArgumentAttribute`: Allows you to ensure that an argument is given to the Console Application. If not, a specific message is displayed to indicate the name of the missing argument and the help text is displayed.
+
+Note that if your argument is also a child argument (See `CIChildArgumentAttribute`) and the corresponding parent argument is not mandatory and not specified in the command line, no error will be generated. The level of the argument is checked in the argument hierarchy to ensure that a mandatory argument error is generated only when needed!
+For example, imagine your Console Application can connect a remote system. By default, you can use it without specifying any credential. But, optionaly, you can specify authentication parameters. So, you will have to define an argument to specify that you want for example a basic authentication. Let's say "-basicauthentication". For that, you can use the following property with its attribute:
+```C#
+[CIShortcutArgumentAttribute("-basicauthentication", "-ba")]
+[CIParentArgument(0)]
+public bool BasicAuthentication { get; private set }
+```
+
+When the property type is a boolean, there is no specific value to give next to the argument itself (like we have with the /URL previous argument). If the argument is specified in the command line, the corresponding boolean value is set to true. Otherwise, it is set to false. 
+
+Then, you have of course to also add two properties to handle user name and password for your basic authentication. But, the arguments corresponding to those properties are required only if -basicauthentication is specified. So, you have to specify that `user` and `password` arguments are children arguments of the `-basicauthentication` argument:
+
+```C#
+[CIShortcutArgumentAttribute("-user", "-u")]
+[CIChildArgument(0)]
+[CIMandatoryArgument]
+public string User { get; private set }
+
+[CIShortcutArgumentAttribute("-password", "-p")]
+[CIChildArgument(0)]
+[CIMandatoryArgument]
+public string Password { get; private set }
+```
+
+Now, `-user` and `-password` are mandatory only if `-basicauthentication` is specified. 
+
+
 
 
 #### Consolification supported type of data mapping
