@@ -85,7 +85,22 @@ Of course, for a so simple example, Consolification is not really usefull. But w
 - `CINamedArgumentAttribute`: Use this attribute to define an argument that has got a specific name. Imagines for example you have a Console Application for which you can pass two arguments like `/URL http://www.google.fr`. In this case, use the `CINamesdArgumentAttribute` like that in your corresponding data class:
 
 ```C#
- [CINamedArgument("/URL", "value", "The URL of the request to perform.")]
- [CIMandatoryArgument]
+ [CINamedArgument("/URL", "The URL of the request to perform.", "valid url")]
  public Uri URL { get; private set; }
 ```
+
+The URL property, from our previous example, will receive the value `http://www.google.fr` and of course, not `/URL` like with a CISimpleArgumentAttribute. 
+When you display the correpsonding help, the following information will be displayed in the usage line:
+`[URL <valid url>`  ('valid url' comes from the last argument of `CINamedArgumentAttribute`.
+And the /URL argument description line will look like:
+`/URL The URL of the request to perform.`
+
+Notes that we have associate the `System.Uri` type to the URL property. But, we could have used the `System.String` type also. But with `System.Uri` type, a specific validation is performed automatically by the type constructor itself, so, it's better in this case, to ensure that user will specify a valid URI.
+
+To view the complete list of supported types, see the section [Supported types](#Consolification-supported-type-of-data-mapping)
+
+- CIShortcutArgumentAttribute: Similar to
+
+
+#### Consolification supported type of data mapping
+
