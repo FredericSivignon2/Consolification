@@ -8,19 +8,35 @@ namespace Consolification.Core.Test
     public class ConsolificationEngineTest
     {
         [TestMethod]
-        public void ConsolificationEngine_SimpleExe()
+        public void ConsolificationEngine_PropertyJobSimpleExe()
         {
             string[] args = new string[2];
             args[0] = "/A";
             args[1] = "123456ABCDEF";
 
-            ConsolificationEngine<DataJobMock> engine = new ConsolificationEngine<DataJobMock>();
+            ConsolificationEngine<JobDataMock> engine = new ConsolificationEngine<JobDataMock>();
             Assert.IsTrue(string.IsNullOrEmpty(engine.Data.In));
             Assert.IsTrue(string.IsNullOrEmpty(engine.Data.Out));
 
-            engine.Start(args);
-
+            int result = engine.Start(args);
+            Assert.IsTrue(result == 0);
             Assert.IsTrue(engine.Data.Out == engine.Data.In);
+        }
+
+        [TestMethod]
+        public void ConsolificationEngine_PropertyJobNotAJob()
+        {
+            string[] args = new string[2];
+            args[0] = "/A";
+            args[1] = "123456ABCDEF";
+
+            ConsolificationEngine<BadJobDataMock> engine = new ConsolificationEngine<BadJobDataMock>();
+            ConsoleWrapperMock console = new ConsoleWrapperMock();
+            engine.Console = console;
+
+            int result = engine.Start(args);
+            Assert.IsTrue(result == engine.ResultCannotParseArguments);
+            Assert.IsTrue(console.Output.Contains("does not implement the Consolification.Core.IJob interface."));
         }
     }
 }

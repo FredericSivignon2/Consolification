@@ -11,10 +11,17 @@ namespace Consolification.Core.Test.Mocks
     [CICommandDescription("This is a dummy class for test purpose.")]
     public class HelpDataMock
     {
-        [CIArgument("-data1", "This is the data1 parameter.")]
+        [CISimpleArgument(0, "source", "The source file path to copy.")]
+        [CIMandatoryArgument]
+        public string Source { get; private set; }
+
+        [CISimpleArgument(0, "destination", "The destination path.")]
+        public string Destination { get; private set; }
+
+        [CINamedArgument("-format", "This is the format parameter.", "formatValue")]
         public string Data1 { get; private set; }
 
-        [CIArgument("-data2", "This is the data2 parameter.")]
+        [CINamedArgument("-method", "This is the method parameter.", "methodValue")]
         [CIMandatoryArgument()]
         public int Data2 { get; private set; }
     }

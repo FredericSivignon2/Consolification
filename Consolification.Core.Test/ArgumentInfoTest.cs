@@ -12,7 +12,7 @@ namespace Consolification.Core.Test
         {
             try
             {
-                ArgumentInfo info = new ArgumentInfo(null);
+                ArgumentInfo info = new ArgumentInfo((CISimpleArgumentAttribute)null);
                 Assert.Fail("An ArgumentNullException must be thrown!");
             }
             catch (ArgumentNullException)
@@ -25,7 +25,7 @@ namespace Consolification.Core.Test
         [TestMethod]
         public void ArgumentInfo_ToString()
         {
-			CIArgumentAttribute attr = new CIArgumentAttribute("/A");
+			CINamedArgumentAttribute attr = new CINamedArgumentAttribute("/A");
 			ArgumentInfo info = new ArgumentInfo(attr);
 
 			string result = info.ToString();

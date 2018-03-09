@@ -9,7 +9,7 @@ namespace Consolification.Core.Test.Mocks
 {
 	public class InvalidDataMock
 	{
-		[CIArgument("/H")]
+		[CINamedArgument("/H")]
 		public EventHandler Handler { get; private set; }
 	}
 }

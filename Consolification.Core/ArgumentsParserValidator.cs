@@ -8,27 +8,35 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core
 {
-    class ArgumentsContainerValidator
+    /// <summary>
+    /// Valides data within an ArgumentsParser instance to ensure that given command arguments
+    /// are valid regarding corresponding data object definition.
+    /// </summary>
+    class ArgumentsParserValidator
     {
+        #region Data Members
         private ArgumentsParser parser;
         private object data;
+        #endregion
 
-        public ArgumentsContainerValidator(ArgumentsParser parser, object data)
+        #region Constructors
+        public ArgumentsParserValidator(ArgumentsParser parser, object data)
         {
             this.parser = parser;
             this.data = data;
         }
+        #endregion
 
-        /// <summary>
-        /// 
-        /// </summary>
+        #region Public Methods
         public void Validate()
         {
             ArgumentInfoCollection argumentsInfo = parser.ArgumentsInfo;
             ValidateParentChildrenArguments(argumentsInfo);
             ValidateMandatoryArguments(argumentsInfo);
         }
+        #endregion
 
+        #region Private Methods
         private void ValidateParentChildrenArguments(ArgumentInfoCollection argumentsInfo)
         {
             foreach (ArgumentInfo argumentInfo in argumentsInfo)
@@ -41,7 +49,7 @@ namespace Consolification.Core
                     {
                         ArgumentInfo parentArgInfo = GetParent(argumentsInfo, curArgInfo);
                         if (parentArgInfo.Found == false)
-                            throw new MissingParentArgumentException(parentArgInfo.Argument.Name);
+                            throw new MissingParentArgumentException(parentArgInfo.NamedArgument.Name);
 
                         curArgInfo = parentArgInfo;
                     }
@@ -119,7 +127,7 @@ namespace Consolification.Core
                             return;
 
                         default:
-                            throw new InvalidArgumentTypeException(string.Format("The type associated with the argument '{0}' is not valid for a password.", argumentInfo.Argument.Name));
+                            throw new InvalidArgumentTypeException(string.Format("The type associated with the argument '{0}' is not valid for a password.", argumentInfo.NamedArgument.Name));
                     }                    
                 }
                 else
@@ -131,7 +139,11 @@ namespace Consolification.Core
                 }
             }
 
-            throw new MissingMandatoryArgumentException(argumentInfo.Argument.Name);
+            if (argumentInfo.SimpleArgument != null)
+                throw new MissingMandatoryArgumentException(argumentInfo.SimpleArgument.HelpText);
+            else
+                throw new MissingMandatoryArgumentException(argumentInfo.NamedArgument.Name);
         }
+        #endregion
     }
 }

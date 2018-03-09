@@ -41,9 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArgumentsContainerValidator.cs" />
+    <Compile Include="ArgumentsParserValidator.cs" />
     <Compile Include="Attributes\CIChildArgumentAttribute.cs" />
-    <Compile Include="Attributes\CIArgumentAttribute.cs" />
+    <Compile Include="Attributes\CINamedArgumentAttribute.cs" />
     <Compile Include="ArgumentInfoCollection.cs" />
     <Compile Include="Attributes\CIArgumentBoundaryAttribute.cs" />
     <Compile Include="Attributes\CICommandDescriptionAttribute.cs" />
@@ -55,17 +55,17 @@
     <Compile Include="Attributes\CIPasswordAttribute.cs" />
     <Compile Include="Attributes\CIShortcutArgumentAttribute.cs" />
     <Compile Include="Attributes\CIParentArgumentAttribute.cs" />
+    <Compile Include="Attributes\CISimpleArgumentAttribute.cs" />
     <Compile Include="ConsolificationEngine.cs" />
     <Compile Include="ArgumentsParser.cs" />
     <Compile Include="DefaultPasswordReader.cs" />
     <Compile Include="DefaultConsoleWrapper.cs" />
-    <Compile Include="DefaultLogWriter.cs" />
     <Compile Include="DuplicateParentArgumentAttributeException.cs" />
+    <Compile Include="ExceptionExtension.cs" />
     <Compile Include="HelpBuilder.cs" />
     <Compile Include="InvalidArgumentTypeException.cs" />
     <Compile Include="IPasswordReader.cs" />
     <Compile Include="IConsoleWrapper.cs" />
-    <Compile Include="ILogWriter.cs" />
     <Compile Include="IJob.cs" />
     <Compile Include="InvalidArgumentDefinitionException.cs" />
     <Compile Include="JobContext.cs" />

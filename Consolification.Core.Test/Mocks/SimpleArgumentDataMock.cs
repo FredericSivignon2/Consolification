@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core.Test.Mocks
 {
-    public class DuplicateDataMock
+    public class SimpleArgumentDataMock
     {
-        [CINamedArgument("/DUP")]
-        public string Duplicated1 { get; private set; }
+        [CISimpleArgument(0)]
+        public string Source { get; private set; }
 
-        [CINamedArgument("/DUP")]
-        public string Duplicated2 { get; private set; }
+        [CISimpleArgument(1)]
+        public string Destination { get; private set; }
     }
 }

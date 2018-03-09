@@ -14,6 +14,7 @@ namespace Consolification.Core
     {
         private ArgumentInfoCollection argumentsInfo = new ArgumentInfoCollection();
         private object data;
+        private int currentSimpleArgumentIndex = 0;
 
         #region Public Properties
         public ArgumentInfoCollection ArgumentsInfo
@@ -23,6 +24,7 @@ namespace Consolification.Core
 
         public bool MustDisplayHelp { get; private set; } = false;
         public string CommandDescription { get; private set; }
+        public CIJobAttribute MainJob { get; private set; }
         public IPasswordReader PasswordReader { get; set; }
         public IConsoleWrapper Console { get; set; }
         #endregion
@@ -56,7 +58,7 @@ namespace Consolification.Core
                 RegisterAttributesFromClassProperties(type);
                 SetPropertiesValuesFromAttributes(args);
 
-                ArgumentsContainerValidator validator = new ArgumentsContainerValidator(this, data);
+                ArgumentsParserValidator validator = new ArgumentsParserValidator(this, data);
                 validator.Validate();
             }
             catch
@@ -75,7 +77,7 @@ namespace Consolification.Core
             CIHelpArgumentAttribute chta = type.GetCustomAttribute<CIHelpArgumentAttribute>();
             if (chta != null)
             {
-                MustDisplayHelp = !args.All(name => !chta.Names.Contains<string>(name));
+                MustDisplayHelp = !args.All(name => !(chta.Name == name));
                 ArgumentInfo ainfo = new ArgumentInfo(chta);
                 argumentsInfo.Add(ainfo);
             }
@@ -85,6 +87,8 @@ namespace Consolification.Core
             {
                 CommandDescription = cda.Description;
             }
+
+            MainJob = type.GetCustomAttribute<CIJobAttribute>();
         }
 
         private void RegisterAttributesFromClassProperties(Type type)
@@ -93,22 +97,30 @@ namespace Consolification.Core
 
             foreach (PropertyInfo pinfo in properties)
             {
-                CIArgumentAttribute caa = pinfo.GetCustomAttribute<CIArgumentAttribute>();
-                if (caa == null)
-                    continue; // Not a field associated with a console argument
-
-                if (caa.Names.Length == 0)
-                    throw new InvalidArgumentDefinitionException(string.Format("No argument associated with the property {0}.", pinfo.Name));
-
-                // If the collection already contains one the of arguments specified in the current AppArgumentAttribute
-                if (argumentsInfo.Contains(caa.Names))
+                ArgumentInfo ainfo = null;
+                CISimpleArgumentAttribute csaa = pinfo.GetCustomAttribute<CISimpleArgumentAttribute>();
+                if (csaa == null)
                 {
-                    throw new InvalidArgumentDefinitionException(string.Format("One of the argument specified with the property {0} has been already registered.", pinfo.Name));
+                    CINamedArgumentAttribute cnaa = pinfo.GetCustomAttribute<CINamedArgumentAttribute>();
+                    if (cnaa == null)
+                        continue; // Not a field associated with a console argument
+
+                    if (cnaa.Names.Length == 0)
+                        throw new InvalidArgumentDefinitionException(string.Format("No argument name associated with the property {0}.", pinfo.Name));
+
+                    // If the collection already contains one the of arguments specified in the current AppArgumentAttribute
+                    if (argumentsInfo.Contains(cnaa.Names))
+                    {
+                        throw new InvalidArgumentDefinitionException(string.Format("One of the argument specified with the property {0} has been already registered.", pinfo.Name));
+                    }
+                    ainfo = new ArgumentInfo(cnaa);
                 }
-
-                ArgumentInfo ainfo = new ArgumentInfo(caa);
+                else
+                {
+                    ainfo = new ArgumentInfo(csaa);
+                }
+               
                 ainfo.PInfo = pinfo;
-
                 ainfo.MandatoryArguments = pinfo.GetCustomAttribute<CIMandatoryArgumentAttribute>();
                 ainfo.ArgumentBoundary = pinfo.GetCustomAttribute<CIArgumentBoundaryAttribute>();
                 ainfo.Job = pinfo.GetCustomAttribute<CIJobAttribute>();
@@ -124,38 +136,50 @@ namespace Consolification.Core
         private void SetPropertiesValuesFromAttributes(string[] args)
         {
             int index = 0;
+            string argValue = "";
+
             while (index < args.Length)
             {
                 string arg = args[index];
-
                 ArgumentInfo currentInfo = null;
-                try
+
+                // If the current argument is not registered as a valid argument name
+                if (argumentsInfo.Contains(arg) == false)
                 {
-                    currentInfo = argumentsInfo.FromName(arg);
+                    currentInfo = argumentsInfo.GetSimpleArgument(currentSimpleArgumentIndex);
+                    if (currentInfo == null)
+                        throw new UnknownArgumentException(arg);
+
+                    argValue = arg;
+                    currentSimpleArgumentIndex++;
                 }
-                catch (InvalidOperationException)
+                else
                 {
-                    throw new UnknownArgumentException(arg);
-                }
-                if (currentInfo.PInfo == null)
-                {
-                    index++;
-                    continue;
+                    try
+                    {
+                        currentInfo = argumentsInfo.FromName(arg);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        throw new UnknownArgumentException(arg);
+                    }
+                    if (currentInfo.PInfo == null)
+                    {
+                        index++;
+                        continue;
+                    }
+
+                    if (Type.GetTypeCode(currentInfo.PInfo.PropertyType) != TypeCode.Boolean)
+                    {
+                        if (index >= args.Length - 1)
+                            throw new ArgumentException("Missing value for the argument {0}", arg);
+
+                        argValue = args[++index];
+                    }
                 }
 
-                string argValue = "";
-                if (Type.GetTypeCode(currentInfo.PInfo.PropertyType) != TypeCode.Boolean)
-                {
-                    if (index >= args.Length - 1)
-                        throw new ArgumentException("Missing value for the argument {0}", arg);
-
-                    argValue = args[++index];
-                }
-               
                 currentInfo.Found = true;
-
                 currentInfo.SetPropertyValue(this.data, argValue);
-                
                 index++;
             }
         }

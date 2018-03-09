@@ -48,47 +48,52 @@ namespace Consolification.Core.Test.Mocks
 
         public void Write(string format, object arg0)
         {
-            
+            Output += string.Format(format, arg0);
         }
 
         public void Write(string format, object arg0, object arg1)
         {
-            
+            Output += string.Format(format, arg0, arg1);
         }
 
         public void Write(string format, object arg0, object arg1, object arg2)
         {
-            
+            Output += string.Format(format, arg0, arg1, arg2);
         }
 
         public void Write(string format, object[] args)
         {
-            
+            Output += string.Format(format, args);
         }
 
         public void WriteLine(string value)
         {
-            Output += value;
+            Output += value + Environment.NewLine;
         }
 
         public void WriteLine(string format, object arg0)
         {
-            
+            Output += string.Format(format, arg0) + Environment.NewLine;
         }
 
         public void WriteLine(string format, object arg0, object arg1)
         {
-            
+            Output += string.Format(format, arg0, arg1) + Environment.NewLine;
         }
 
         public void WriteLine(string format, object arg0, object arg1, object arg2)
         {
-            
+            Output += string.Format(format, arg0, arg1, arg2) + Environment.NewLine;
         }
 
         public void WriteLine(string format, object[] args)
         {
-            
+            Output += string.Format(format, args) + Environment.NewLine;
+        }
+
+        public void WriteLine(string value, Exception exp)
+        {
+            Output += value + Environment.NewLine + exp.FullMessage() + Environment.NewLine;
         }
     }
 }

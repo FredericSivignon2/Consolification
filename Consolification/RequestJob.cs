@@ -11,7 +11,7 @@ namespace Consolification
 {
     public class RequestJob : IJob<RequestData>
     {
-        public void Run(JobContext<RequestData> context)
+        public int Run(JobContext<RequestData> context)
         {
             RequestData data = context.Data;
 
@@ -40,14 +40,17 @@ namespace Consolification
                 watch.Stop();
                 var elapsedMs = watch.ElapsedMilliseconds;
                 TimeSpan span = TimeSpan.FromMilliseconds(elapsedMs);
-                context.Logger.InfoFormat("Request executed in: {0}", span.ToString(@"hh\:mm\:ss\:fff"));
-                context.Logger.InfoFormat("Response size:       {0} octet(s)", content.Length);
-                context.Logger.InfoFormat("Content:             {0}...",content.Substring(0, 64));
-                context.Logger.Info("");
+                context.Console.WriteLine("Request executed in: {0}", span.ToString(@"hh\:mm\:ss\:fff"));
+                context.Console.WriteLine("Response size:       {0} octet(s)", content.Length);
+                context.Console.WriteLine("Content:             {0}...",content.Substring(0, 64));
+                context.Console.WriteLine("");
+
+                return 0;
             }
             catch (Exception exp)
             {
-                context.Logger.Error("Failed to execute HTTP request.", exp);
+                context.Console.WriteLine("ERROR: Failed to execute HTTP request.", exp);
+                return -1;
             }
         }
     }

@@ -10,7 +10,7 @@ namespace Consolification.Core.Test
         [TestMethod]
         public void HelpBuilder_GetHelpLines()
         {
-            string[] args = new string[] { "-data2", "1" };
+            string[] args = new string[] { @"C:\source\file.txt", "-method", "1" };
 
             HelpDataMock data = new HelpDataMock();
             ArgumentsParser parser = new ArgumentsParser();
@@ -20,13 +20,15 @@ namespace Consolification.Core.Test
             string[] lines = builder.GetHelpLines();
 
             Assert.IsNotNull(lines);
-            Assert.IsTrue(lines.Length == 6);
+            Assert.IsTrue(lines.Length == 8);
             Assert.IsTrue(lines[0] == "This is a dummy class for test purpose.");
             Assert.IsTrue(lines[1] == "");
-            Assert.IsTrue(lines[2] == "Usage: Consolification.Core [--help] [-data1] -data2");
+            Assert.IsTrue(lines[2] == "Usage: Consolification.Core [--help] source [destination] [-format <formatValue>] -method <methodValue>");
             Assert.IsTrue(lines[3] == "");
-            Assert.IsTrue(lines[4] == "-data1 This is the data1 parameter.");
-            Assert.IsTrue(lines[5] == "-data2 This is the data2 parameter.");
+            Assert.IsTrue(lines[4] == "source      The source file path to copy.");
+            Assert.IsTrue(lines[5] == "destination The destination path.");
+            Assert.IsTrue(lines[6] == "-format     This is the format parameter.");
+            Assert.IsTrue(lines[7] == "-method     This is the method parameter.");
         }
 
         [TestMethod]

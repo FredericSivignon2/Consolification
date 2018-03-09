@@ -23,5 +23,6 @@ namespace Consolification.Core
         void WriteLine(string format, object arg0, object arg1);
         void WriteLine(string format, object arg0, object arg1, object arg2);
         void WriteLine(string format, object[] args);
+        void WriteLine(string value, Exception exp);
     }
 }

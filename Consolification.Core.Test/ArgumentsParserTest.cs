@@ -16,12 +16,24 @@ namespace Consolification.Core.Test
         private const string TextFileName = "dummy.txt";
 
         [TestMethod]
+        public void ArgumentsParser_SimpleArgument()
+        {
+            string[] args = new string[] { "mysource", "mydestination" };
+            SimpleArgumentDataMock data = new SimpleArgumentDataMock();
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+
+            Assert.IsTrue(data.Source == args[0]);
+            Assert.IsTrue(data.Destination == args[1]);
+        }
+
+        [TestMethod]
 		public void ArgumentsParser_BooleanArgument()
 		{
 			string[] args = new string[1];
 			args[0] = "/A";
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsFalse(data.MyBoolean1);
 
 			ArgumentsParser parser = new ArgumentsParser();
@@ -37,7 +49,7 @@ namespace Consolification.Core.Test
 			args[0] = "/B";
 			args[1] = argValue.ToString();
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.MyDouble1 == 0);
 
 			ArgumentsParser parser = new ArgumentsParser();
@@ -53,7 +65,7 @@ namespace Consolification.Core.Test
 			args[0] = "/SB";
 			args[1] = argValue.ToString();
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.MySByte == 0);
 
 			ArgumentsParser parser = new ArgumentsParser();
@@ -67,7 +79,7 @@ namespace Consolification.Core.Test
 			char argValue = 'h';
 			string[] args = new string[] { "/C1", argValue.ToString() };
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.MyChar == default(char));
 
 			ArgumentsParser parser = new ArgumentsParser();
@@ -81,7 +93,7 @@ namespace Consolification.Core.Test
 			char argValue = 'T'; // Only low letter alpha char are accepted (see associated attribute)
 			string[] args = new string[] { "/C1", argValue.ToString() };
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.MyChar == default(char));
 
 			try
@@ -104,7 +116,7 @@ namespace Consolification.Core.Test
 			args[0] = "/I16";
 			args[1] = argValue.ToString();
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.MyShort1 == 0);
 
 			ArgumentsParser parser = new ArgumentsParser();
@@ -117,7 +129,7 @@ namespace Consolification.Core.Test
 			args[0] = "/INTEGER16";
 			args[1] = argValue.ToString();
 
-			data = new SimpleDataMock();
+			data = new AllDataTypeMock();
 			Assert.IsTrue(data.MyShort1 == 0);
 
 			parser = new ArgumentsParser();
@@ -133,7 +145,7 @@ namespace Consolification.Core.Test
 			args[0] = "/I32";
 			args[1] = argValue.ToString();
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.MyInteger1 == 0);
 
 			ArgumentsParser parser = new ArgumentsParser();
@@ -149,7 +161,7 @@ namespace Consolification.Core.Test
 			args[0] = "/I64";
 			args[1] = argValue.ToString();
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.MyLong1 == 0);
 
 			ArgumentsParser parser = new ArgumentsParser();
@@ -165,7 +177,7 @@ namespace Consolification.Core.Test
 			args[0] = "/UI16";
 			args[1] = argValue.ToString();
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.MyUShort == 0);
 
 			ArgumentsParser parser = new ArgumentsParser();
@@ -181,7 +193,7 @@ namespace Consolification.Core.Test
 			args[0] = "/UI32";
 			args[1] = argValue.ToString();
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.MyUInt == 0);
 
 			ArgumentsParser parser = new ArgumentsParser();
@@ -197,7 +209,7 @@ namespace Consolification.Core.Test
 			args[0] = "/UI64";
 			args[1] = argValue.ToString();
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.MyULong == 0);
 
 			ArgumentsParser parser = new ArgumentsParser();
@@ -211,7 +223,7 @@ namespace Consolification.Core.Test
 			decimal argValue = 856498763251.65m;
 			string[] args = new string[] { "/DEC", argValue.ToString() };
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.MyDecimal == 0m);
 
 			ArgumentsParser parser = new ArgumentsParser();
@@ -227,7 +239,7 @@ namespace Consolification.Core.Test
 			args[0] = "/SINGLE";
 			args[1] = argValue.ToString(CultureInfo.InvariantCulture);
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.MySingle == 0);
 
 			ArgumentsParser parser = new ArgumentsParser();
@@ -243,7 +255,7 @@ namespace Consolification.Core.Test
 			args[0] = "/D";
 			args[1] = argValue.ToString(CultureInfo.InvariantCulture);
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.MyDouble1 == 0);
 
 			ArgumentsParser parser = new ArgumentsParser();
@@ -256,7 +268,7 @@ namespace Consolification.Core.Test
 		{
 			string[] args = new string[] { "/STARTDATE", "2018/02/24" };
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.StartDate == DateTime.MinValue);
 
 			ArgumentsParser parser = new ArgumentsParser();
@@ -269,7 +281,7 @@ namespace Consolification.Core.Test
 		{
 			string[] args = new string[] { "/STARTDATE", "2018/02/24 15:36:20" };
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.StartDate == DateTime.MinValue);
 
 			ArgumentsParser parser = new ArgumentsParser();
@@ -282,7 +294,7 @@ namespace Consolification.Core.Test
 		{
 			string[] args = new string[] { "/URI", "http://www.google.com" };
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.MyUri == default(Uri));
 
 			ArgumentsParser parser = new ArgumentsParser();
@@ -295,7 +307,7 @@ namespace Consolification.Core.Test
 		{
 			string[] args = new string[] { "/VERSION", "1.5.2" };
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.MyVersion == default(Version));
 
 			ArgumentsParser parser = new ArgumentsParser();
@@ -308,7 +320,7 @@ namespace Consolification.Core.Test
         {
             string[] args = new string[] { "/CHARARRAY", "This is a string!" };
 
-            SimpleDataMock data = new SimpleDataMock();
+            AllDataTypeMock data = new AllDataTypeMock();
             Assert.IsNull(data.CharArray);
 
             ArgumentsParser parser = new ArgumentsParser();
@@ -323,7 +335,7 @@ namespace Consolification.Core.Test
         {
             string[] args = new string[] { "/BYTEARRAY", "This is a string!" };
 
-            SimpleDataMock data = new SimpleDataMock();
+            AllDataTypeMock data = new AllDataTypeMock();
             Assert.IsNull(data.ByteArray);
 
             ArgumentsParser parser = new ArgumentsParser();
@@ -340,7 +352,7 @@ namespace Consolification.Core.Test
 			args[0] = "/S";
 			args[1] = "This is an argument";
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.MyDouble1 == 0);
 
 			ArgumentsParser parser = new ArgumentsParser();
@@ -356,7 +368,7 @@ namespace Consolification.Core.Test
 			args[0] = "/B2";
 			args[1] = argValue.ToString();
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.MyByte2 == 0);
 
 			ArgumentsParser parser = new ArgumentsParser();
@@ -371,7 +383,7 @@ namespace Consolification.Core.Test
 			args[0] = "/B2";
 			args[1] = "50";
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.MyByte2 == 0);
 
 			try
@@ -393,7 +405,7 @@ namespace Consolification.Core.Test
 			args[0] = "/B2";
 			args[1] = "3";
 
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			Assert.IsTrue(data.MyByte2 == 0);
 
 			try
@@ -586,31 +598,31 @@ namespace Consolification.Core.Test
 			/// 
 
 			Assert.IsTrue(argsInfo.Length == 5);
-			Assert.IsTrue(argsInfo[0].Argument.Name == "/?");
-			Assert.IsTrue(argsInfo[1].Argument.Name == "/ARG1");
-			Assert.IsTrue(argsInfo[2].Argument.Name == "/TOPA");
+			Assert.IsTrue(argsInfo[0].NamedArgument.Name == "/?");
+			Assert.IsTrue(argsInfo[1].NamedArgument.Name == "/ARG1");
+			Assert.IsTrue(argsInfo[2].NamedArgument.Name == "/TOPA");
 			Assert.IsTrue(argsInfo[2].Children.Count == 2);
-			Assert.IsTrue(argsInfo[2].Children[0].Argument.Name == "/CHILDTOPA1");
-			Assert.IsTrue(argsInfo[2].Children[1].Argument.Name == "/MID");
+			Assert.IsTrue(argsInfo[2].Children[0].NamedArgument.Name == "/CHILDTOPA1");
+			Assert.IsTrue(argsInfo[2].Children[1].NamedArgument.Name == "/MID");
 			Assert.IsTrue(argsInfo[2].Children[1].Children.Count == 3);
-			Assert.IsTrue(argsInfo[2].Children[1].Children[0].Argument.Name == "/CHILDMID1");
-			Assert.IsTrue(argsInfo[2].Children[1].Children[1].Argument.Name == "/CHILDMID2");
-			Assert.IsTrue(argsInfo[2].Children[1].Children[2].Argument.Name == "/BACK");
+			Assert.IsTrue(argsInfo[2].Children[1].Children[0].NamedArgument.Name == "/CHILDMID1");
+			Assert.IsTrue(argsInfo[2].Children[1].Children[1].NamedArgument.Name == "/CHILDMID2");
+			Assert.IsTrue(argsInfo[2].Children[1].Children[2].NamedArgument.Name == "/BACK");
 			Assert.IsTrue(argsInfo[2].Children[1].Children[2].Children.Count == 2);
-			Assert.IsTrue(argsInfo[2].Children[1].Children[2].Children[0].Argument.Name == "/CHILDBACK2");
-			Assert.IsTrue(argsInfo[2].Children[1].Children[2].Children[1].Argument.Name == "/CHILDBACK1");
+			Assert.IsTrue(argsInfo[2].Children[1].Children[2].Children[0].NamedArgument.Name == "/CHILDBACK2");
+			Assert.IsTrue(argsInfo[2].Children[1].Children[2].Children[1].NamedArgument.Name == "/CHILDBACK1");
 
-			Assert.IsTrue(argsInfo[3].Argument.Name == "/TOPB");
+			Assert.IsTrue(argsInfo[3].NamedArgument.Name == "/TOPB");
 			Assert.IsTrue(argsInfo[3].Children.Count == 3);
-			Assert.IsTrue(argsInfo[3].Children[0].Argument.Name == "/MIDB");
+			Assert.IsTrue(argsInfo[3].Children[0].NamedArgument.Name == "/MIDB");
 			Assert.IsTrue(argsInfo[3].Children[0].Children.Count == 2);
-			Assert.IsTrue(argsInfo[3].Children[0].Children[0].Argument.Name == "/CHILDMIDB2");
-			Assert.IsTrue(argsInfo[3].Children[0].Children[1].Argument.Name == "/CHILDMIDB1");
+			Assert.IsTrue(argsInfo[3].Children[0].Children[0].NamedArgument.Name == "/CHILDMIDB2");
+			Assert.IsTrue(argsInfo[3].Children[0].Children[1].NamedArgument.Name == "/CHILDMIDB1");
 
-			Assert.IsTrue(argsInfo[3].Children[1].Argument.Name == "/CHILDTOPB1");
-			Assert.IsTrue(argsInfo[3].Children[2].Argument.Name == "/CHILDTOPB2");
+			Assert.IsTrue(argsInfo[3].Children[1].NamedArgument.Name == "/CHILDTOPB1");
+			Assert.IsTrue(argsInfo[3].Children[2].NamedArgument.Name == "/CHILDTOPB2");
 
-			Assert.IsTrue(argsInfo[4].Argument.Name == "/ARG2");
+			Assert.IsTrue(argsInfo[4].NamedArgument.Name == "/ARG2");
 		}
 
 		[TestMethod]
@@ -634,7 +646,7 @@ namespace Consolification.Core.Test
 		public void ArgumentsParser_UnknownArgument()
 		{
 			string[] args = new string[] { "/YES" };
-			SimpleDataMock data = new SimpleDataMock();
+			AllDataTypeMock data = new AllDataTypeMock();
 			ArgumentsParser parser = new ArgumentsParser();
 			try
 			{

@@ -77,5 +77,11 @@ namespace Consolification.Core
         {
             Console.WriteLine(format, args);
         }
+
+        public void WriteLine(string value, Exception exp)
+        {
+            Console.WriteLine(value);
+            Console.WriteLine(exp.FullMessage());
+        }
     }
 }

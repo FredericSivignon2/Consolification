@@ -11,17 +11,32 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core
 {
+    /// <summary>
+    /// Maintains information related to an argument.
+    /// </summary>
     public class ArgumentInfo
     {
-        public ArgumentInfo(CIArgumentAttribute argument)
+        #region Constructors
+        public ArgumentInfo(CISimpleArgumentAttribute argument)
         {
             if (argument == null)
                 throw new ArgumentNullException("argument");
 
-            Argument = argument;
+            SimpleArgument = argument;
         }
 
-        public CIArgumentAttribute Argument { get; private set; }
+        public ArgumentInfo(CINamedArgumentAttribute argument)
+        {
+            if (argument == null)
+                throw new ArgumentNullException("argument");
+
+            NamedArgument = argument;
+        }
+        #endregion
+
+        #region Public Properties
+        public CISimpleArgumentAttribute SimpleArgument { get; private set; }
+        public CINamedArgumentAttribute NamedArgument { get; private set; }
         public PropertyInfo PInfo { get; set; }
         public CIMandatoryArgumentAttribute MandatoryArguments { get; set; }
         public CIArgumentBoundaryAttribute ArgumentBoundary { get; set; }
@@ -33,16 +48,34 @@ namespace Consolification.Core
         public bool Found { get; set; }
 
         public List<ArgumentInfo> Children { get; } = new List<ArgumentInfo>();
+        #endregion
 
+        #region Overridden
         public override string ToString()
         {
             StringBuilder output = new StringBuilder("Argument: ");
-            output.Append(Argument.Name);
+
+            if (SimpleArgument != null)
+            {
+                output.Append(SimpleArgument.HelpText);
+            }
+            else
+            {
+                output.Append(NamedArgument.Name);
+
+            }
             output.AppendFormat(" - Found: {0}", Found);
 
             return output.ToString();
         }
+        #endregion
 
+        #region Public Methods
+        /// <summary>
+        /// Sets the given value to the corresponding property within the object 'data'.
+        /// </summary>
+        /// <param name="data">The object for which we need to set the property value.</param>
+        /// <param name="argValue">The value of the property to set.</param>
         public void SetPropertyValue(object data, string argValue)
         {
             if (FileContent != null)
@@ -53,11 +86,11 @@ namespace Consolification.Core
             {
                 SetDirectPropertyValue(data, argValue);
             }
-
         }
+        #endregion
 
         #region Private Methods
-
+        
         private void SetFileContentPropertyValue(object data, string argValue)
         {
             switch (PInfo.PropertyType.FullName)
@@ -68,7 +101,7 @@ namespace Consolification.Core
                        {
                            if (File.Exists(str) == false)
                            {
-                               throw new FileNotFoundException(string.Format("The file path specified with the argument '{0}' does not exist.", Argument.Name), str);
+                               throw new FileNotFoundException(string.Format("The file path specified with the argument '{0}' does not exist.", NamedArgument.Name), str);
                            }
 
                            return File.ReadAllText(str, FileContent.Encoding);
@@ -81,7 +114,7 @@ namespace Consolification.Core
                        {
                            if (File.Exists(str) == false)
                            {
-                               throw new FileNotFoundException(string.Format("The file path specified with the argument '{0}' does not exist.", Argument.Name), str);
+                               throw new FileNotFoundException(string.Format("The file path specified with the argument '{0}' does not exist.", NamedArgument.Name), str);
                            }
 
                            return File.ReadAllLines(str, FileContent.Encoding);
@@ -94,7 +127,7 @@ namespace Consolification.Core
                         {
                             if (File.Exists(str) == false)
                             {
-                                throw new FileNotFoundException(string.Format("The file path specified with the argument '{0}' does not exist.", Argument.Name), str);
+                                throw new FileNotFoundException(string.Format("The file path specified with the argument '{0}' does not exist.", NamedArgument.Name), str);
                             }
                             return File.ReadAllBytes(str);
                         }));
@@ -106,7 +139,7 @@ namespace Consolification.Core
                     {
                         if (File.Exists(str) == false)
                         {
-                            throw new FileNotFoundException(string.Format("The file path specified with the argument '{0}' does not exist.", Argument.Name), str);
+                            throw new FileNotFoundException(string.Format("The file path specified with the argument '{0}' does not exist.", NamedArgument.Name), str);
                         }
 
                         return File.ReadAllText(str, FileContent.Encoding).ToArray<char>();
@@ -119,7 +152,7 @@ namespace Consolification.Core
                     {
                         if (File.Exists(str) == false)
                         {
-                            throw new FileNotFoundException(string.Format("The file path specified with the argument '{0}' does not exist.", Argument.Name), str);
+                            throw new FileNotFoundException(string.Format("The file path specified with the argument '{0}' does not exist.", NamedArgument.Name), str);
                         }
 
                         return File.OpenRead(str);
@@ -127,7 +160,7 @@ namespace Consolification.Core
                     break;
 
                 default:
-                    throw new NotSupportedException(string.Format("The type of the argument '{0}' is not supported when associated with the CIFileContentAttribute attribute.", Argument.Name));
+                    throw new NotSupportedException(string.Format("The type of the argument '{0}' is not supported when associated with the CIFileContentAttribute attribute.", NamedArgument.Name));
 
             }
         }
@@ -205,10 +238,11 @@ namespace Consolification.Core
                     break;
 
                 default:
-                    throw new NotSupportedException(string.Format("The type of the argument '{0}' is not supported.", Argument.Name));
+                    throw new NotSupportedException(string.Format("The type of the argument '{0}' is not supported.", NamedArgument.Name));
             }
         }
 
+        // To process all types that are not defined in System.TypeCode
         private void SetValueForObjects(object data, string argValue)
         {
             switch (PInfo.PropertyType.FullName)
@@ -234,7 +268,7 @@ namespace Consolification.Core
                     break;
 
                 default:
-                    throw new NotSupportedException(string.Format("The type of the argument '{0}' is not supported.", Argument.Name));
+                    throw new NotSupportedException(string.Format("The type of the argument '{0}' is not supported.", NamedArgument.Name));
 
             }
         }
@@ -255,7 +289,7 @@ namespace Consolification.Core
             {
                 T minVal = convertor(ArgumentBoundary.MinValue);
                 if (val.CompareTo(minVal) < 0)
-                    throw new ArgumentException(string.Format("The value of the argument {0} cannot be lower than {1}", Argument.Name, minVal));
+                    throw new ArgumentException(string.Format("The value of the argument {0} cannot be lower than {1}", NamedArgument.Name, minVal));
 
             }
 
@@ -263,7 +297,7 @@ namespace Consolification.Core
             {
                 T maxVal = convertor(ArgumentBoundary.MaxValue);
                 if (val.CompareTo(maxVal) > 0)
-                    throw new ArgumentException(string.Format("The value of the argument {0} cannot be greater than {1}", Argument.Name, maxVal));
+                    throw new ArgumentException(string.Format("The value of the argument {0} cannot be greater than {1}", NamedArgument.Name, maxVal));
 
             }
 
@@ -280,7 +314,7 @@ namespace Consolification.Core
             }
             catch (Exception e)
             {
-                throw new ArgumentException(string.Format("Invalid specified value for the argument {0}.", Argument.Name), e);
+                throw new ArgumentException(string.Format("Invalid specified value for the argument {0}.", NamedArgument.Name), e);
             }
             return val;
         }

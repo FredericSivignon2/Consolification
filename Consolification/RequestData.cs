@@ -1,29 +1,22 @@
-﻿using Consolification.Core;
-using Consolification.Core.Attributes;
+﻿using Consolification.Core.Attributes;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Consolification
 {
     [CIHelpArgument("/?")]
     [CICommandDescription("Performs an HTTP request and get some result statistics.")]
+    [CIJob(typeof(RequestJob))]
     public class RequestData
     {
-        [CIArgument("/url", "The URL of the request to perform.")]
+        [CINamedArgument("/url", "The URL of the request to perform.", "value")]
         [CIMandatoryArgument]
-        [CIJob(typeof(RequestJob))]
         public Uri URL { get; private set; }
 
-        [CIShortcutArgument("/user", "/u", "The user to authenticate the request.")]
+        [CIShortcutArgument("/user", "/u", "The user to authenticate the request.", "value")]
         [CIParentArgument(1)]
         public string User { get; private set; }
 
-        [CIShortcutArgument("/password", "/p", "This user password to authenticate the request.")]
+        [CIShortcutArgument("/password", "/p", "This user password to authenticate the request.", "value")]
         [CIChildArgument(1)]
         [CIMandatoryArgument(true, "User password: ")]
         [CIPassword]

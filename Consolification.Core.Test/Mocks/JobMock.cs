@@ -6,15 +6,16 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core.Test.Mocks
 {
-    public class JobMock : IJob<DataJobMock>
+    public class JobMock : IJob<JobDataMock>
     {
-        public void Run(JobContext<DataJobMock> context)
+        public int Run(JobContext<JobDataMock> context)
         {
-            DataJobMock data = context.Data;
+            JobDataMock data = context.Data;
             if (data == null)
                 throw new InvalidOperationException("data is null or is not a DataJobMock!");
 
             data.Out = data.In;
+            return 0;
         }
     }
 }

@@ -9,25 +9,25 @@ namespace Consolification.Core.Test.Mocks
 {
     public class SimpleHierarchyDataMock
     {
-        [CIArgument("/TOP")]
+        [CINamedArgument("/TOP")]
         [CIParentArgument(1)]
         public string TopArg { get; private set; }
 
-        [CIArgument("/MID")]
+        [CINamedArgument("/MID")]
         [CIParentArgument(2)]
         [CIChildArgument(1)]
         public string MidArg { get; private set; }
 
-        [CIArgument("/CHILD1")]
+        [CINamedArgument("/CHILD1")]
         [CIChildArgument(1)]
         public string ChildArg1 { get; private set; }
 
-        [CIArgument("/CHILD2")]
+        [CINamedArgument("/CHILD2")]
         [CIChildArgument(2)]
         [CIMandatoryArgument]
         public string ChildArg2 { get; private set; }
 
-        [CIArgument("/CHILD3")]
+        [CINamedArgument("/CHILD3")]
         [CIChildArgument(2)]
         public string ChildArg3 { get; private set; }
     }

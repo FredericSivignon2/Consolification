@@ -9,14 +9,14 @@ namespace Consolification.Core
 {
     class HelpBuilder
     {
-        private ArgumentsParser container;
+        private ArgumentsParser parser;
         
-        public HelpBuilder(ArgumentsParser container)
+        public HelpBuilder(ArgumentsParser parser)
         {
-            if (container == null)
-                throw new ArgumentNullException("container");
+            if (parser == null)
+                throw new ArgumentNullException("parser");
 
-            this.container = container;
+            this.parser = parser;
         }
 
         public string[] GetHelpLines()
@@ -38,9 +38,9 @@ namespace Consolification.Core
 
             StringBuilder usage = new StringBuilder();
 
-            if (!string.IsNullOrWhiteSpace(this.container.CommandDescription))
+            if (!string.IsNullOrWhiteSpace(this.parser.CommandDescription))
             {
-                lines.Add(this.container.CommandDescription);
+                lines.Add(this.parser.CommandDescription);
                 lines.Add(string.Empty);
             }
 
@@ -48,7 +48,7 @@ namespace Consolification.Core
             usage.Append("Usage: ");
             usage.Append(GetExeName());
 
-            AppendHeaderArgs(usage, this.container.ArgumentsInfo.Hierarchy);
+            AppendHeaderArgs(usage, this.parser.ArgumentsInfo.Hierarchy);
 
             lines.Add(usage.ToString());
             lines.Add(string.Empty);
@@ -63,12 +63,28 @@ namespace Consolification.Core
                 usage.Append(" ");
                 if (argInfo.MandatoryArguments != null)
                 {
-                    usage.Append(argInfo.Argument.Names[0]);
+                    if (argInfo.SimpleArgument != null)
+                        usage.Append(argInfo.SimpleArgument.HelpText);
+                    else
+                    {
+                        if (string.IsNullOrWhiteSpace(argInfo.NamedArgument.ValueHelpText))
+                            usage.Append(argInfo.NamedArgument.Names[0]);
+                        else
+                            usage.AppendFormat("{0} <{1}>", argInfo.NamedArgument.Names[0], argInfo.NamedArgument.ValueHelpText);
+                    }
                     AppendHeaderArgs(usage, argInfo.Children.ToArray<ArgumentInfo>());
                 }
                 else
                 {
-                    usage.AppendFormat("[{0}", argInfo.Argument.Names[0]);
+                    if (argInfo.SimpleArgument != null)
+                        usage.AppendFormat("[{0}", argInfo.SimpleArgument.HelpText);
+                    else
+                    {                        
+                        if (string.IsNullOrWhiteSpace(argInfo.NamedArgument.ValueHelpText))
+                            usage.AppendFormat("[{0}", argInfo.NamedArgument.Names[0]);
+                        else
+                            usage.AppendFormat("[{0} <{1}>", argInfo.NamedArgument.Names[0], argInfo.NamedArgument.ValueHelpText);
+                    }
                     AppendHeaderArgs(usage, argInfo.Children.ToArray<ArgumentInfo>());
                     usage.Append("]");
                 }
@@ -90,7 +106,7 @@ namespace Consolification.Core
         {
             List<string> lines = new List<string>();
             
-            AddArgumentDescriptionLines(lines, this.container.ArgumentsInfo.Hierarchy);
+            AddArgumentDescriptionLines(lines, this.parser.ArgumentsInfo.Hierarchy);
 
             return lines.ToArray();
         }
@@ -100,12 +116,19 @@ namespace Consolification.Core
             if (argsInfo.Length == 0)
                 return;
 
-            int maxArgNamesLength = this.container.ArgumentsInfo.MaxArgumentsStringLength;
+            int maxArgNamesLength = this.parser.ArgumentsInfo.MaxArgumentsStringLength;
             foreach (ArgumentInfo argInfo in argsInfo)
             {
-                if (string.IsNullOrWhiteSpace(argInfo.Argument.Description))
-                    continue;
-
+                if (argInfo.SimpleArgument != null)
+                {
+                    if (string.IsNullOrWhiteSpace(argInfo.SimpleArgument.Description))
+                        continue;
+                }
+                else
+                {
+                    if (string.IsNullOrWhiteSpace(argInfo.NamedArgument.Description))
+                        continue;
+                }
                 string line = GetHelpLineFromArgument(argInfo, maxArgNamesLength);
 
                 lines.Add(line);
@@ -117,21 +140,36 @@ namespace Consolification.Core
         private string GetHelpLineFromArgument(ArgumentInfo argInfo, int maxArgNamesLength)
         {
             StringBuilder builder = new StringBuilder();
-            foreach (string name in argInfo.Argument.Names)
+            if (argInfo.SimpleArgument != null)
             {
-                if (builder.Length > 0)
-                    builder.Append(", ");
+                builder.Append(argInfo.SimpleArgument.HelpText);
 
-                builder.Append(name);
+                int spaceLeft = maxArgNamesLength - argInfo.SimpleArgument.HelpText.Length;
+                for (int i = 0; i < spaceLeft + 1; i++)
+                {
+                    builder.Append(" ");
+                }
+
+                builder.Append(argInfo.SimpleArgument.Description);
             }
-
-            int spaceLeft = maxArgNamesLength - argInfo.Argument.NamesLength;
-            for (int i = 0; i < spaceLeft + 1; i++)
+            else
             {
-                builder.Append(" ");
-            }
+                foreach (string name in argInfo.NamedArgument.Names)
+                {
+                    if (builder.Length > 0)
+                        builder.Append(", ");
 
-            builder.Append(argInfo.Argument.Description);
+                    builder.Append(name);
+                }
+
+                int spaceLeft = maxArgNamesLength - argInfo.NamedArgument.NamesLength;
+                for (int i = 0; i < spaceLeft + 1; i++)
+                {
+                    builder.Append(" ");
+                }
+
+                builder.Append(argInfo.NamedArgument.Description);
+            }
 
             return builder.ToString();
         }

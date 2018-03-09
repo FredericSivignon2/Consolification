@@ -9,11 +9,11 @@ namespace Consolification.Core.Test.Mocks
 {
     public class UserCredetentialDataMock
     {
-        [CIArgument("/U")]
+        [CINamedArgument("/U")]
         [CIMandatoryArgument]
         public string UserName { get; set; }
 
-        [CIArgument("/S")]
+        [CINamedArgument("/S")]
         public string UserPassword { get; set; }
     }
 }

@@ -30,70 +30,70 @@ namespace Consolification.Core.Test.Mocks
     [CIHelpArgument("/?")]
     public class ComplexHierarchyDataMock
     {
-        [CIArgument("/ARG1", "This is the ARG1 argument.")]
+        [CINamedArgument("/ARG1", "This is the ARG1 argument.", "value")]
         public bool Arg1 { get; private set; }
 
-        [CIArgument("/CHILDTOPA1", "This is the CHILDTOPA1 argument.")]
+        [CINamedArgument("/CHILDTOPA1", "This is the CHILDTOPA1 argument.", "value")]
         [CIChildArgument(1)]
         public string ChildTopAArg1 { get; private set; }
 
-        [CIArgument("/CHILDMID1", "This is the CHILDMID1 argument.")]
+        [CINamedArgument("/CHILDMID1", "This is the CHILDMID1 argument.", "value")]
         [CIChildArgument(2)]
         [CIMandatoryArgument()]
         public string ChildMidArg1 { get; private set; }
 
-        [CIArgument("/CHILDMID2", "This is the CHILDMID2 argument.")]
+        [CINamedArgument("/CHILDMID2", "This is the CHILDMID2 argument.", "value")]
         [CIChildArgument(2)]
         public string ChildMidArg2 { get; private set; }
 
-        [CIArgument("/CHILDBACK2", "This is the CHILDBACK2 argument.")]
+        [CINamedArgument("/CHILDBACK2", "This is the CHILDBACK2 argument.", "value")]
         [CIChildArgument(3)]
         public string ChildBackArg2 { get; private set; }
 
-        [CIArgument("/MIDB", "This is the MIDB argument.")]
+        [CINamedArgument("/MIDB", "This is the MIDB argument.", "value")]
         [CIChildArgument(4)]
         [CIParentArgument(5)]
         public string MidBArg { get; private set; }
 
-        [CIArgument("/CHILDMIDB2", "This is the CHILDMIDB2 argument.")]
+        [CINamedArgument("/CHILDMIDB2", "This is the CHILDMIDB2 argument.", "value")]
         [CIChildArgument(5)]
         public string ChildMidBArg2 { get; private set; }
 
-        [CIArgument("/CHILDTOPB1", "This is the CHILDTOPB1 argument.")]
+        [CINamedArgument("/CHILDTOPB1", "This is the CHILDTOPB1 argument.", "value")]
         [CIChildArgument(4)]
         public string ChildTopBArg1 { get; private set; }
 
-        [CIArgument("/MID", "This is the MID argument.")]
+        [CINamedArgument("/MID", "This is the MID argument.", "value")]
         [CIParentArgument(2)]
         [CIChildArgument(1)]
         public string MidArg { get; private set; }
 
-        [CIArgument("/TOPA", "This is the TOPA argument.")]
+        [CINamedArgument("/TOPA", "This is the TOPA argument.", "value")]
         [CIParentArgument(1)]
         public string TopAArg { get; private set; }
 
-        [CIArgument("/BACK", "This is the BACK argument.")]
+        [CINamedArgument("/BACK", "This is the BACK argument.", "value")]
         [CIChildArgument(2)]
         [CIParentArgument(3)]
         [CIMandatoryArgument()]
         public string BackArg { get; private set; }
 
-        [CIArgument("/CHILDBACK1", "This is the CHILDBACK1 argument.")]
+        [CINamedArgument("/CHILDBACK1", "This is the CHILDBACK1 argument.", "value")]
         [CIChildArgument(3)]
         public string ChildBackArg1 { get; private set; }
 
-        [CIArgument("/TOPB", "This is the TOPB argument.")]
+        [CINamedArgument("/TOPB", "This is the TOPB argument.", "value")]
         [CIParentArgument(4)]
         public string ToBAArg { get; private set; }
 
-        [CIArgument("/ARG2", "This is the ARG2 argument.")]
+        [CINamedArgument("/ARG2", "This is the ARG2 argument.", "value")]
         public bool Arg2 { get; private set; }
 
-        [CIArgument("/CHILDTOPB2", "This is the CHILDTOPB2 argument.")]
+        [CINamedArgument("/CHILDTOPB2", "This is the CHILDTOPB2 argument.", "value")]
         [CIChildArgument(4)]
         public string ChildTopBArg2 { get; private set; }
 
-        [CIArgument("/CHILDMIDB1", "This is the CHILDMIDB1 argument.")]
+        [CINamedArgument("/CHILDMIDB1", "This is the CHILDMIDB1 argument.", "value")]
         [CIChildArgument(5)]
         public string ChildMidBArg1 { get; private set; }
     }

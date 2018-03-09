@@ -8,6 +8,6 @@ namespace Consolification.Core
 {
     public interface IJob<T> where T: new()
     {
-        void Run(JobContext<T> context);
+        int Run(JobContext<T> context);
     }
 }

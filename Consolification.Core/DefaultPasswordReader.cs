@@ -17,6 +17,14 @@ namespace Consolification.Core
 			this.console = wrapper;
 		}
 
+        public IConsoleWrapper Console
+        {
+            get
+            {
+                return this.console;
+            }
+        }
+
 		public SecureString GetSecurePassword()
         {
             return GetSecurePassword('*');

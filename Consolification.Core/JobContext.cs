@@ -8,7 +8,6 @@ namespace Consolification.Core
 {
     public class JobContext<T> where T : new()
     {
-        public ILogWriter Logger { get; internal set; }
         public IPasswordReader Reader { get; internal set; }
         public IConsoleWrapper Console { get; internal set; }
         public T Data { get; internal set; }

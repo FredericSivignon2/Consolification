@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 
 namespace Consolification.Core.Test.Mocks
 {
-    public class DataJobMock
+    // FileDataMock does not implement IJob. So it must generate an error
+    [CIJob(typeof(FileDataMock))] 
+    public class BadJobDataMock
     {
-        [CIArgument("/A")]
-        [CIJob(typeof(JobMock))]
-        public string In { get; private set; }
-
-        public string Out { get; set; }
+        [CINamedArgument("/A")]
+        public string Value { get; private set; }
     }
 }

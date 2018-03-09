@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Consolification.Ext")]
+[assembly: AssemblyTitle("Consolification.QuickExample")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Consolification.Ext")]
+[assembly: AssemblyProduct("Consolification.QuickExample")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("920190ff-dd5f-4020-a3c9-255f41f7a57d")]
+[assembly: Guid("04bcf1ef-adad-467f-b7ab-34fd4d0879f5")]
 
 // Version information for an assembly consists of the following four values:
 //

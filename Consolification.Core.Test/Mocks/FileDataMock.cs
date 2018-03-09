@@ -10,23 +10,23 @@ namespace Consolification.Core.Test.Mocks
 {
     public class FileDataMock
     {
-        [CIArgument("/FILE")]
+        [CINamedArgument("/FILE")]
         [CIFileContent]
         public byte[] FileByteArray { get; set; }
 
-        [CIArgument("/FILELINES")]
+        [CINamedArgument("/FILELINES")]
         [CIFileContent]
         public string[] FileLines { get; set; }
 
-        [CIArgument("/FILESTRING")]
+        [CINamedArgument("/FILESTRING")]
         [CIFileContent("UTF8")]
         public string FileString { get; set; }
 
-        [CIArgument("/FILECHAR")]
+        [CINamedArgument("/FILECHAR")]
         [CIFileContent]
         public char[] FileCharArray { get; set; }
 
-        [CIArgument("/FILESTREAM")]
+        [CINamedArgument("/FILESTREAM")]
         [CIFileContent]
         public FileStream FileStream { get; set; }
     }
