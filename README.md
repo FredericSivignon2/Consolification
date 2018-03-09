@@ -28,7 +28,7 @@ public class Data
 
 The first attribute `CIHelpArgument`, on the class `Data`, specifies that you need to provide the argument '/?' to view the corresponding help.
 The second class `Data` attribute `CIJob` indicates that the application logic is implemented within the class `MessageJob`.
-The attribute `CISimpleArgument` on the property `Message` indicates that the Message property will receive the value of the first argument provided to the application. The other attribute parameters are dedicated to the automatically generated help text. We'll see that later.
+The attribute `CISimpleArgument` on the property `Message` indicates that the Message property will receive the value of the first argument provided to the application (index 0). The other attribute parameters are dedicated to the automatically generated help text. We'll see that later.
 
 Then, simply modify the Program class with the Main method like that:
 
@@ -48,28 +48,44 @@ Now, you just have to execute your application by giving a message as the single
 
 For example, if your Console Application executable  is named Example.exe, juste type in the console:
 
-`> Example "Hello the world!"`
+```Batchfile
+> Example "Hello the world!"
+```
 
 The result output will be simply 
-`
+```Batchfile
 Hello the world!
-`
+```
 
 Now, if you type: `> Example /?` the output will be the automatically generated help text:
 
-`
+```Batchfile
 Usage: Example [/?] [message]
 
 message The message to display.
-`
+```
 
 The brackets [] indicates optional arguments. If you specify that Message is a mandatory argument, by using the CIMandatoryArgumentAttribute, the help displayed will be:
 
-`
+```Batchfile
 Usage: Example [/?] message
 
 message The message to display.
-`
+```
 
+The word 'message' to name the related argument has been specified in the CISimpleArgumentAttribute as second parameter. And the corresponding description ('The message to display') is taken from the last parameter of this same attribute.
 
 Of course, for a so simple example, Consolification is not really usefull. But wait and see what will be the benefits when things are being more complex.
+
+
+#### Consolification Attribute list:
+
+- `CISimpleArgumentAttribute`: The attribute used in the example above.
+
+- `CINamedArgumentAttribute`: Use this attribute to define an argument that has got a specific name. Imagines for example you have a Console Application for which you can pass two arguments like `/URL http://www.google.fr`. In this case, use the `CINamesdArgumentAttribute` like that in your corresponding data class:
+
+```C#
+ [CINamedArgument("/URL", "value", "The URL of the request to perform.")]
+ [CIMandatoryArgument]
+ public Uri URL { get; private set; }
+```
