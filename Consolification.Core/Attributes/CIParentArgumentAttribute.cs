@@ -20,8 +20,8 @@ namespace Consolification.Core.Attributes
         /// <param name="id">The identifier of this parent argument.</param>
         public CIParentArgumentAttribute(int id)
         {
-            if (id < 1)
-                throw new ArgumentException("The argument id must be equal or greater than 1.");
+            if (id < 0)
+                throw new ArgumentException("The argument id must be equal or greater than 0.");
             this.Id = id;
         }
         #endregion
