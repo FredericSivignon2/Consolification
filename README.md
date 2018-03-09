@@ -97,7 +97,7 @@ And the /URL argument description line will look like:
 
 Notes that we have associate the `System.Uri` type to the URL property. But, we could have used the `System.String` type also. But with `System.Uri` type, a specific validation is performed automatically by the type constructor itself, so, it's better in this case, to ensure that user will specify a valid URI.
 
-To view the complete list of supported types, see the section [Supported types](#Consolification-supported-type-of-data-mapping)
+To view the complete list of supported types, see the section [Supported types](#consolification-supported-type-of-data-mapping)
 
 - `CIShortcutArgumentAttribute`: Similar to the `CINamedArgumentAttribute` except that you can also specify a shortcut name for your argument (for example, "/u" in addition to "/user" default argument name).
 
