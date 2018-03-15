@@ -907,6 +907,17 @@ namespace Consolification.Core.Test
             }
         }
 
+        [TestMethod]
+        public void ArgumentsParser_EmbeddedChildData()
+        {
+            string[] args = new string[] { "/PARENTVALUE", "1", "/CHILD1", "CHILDVALUE1", "abcdef" };
+            ParentDataMock data = new ParentDataMock();
+                       
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+              
+        }
+
         #region Private Methods
         private string GetDummyTextFilePath()
         {

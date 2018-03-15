@@ -47,7 +47,11 @@ namespace Consolification.Core
         public CIPasswordAttribute Password { get; set; }
         public bool Found { get; set; }
 
-        public List<ArgumentInfo> Children { get; } = new List<ArgumentInfo>();
+        public bool UserType { get; set; }
+
+        public object UserTypeInstance { get; set; }
+
+        public ArgumentInfoCollection Children { get; } = new ArgumentInfoCollection();
         #endregion
 
         #region Overridden

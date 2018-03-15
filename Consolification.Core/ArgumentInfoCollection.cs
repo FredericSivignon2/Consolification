@@ -23,6 +23,20 @@ namespace Consolification.Core
         #endregion
 
         #region Public Properties
+        public int Count
+        {
+            get
+            {
+                return this.argumentInfos.Count;
+            }
+        }
+        public ArgumentInfo this[int index]
+        {
+            get
+            {
+                return this.argumentInfos[index];
+            }
+        }
         /// <summary>
         /// Gets an array of ArgumentInfo for which all elements are top parent argument
         /// (meaning that those arguments are not children arguments).
@@ -148,6 +162,8 @@ namespace Consolification.Core
         {
             return GetParent(this.argumentInfos, parentId);
         }
+
+     
         #endregion
 
         #region  IEnumerable<ArgumentInfo> implementation
@@ -175,7 +191,7 @@ namespace Consolification.Core
 
             foreach (ArgumentInfo curArgInfo in argumentInfos)
             {
-                argInfo = GetParent(curArgInfo.Children, parentId);
+                argInfo = GetParent(curArgInfo.Children.argumentInfos, parentId);
                 if (argInfo != null)
                     return argInfo;
             }

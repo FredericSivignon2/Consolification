@@ -55,7 +55,7 @@ namespace Consolification.Core
             try
             {
                 ProcessClassAttributes(type, args);
-                RegisterAttributesFromClassProperties(type);
+                RegisterAttributesFromClassProperties(type, this.argumentsInfo);
                 SetPropertiesValuesFromAttributes(args);
 
                 ArgumentsParserValidator validator = new ArgumentsParserValidator(this, data);
@@ -91,7 +91,7 @@ namespace Consolification.Core
             MainJob = type.GetCustomAttribute<CIJobAttribute>();
         }
 
-        private void RegisterAttributesFromClassProperties(Type type)
+        private static void RegisterAttributesFromClassProperties(Type type, ArgumentInfoCollection argumentsInfo)
         {
             PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
@@ -128,6 +128,14 @@ namespace Consolification.Core
                 ainfo.ParentArgument = pinfo.GetCustomAttribute<CIParentArgumentAttribute>();
                 ainfo.FileContent = pinfo.GetCustomAttribute<CIFileContentAttribute>();
                 ainfo.Password = pinfo.GetCustomAttribute<CIPasswordAttribute>();
+
+                if (pinfo.PropertyType.IsUserType())
+                {
+                    ainfo.UserType = true;
+                    ainfo.UserTypeInstance = Activator.CreateInstance(pinfo.PropertyType);
+
+
+                }
 
                 argumentsInfo.Add(ainfo);
             }
