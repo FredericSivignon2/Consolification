@@ -52,7 +52,9 @@
     <Compile Include="ArgumentsParserTest.cs" />
     <Compile Include="Mocks\BadJobDataMock.cs" />
     <Compile Include="Mocks\Child1DataMock.cs" />
+    <Compile Include="Mocks\Child2DataMock.cs" />
     <Compile Include="Mocks\ComplexHierarchyDataMock.cs" />
+    <Compile Include="Mocks\ComplexParentDataMock.cs" />
     <Compile Include="Mocks\ConsoleWrapperMock.cs" />
     <Compile Include="Mocks\JobDataMock.cs" />
     <Compile Include="Mocks\DuplicateDataMock.cs" />
@@ -60,7 +62,7 @@
     <Compile Include="Mocks\HelpDataMock.cs" />
     <Compile Include="Mocks\InvalidDataMock.cs" />
     <Compile Include="Mocks\MandatoryDataMock.cs" />
-    <Compile Include="Mocks\ParentDataMock.cs" />
+    <Compile Include="Mocks\SimpleParentDataMock.cs" />
     <Compile Include="Mocks\SimpleArgumentDataMock.cs" />
     <Compile Include="Mocks\SimpleHierarchyDataMock.cs" />
     <Compile Include="Mocks\JobMock.cs" />

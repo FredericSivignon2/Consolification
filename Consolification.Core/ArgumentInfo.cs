@@ -52,6 +52,17 @@ namespace Consolification.Core
         public object UserTypeInstance { get; set; }
 
         public ArgumentInfoCollection Children { get; } = new ArgumentInfoCollection();
+
+        public string Name
+        {
+            get
+            {
+                if (NamedArgument != null)
+                    return NamedArgument.Name;
+
+                return string.Empty;
+            }
+        }
         #endregion
 
         #region Overridden
