@@ -11,7 +11,12 @@ namespace Consolification.Core
     public class MissingParentArgumentException : Exception
     {
         public MissingParentArgumentException(string parentArgument) 
-            : base(string.Format("The parent argument {0} is missing.", parentArgument))
+            : base(string.Format("The parent argument '{0}' is missing.", parentArgument))
+        {
+        }
+
+        public MissingParentArgumentException(string parentArgument, string childArgument)
+            : base(string.Format("The parent argument '{0}' is missing for the argument '{1}'.", parentArgument, childArgument))
         {
         }
 

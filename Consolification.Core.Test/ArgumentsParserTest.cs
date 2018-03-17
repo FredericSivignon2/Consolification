@@ -497,7 +497,7 @@ namespace Consolification.Core.Test
 			}
 			catch (MissingParentArgumentException e)
 			{
-				Assert.IsTrue(e.Message.Contains("The parent argument /TOP is missing."));
+				Assert.IsTrue(e.Message.Contains("The parent argument '/TOP' is missing."));
 			}
 		}
 
@@ -516,7 +516,7 @@ namespace Consolification.Core.Test
 			}
 			catch (MissingParentArgumentException e)
 			{
-				Assert.IsTrue(e.Message.Contains("The parent argument /MID is missing."));
+				Assert.IsTrue(e.Message.Contains("The parent argument '/MID' is missing."));
 			}
 		}
 
@@ -904,6 +904,174 @@ namespace Consolification.Core.Test
             catch (MissingMandatoryArgumentException e)
             {
                 Assert.IsTrue(e.Message == "The mandatory argument /D2 is missing.");
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_EmbeddedChild1DataSet()
+        {
+            string[] args = new string[] { "/PARENTVALUE", "1", "/CHILD1", "/CHILDVALUE1", "abcdef" };
+            SimpleParentDataMock data = new SimpleParentDataMock();
+            Assert.IsNull(data.Child1);
+                       
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+
+            Assert.IsTrue(data.ParentValue == 1);
+            Assert.IsNotNull(data.Child1);
+            Assert.IsTrue(data.Child1.ChildValue1 == "abcdef");
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_EmbeddedChild1DataNotSet()
+        {
+            string[] args = new string[] { "/PARENTVALUE", "1" };
+            SimpleParentDataMock data = new SimpleParentDataMock();
+            Assert.IsNull(data.Child1);
+
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+
+            Assert.IsTrue(data.ParentValue == 1);
+            Assert.IsNull(data.Child1);
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_EmbeddedChild1DataMissingChild1()
+        {
+            string[] args = new string[] { "/PARENTVALUE", "1", "/CHILDVALUE1", "abcdef" };
+            SimpleParentDataMock data = new SimpleParentDataMock();
+            Assert.IsNull(data.Child1);
+
+            try
+            {
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
+                Assert.Fail("A MissingParentArgumentException must be thrown.");
+            }
+            catch (MissingParentArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "The parent argument '/CHILD1' is missing for the argument '/CHILDVALUE1'.");
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_ComplexParentDataAllSet()
+        {
+            string[] args = new string[] { "/CHILD2", "Hello!", "/CHILD1", "/CHILDVALUE1", "tuvwxyz", "/SECONDARG", "123456" };
+            ComplexParentDataMock data = new ComplexParentDataMock();
+            Assert.IsNull(data.Child2Data);
+
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+
+            Assert.IsNotNull(data.Child2Data);
+            Assert.IsTrue(data.Child2Data.Child2Data == "Hello!");
+            Assert.IsNotNull(data.Child2Data.Child1Data);
+            Assert.IsTrue(data.Child2Data.Child1Data.ChildValue1 == "tuvwxyz");
+            Assert.IsTrue(data.SecondArg == "123456");
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_ComplexParentDataOnlyChild2()
+        {
+            string[] args = new string[] { "/CHILD2", "Hello!" };
+            ComplexParentDataMock data = new ComplexParentDataMock();
+            Assert.IsNull(data.Child2Data);
+
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+
+            Assert.IsNotNull(data.Child2Data);
+            Assert.IsTrue(data.Child2Data.Child2Data == "Hello!");
+            Assert.IsNull(data.Child2Data.Child1Data);
+            Assert.IsNull(data.SecondArg);
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_ComplexParentDataOnlyChild2AndChild1()
+        {
+            string[] args = new string[] { "/CHILD2", "Hello!", "/CHILD1" };
+            ComplexParentDataMock data = new ComplexParentDataMock();
+            Assert.IsNull(data.Child2Data);
+
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+
+            Assert.IsNotNull(data.Child2Data);
+            Assert.IsTrue(data.Child2Data.Child2Data == "Hello!");
+            Assert.IsNotNull(data.Child2Data.Child1Data);
+            Assert.IsNull(data.Child2Data.Child1Data.ChildValue1);
+            Assert.IsNull(data.SecondArg);
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_ComplexParentDataSecondArgOnly()
+        {
+            string[] args = new string[] { "/SECONDARG", "789" };
+            ComplexParentDataMock data = new ComplexParentDataMock();
+            
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+
+            Assert.IsNull(data.Child2Data);
+            Assert.IsTrue(data.SecondArg == "789");
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_ComplexParentDataChild1Only()
+        {
+            string[] args = new string[] { "/CHILD1" };
+            ComplexParentDataMock data = new ComplexParentDataMock();
+            Assert.IsNull(data.Child2Data);
+
+            ArgumentsParser parser = new ArgumentsParser();
+            try
+            {
+                parser.Parse(data, args);
+                Assert.Fail("A MissingParentArgumentException exception must be thrown.");
+            }
+            catch (MissingParentArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "The parent argument '/CHILD2' is missing for the argument '/CHILD1'.");
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_ComplexParentDataChildValue1Only()
+        {
+            string[] args = new string[] { "/CHILDVALUE1" };
+            ComplexParentDataMock data = new ComplexParentDataMock();
+            Assert.IsNull(data.Child2Data);
+
+            ArgumentsParser parser = new ArgumentsParser();
+            try
+            {
+                parser.Parse(data, args);
+                Assert.Fail("A MissingParentArgumentException exception must be thrown.");
+            }
+            catch (MissingParentArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "The parent argument '/CHILD1' is missing for the argument '/CHILDVALUE1'.");
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_ComplexParentDataUnknowArg()
+        {
+            string[] args = new string[] { "--reset" };
+            ComplexParentDataMock data = new ComplexParentDataMock();
+            Assert.IsNull(data.Child2Data);
+
+            ArgumentsParser parser = new ArgumentsParser();
+            try
+            {
+                parser.Parse(data, args);
+                Assert.Fail("A UnknownArgumentException exception must be thrown.");
+            }
+            catch (UnknownArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "Unknown argument --reset.");
             }
         }
 

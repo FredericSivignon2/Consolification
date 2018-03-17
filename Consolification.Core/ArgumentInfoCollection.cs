@@ -23,6 +23,20 @@ namespace Consolification.Core
         #endregion
 
         #region Public Properties
+        public int Count
+        {
+            get
+            {
+                return this.argumentInfos.Count;
+            }
+        }
+        public ArgumentInfo this[int index]
+        {
+            get
+            {
+                return this.argumentInfos[index];
+            }
+        }
         /// <summary>
         /// Gets an array of ArgumentInfo for which all elements are top parent argument
         /// (meaning that those arguments are not children arguments).
@@ -74,6 +88,11 @@ namespace Consolification.Core
             this.argumentInfos.Add(argInfo);
         }
 
+        public void AddRange(ArgumentInfoCollection items)
+        {
+            this.argumentInfos.AddRange(items.argumentInfos);
+        }
+
         /// <summary>
         /// Gets a boolean value that indicates whether this instance contains an argument
         /// for which the name is equal to the specified string.
@@ -89,6 +108,32 @@ namespace Consolification.Core
 
                 return argInfo.NamedArgument.Names.Contains<string>(name);
             });
+        }
+
+        /// <summary>
+        /// Gets a boolean value that indicates whether this instance contains an argument
+        /// for which the name is equal to the specified string. Also look into
+        /// children.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public ArgumentInfo GetParentArgument(string name)
+        {
+            return GetParentArgument(name, this.argumentInfos);   
+        }
+
+        private static ArgumentInfo GetParentArgument(string name, List<ArgumentInfo> items)
+        {
+            foreach (ArgumentInfo parentArgInfo in items)
+            {
+                if (parentArgInfo.Children.Contains(name))
+                    return parentArgInfo;
+
+                ArgumentInfo foundArgInfo = GetParentArgument(name, parentArgInfo.Children.argumentInfos);
+                if (foundArgInfo != null)
+                    return foundArgInfo;
+            }
+            return null;
         }
 
         /// <summary>
@@ -148,6 +193,8 @@ namespace Consolification.Core
         {
             return GetParent(this.argumentInfos, parentId);
         }
+
+     
         #endregion
 
         #region  IEnumerable<ArgumentInfo> implementation
@@ -175,7 +222,7 @@ namespace Consolification.Core
 
             foreach (ArgumentInfo curArgInfo in argumentInfos)
             {
-                argInfo = GetParent(curArgInfo.Children, parentId);
+                argInfo = GetParent(curArgInfo.Children.argumentInfos, parentId);
                 if (argInfo != null)
                     return argInfo;
             }

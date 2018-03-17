@@ -14,6 +14,7 @@ namespace Consolification.Core
     {
         private ArgumentInfoCollection argumentsInfo = new ArgumentInfoCollection();
         private object data;
+        private int currentArgIndex = 0;
         private int currentSimpleArgumentIndex = 0;
 
         #region Public Properties
@@ -55,8 +56,8 @@ namespace Consolification.Core
             try
             {
                 ProcessClassAttributes(type, args);
-                RegisterAttributesFromClassProperties(type);
-                SetPropertiesValuesFromAttributes(args);
+                RegisterAttributesFromClassProperties(type, this.argumentsInfo);
+                SetPropertiesValuesFromAttributes(args, this.argumentsInfo, data);
 
                 ArgumentsParserValidator validator = new ArgumentsParserValidator(this, data);
                 validator.Validate();
@@ -91,7 +92,7 @@ namespace Consolification.Core
             MainJob = type.GetCustomAttribute<CIJobAttribute>();
         }
 
-        private void RegisterAttributesFromClassProperties(Type type)
+        private static void RegisterAttributesFromClassProperties(Type type, ArgumentInfoCollection argumentsInfo)
         {
             PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
@@ -129,18 +130,27 @@ namespace Consolification.Core
                 ainfo.FileContent = pinfo.GetCustomAttribute<CIFileContentAttribute>();
                 ainfo.Password = pinfo.GetCustomAttribute<CIPasswordAttribute>();
 
+                if (pinfo.PropertyType.IsUserType())
+                {
+                    ainfo.UserType = true;
+                    ainfo.UserTypeInstance = Activator.CreateInstance(pinfo.PropertyType);
+
+                    ArgumentInfoCollection childrenInfo = new ArgumentInfoCollection();
+                    RegisterAttributesFromClassProperties(pinfo.PropertyType, childrenInfo);
+                    ainfo.Children.AddRange(childrenInfo);
+                }
+
                 argumentsInfo.Add(ainfo);
             }
         }
 
-        private void SetPropertiesValuesFromAttributes(string[] args)
+        private void SetPropertiesValuesFromAttributes(string[] args, ArgumentInfoCollection argumentsInfo, object data)
         {
-            int index = 0;
             string argValue = "";
 
-            while (index < args.Length)
+            while (this.currentArgIndex < args.Length)
             {
-                string arg = args[index];
+                string arg = args[this.currentArgIndex];
                 ArgumentInfo currentInfo = null;
 
                 // If the current argument is not registered as a valid argument name
@@ -148,7 +158,20 @@ namespace Consolification.Core
                 {
                     currentInfo = argumentsInfo.GetSimpleArgument(currentSimpleArgumentIndex);
                     if (currentInfo == null)
-                        throw new UnknownArgumentException(arg);
+                    {
+                        ArgumentInfo argInfo = this.argumentsInfo.GetParentArgument(arg);
+                        if (argInfo != null)
+                        {
+                            throw new MissingParentArgumentException(argInfo.Name, arg);
+                        }
+
+                        if (argumentsInfo == this.argumentsInfo)
+                            throw new UnknownArgumentException(arg);
+
+                        // Not at this level, looks again at upper level
+                        this.currentArgIndex--;
+                        return;
+                    }
 
                     argValue = arg;
                     currentSimpleArgumentIndex++;
@@ -165,22 +188,33 @@ namespace Consolification.Core
                     }
                     if (currentInfo.PInfo == null)
                     {
-                        index++;
+                        this.currentArgIndex++;
                         continue;
                     }
 
-                    if (Type.GetTypeCode(currentInfo.PInfo.PropertyType) != TypeCode.Boolean)
+                    if (Type.GetTypeCode(currentInfo.PInfo.PropertyType) != TypeCode.Boolean &&
+                        currentInfo.UserType == false)
                     {
-                        if (index >= args.Length - 1)
+                        if (this.currentArgIndex >= args.Length - 1)
                             throw new ArgumentException("Missing value for the argument {0}", arg);
 
-                        argValue = args[++index];
+                        argValue = args[++this.currentArgIndex];
                     }
                 }
 
                 currentInfo.Found = true;
-                currentInfo.SetPropertyValue(this.data, argValue);
-                index++;
+                if (currentInfo.UserType)
+                {
+                    this.currentArgIndex++;
+                    SetPropertiesValuesFromAttributes(args, currentInfo.Children, currentInfo.UserTypeInstance);
+
+                    currentInfo.PInfo.SetValue(data, currentInfo.UserTypeInstance);
+                }
+                else
+                {
+                    currentInfo.SetPropertyValue(data, argValue);
+                }
+                this.currentArgIndex++;
             }
         }
         #endregion
