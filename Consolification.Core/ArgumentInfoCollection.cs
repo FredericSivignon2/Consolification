@@ -110,6 +110,26 @@ namespace Consolification.Core
             });
         }
 
+        public bool DeepContains(string name)
+        {
+            return DeepContains(name, this.argumentInfos);
+        }
+
+        private bool DeepContains(string name, List<ArgumentInfo> args)
+        {
+            return args.Exists(argInfo =>
+            {
+                if (argInfo.NamedArgument != null)
+                {
+                    if (argInfo.NamedArgument.Names.Contains<string>(name))
+                        return true;
+                }
+                if (argInfo.Children.Count > 0)
+                    return DeepContains(name, argInfo.Children.argumentInfos);
+                else
+                    return false;
+            });
+        }
         /// <summary>
         /// Gets a boolean value that indicates whether this instance contains an argument
         /// for which the name is equal to the specified string. Also look into
@@ -193,8 +213,15 @@ namespace Consolification.Core
         {
             return GetParent(this.argumentInfos, parentId);
         }
+        #endregion
 
-     
+        #region Overridden
+        public override string ToString()
+        {
+            return string.Format("Count = {0} (Hierarchy count: {1}", this.argumentInfos.Count,
+                this.hierarchy == null ? "N/A" : this.hierarchy.Count.ToString());
+        }
+
         #endregion
 
         #region  IEnumerable<ArgumentInfo> implementation

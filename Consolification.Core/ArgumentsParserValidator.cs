@@ -67,14 +67,14 @@ namespace Consolification.Core
                     {
                         ArgumentInfo parentArgInfo = GetParent(argumentsInfo, argumentInfo);
                         // If the parent has been found,
-                        if (parentArgInfo.Found && argumentInfo.MandatoryArguments != null)
+                        if (parentArgInfo.Found && argumentInfo.MandatoryArgument != null)
                         {
                             ProcessMandatoryMissing(argumentInfo);
                         }
                     }
                     else // The current argument is not a child argument
                     {
-                        if (argumentInfo.Found == false && argumentInfo.MandatoryArguments != null)
+                        if (argumentInfo.Found == false && argumentInfo.MandatoryArgument != null)
                         {
                             ProcessMandatoryMissing(argumentInfo);
                             
@@ -99,11 +99,11 @@ namespace Consolification.Core
         
         private void ProcessMandatoryMissing(ArgumentInfo argumentInfo)
         {
-            if (argumentInfo.MandatoryArguments.PromptUser)
+            if (argumentInfo.MandatoryArgument.PromptUser)
             {
-                if (!string.IsNullOrEmpty(argumentInfo.MandatoryArguments.PromptMessage))
+                if (!string.IsNullOrEmpty(argumentInfo.MandatoryArgument.PromptMessage))
                 {
-                    this.parser.Console.Write(argumentInfo.MandatoryArguments.PromptMessage);
+                    this.parser.Console.Write(argumentInfo.MandatoryArgument.PromptMessage);
                 }
                 else
                 {

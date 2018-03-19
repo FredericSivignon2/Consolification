@@ -122,7 +122,7 @@ namespace Consolification.Core
                 }
                
                 ainfo.PInfo = pinfo;
-                ainfo.MandatoryArguments = pinfo.GetCustomAttribute<CIMandatoryArgumentAttribute>();
+                ainfo.MandatoryArgument = pinfo.GetCustomAttribute<CIMandatoryArgumentAttribute>();
                 ainfo.ArgumentBoundary = pinfo.GetCustomAttribute<CIArgumentBoundaryAttribute>();
                 ainfo.Job = pinfo.GetCustomAttribute<CIJobAttribute>();
                 ainfo.ChildArgument = pinfo.GetCustomAttribute<CIChildArgumentAttribute>();
@@ -160,9 +160,12 @@ namespace Consolification.Core
                     if (currentInfo == null)
                     {
                         ArgumentInfo argInfo = this.argumentsInfo.GetParentArgument(arg);
-                        if (argInfo != null)
+                        if (argInfo != null && argInfo.Found == false)
                         {
-                            throw new MissingParentArgumentException(argInfo.Name, arg);
+                            if (args.Contains<string>(argInfo.Name))
+                                throw new WrongArgumentPositionException(argInfo.Name, arg);
+                            else
+                                throw new MissingParentArgumentException(argInfo.Name, arg);
                         }
 
                         if (argumentsInfo == this.argumentsInfo)
@@ -171,6 +174,14 @@ namespace Consolification.Core
                         // Not at this level, looks again at upper level
                         this.currentArgIndex--;
                         return;
+                    }
+                    else
+                    {
+                        // For a simple argument, the value cannot be the name of another defined argument.
+                        if (this.argumentsInfo.DeepContains(arg) && currentInfo.MandatoryArgument != null)
+                        {
+                            throw new MissingMandatoryArgumentException(currentInfo.SimpleArgument.HelpText);
+                        }
                     }
 
                     argValue = arg;
@@ -198,16 +209,25 @@ namespace Consolification.Core
                         if (this.currentArgIndex >= args.Length - 1)
                             throw new ArgumentException("Missing value for the argument {0}", arg);
 
-                        argValue = args[++this.currentArgIndex];
+                        // If the value is a known argument, it means the value is missing!
+                        string value = args[++this.currentArgIndex];
+                        if (this.argumentsInfo.DeepContains(value))
+                        {
+                            throw new MissingArgumentValueException(arg);
+                        }
+
+                        argValue = value;
                     }
                 }
 
                 currentInfo.Found = true;
+                // If the current property info represent a user defined type
                 if (currentInfo.UserType)
                 {
                     this.currentArgIndex++;
+                    // Set values for this user defined type
                     SetPropertiesValuesFromAttributes(args, currentInfo.Children, currentInfo.UserTypeInstance);
-
+                    // Associates the user defined type instance to the parent class instance
                     currentInfo.PInfo.SetValue(data, currentInfo.UserTypeInstance);
                 }
                 else

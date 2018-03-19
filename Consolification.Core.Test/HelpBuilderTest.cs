@@ -37,6 +37,21 @@ namespace Consolification.Core.Test
             string[] args = new string[] { "/?" };
             ComplexHierarchyDataMock data = new ComplexHierarchyDataMock();
             ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+
+            HelpBuilder builder = new HelpBuilder(parser);
+            string[] lines = builder.GetHelpLines();
+
+            Assert.IsNotNull(lines);
+        }
+
+        [TestMethod]
+        public void HelpBuilder_GetHelpLines_OnComplexParentData()
+        {
+            string[] args = new string[] { "/?" };
+            ComplexParentDataMock data = new ComplexParentDataMock();
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
 
             HelpBuilder builder = new HelpBuilder(parser);
             string[] lines = builder.GetHelpLines();

@@ -478,7 +478,7 @@ namespace Consolification.Core.Test
 			}
 			catch (MissingMandatoryArgumentException e)
 			{
-				Assert.IsTrue(e.Message.Contains("The mandatory argument /CHILD2 is missing."));
+				Assert.IsTrue(e.Message.Contains("The mandatory argument '/CHILD2' is missing."));
 			}
 		}
 
@@ -903,7 +903,7 @@ namespace Consolification.Core.Test
             }
             catch (MissingMandatoryArgumentException e)
             {
-                Assert.IsTrue(e.Message == "The mandatory argument /D2 is missing.");
+                Assert.IsTrue(e.Message == "The mandatory argument '/D2' is missing.");
             }
         }
 
@@ -970,6 +970,25 @@ namespace Consolification.Core.Test
             Assert.IsNotNull(data.Child2Data.Child1Data);
             Assert.IsTrue(data.Child2Data.Child1Data.ChildValue1 == "tuvwxyz");
             Assert.IsTrue(data.SecondArg == "123456");
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_ComplexParentDataAllSet_WrongOrder()
+        {
+            string[] args = new string[] { "/CHILD1", "/CHILDVALUE1", "tuvwxyz", "/CHILD2", "Hello!", "/SECONDARG", "123456" };
+            ComplexParentDataMock data = new ComplexParentDataMock();
+            Assert.IsNull(data.Child2Data);
+
+            ArgumentsParser parser = new ArgumentsParser();
+            try
+            {
+                parser.Parse(data, args);
+                Assert.Fail("A WrongArgumentPositionException exception must be thrown.");
+            }
+            catch (WrongArgumentPositionException e)
+            {
+                Assert.IsTrue(e.Message == "The argument '/CHILD2' must be placed before the argument '/CHILD1'.");
+            }
         }
 
         [TestMethod]
@@ -1072,6 +1091,43 @@ namespace Consolification.Core.Test
             catch (UnknownArgumentException e)
             {
                 Assert.IsTrue(e.Message == "Unknown argument --reset.");
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_ComplexParentDataMandatory()
+        {
+            string[] args = new string[] { "/CHILD2", "/CHILD1", "/CHILDVALUE1", "tuvwxyz", "/SECONDARG", "123456" };
+            ComplexParentDataMock data = new ComplexParentDataMock();
+            Assert.IsNull(data.Child2Data);
+
+            ArgumentsParser parser = new ArgumentsParser();
+            try
+            {
+                parser.Parse(data, args);
+                Assert.Fail("A UnknownArgumentException exception must be thrown.");
+            }
+            catch (MissingMandatoryArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "The mandatory argument 'child2data' is missing.");
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_MissingMandatorySimpleArgument()
+        {
+            string[] args = new string[] { "-format", "test" };
+            HelpDataMock data = new HelpDataMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            try
+            {
+                parser.Parse(data, args);
+                Assert.Fail("A UnknownArgumentException exception must be thrown.");
+            }
+            catch (MissingMandatoryArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "The mandatory argument 'source' is missing.");
             }
         }
 

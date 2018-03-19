@@ -10,6 +10,7 @@ namespace Consolification.Core.Test.Mocks
     [CIHelpArgument("/?", "This is the child 2.")]
     public class Child2DataMock
     {
+        [CIMandatoryArgument]
         [CISimpleArgument(0, "child2data", "Data for child 2.")]
         public string Child2Data { get; private set; }
 

@@ -38,7 +38,7 @@ namespace Consolification.Core
         public CISimpleArgumentAttribute SimpleArgument { get; private set; }
         public CINamedArgumentAttribute NamedArgument { get; private set; }
         public PropertyInfo PInfo { get; set; }
-        public CIMandatoryArgumentAttribute MandatoryArguments { get; set; }
+        public CIMandatoryArgumentAttribute MandatoryArgument { get; set; }
         public CIArgumentBoundaryAttribute ArgumentBoundary { get; set; }
         public CIJobAttribute Job { get; set; }
         public CIChildArgumentAttribute ChildArgument { get; set; }

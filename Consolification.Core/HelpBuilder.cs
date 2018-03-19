@@ -61,7 +61,7 @@ namespace Consolification.Core
             foreach (ArgumentInfo argInfo in hierarchy)
             {
                 usage.Append(" ");
-                if (argInfo.MandatoryArguments != null)
+                if (argInfo.MandatoryArgument != null)
                 {
                     if (argInfo.SimpleArgument != null)
                         usage.Append(argInfo.SimpleArgument.HelpText);

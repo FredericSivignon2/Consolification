@@ -11,7 +11,7 @@ namespace Consolification.Core
     public class MissingMandatoryArgumentException : Exception
     {
         public MissingMandatoryArgumentException(string argument) 
-            : base(string.Format("The mandatory argument {0} is missing.", argument))
+            : base(string.Format("The mandatory argument '{0}' is missing.", argument))
         {
         }
 
