@@ -7,7 +7,7 @@ namespace Consolification.QuickExample
     [CIJob(typeof(MessageJob))]
     public class Data
     {
-        [CISimpleArgument(0, "message", "The message to display.")]
+        [CISimpleArgument("message", "The message to display.")]
         [CIMandatoryArgument]
         public string Message { get; private set; }
     }

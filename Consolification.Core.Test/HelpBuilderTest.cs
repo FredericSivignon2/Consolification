@@ -57,6 +57,14 @@ namespace Consolification.Core.Test
             string[] lines = builder.GetHelpLines();
 
             Assert.IsNotNull(lines);
+            Assert.IsTrue(lines[0] == "Usage: Consolification.Core [/?] [/CHILD2 child2data [/CHILD1 [/CHILDVALUE1 <value>]]] [/SECONDARG <value>]");
+            Assert.IsTrue(lines[1] == "");
+            Assert.IsTrue(lines[2] == "/?         This is a complex example of inner class support.");
+            Assert.IsTrue(lines[3] == "/CHILD2    Child 2");
+            Assert.IsTrue(lines[4] == "    child2data   Data for child 2.");
+            Assert.IsTrue(lines[5] == "    /CHILD1    Child 1 from child 2.");
+            Assert.IsTrue(lines[6] == "        /CHILDVALUE1 This is the child value 1.");
+            Assert.IsTrue(lines[7] == "/SECONDARG This is a second argument.");
         }
     }
 }

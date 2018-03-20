@@ -660,6 +660,23 @@ namespace Consolification.Core.Test
 		}
 
         [TestMethod]
+        public void ArgumentsParser_UnknownArgumentInChild()
+        {
+            string[] args = new string[] { "/CHILD2", "abcdef", "/YES" };
+            ComplexParentDataMock data = new ComplexParentDataMock();
+            ArgumentsParser parser = new ArgumentsParser();
+            try
+            {
+                parser.Parse(data, args);
+                Assert.Fail("A UnknownArgumentException exception must be thrown!");
+            }
+            catch (UnknownArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "Unknown argument /YES.");
+            }
+        }
+
+        [TestMethod]
         public void ArgumentsParser_FileContentAttribute_OK()
         {
             string filePath = GetDummyTextFilePath();
@@ -988,6 +1005,25 @@ namespace Consolification.Core.Test
             catch (WrongArgumentPositionException e)
             {
                 Assert.IsTrue(e.Message == "The argument '/CHILD2' must be placed before the argument '/CHILD1'.");
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_ComplexParentDataAllSet_WrongOrder2()
+        {
+            string[] args = new string[] { "/CHILD2", "/CHILD1", "Hello!", "/CHILDVALUE1", "tuvwxyz", "/SECONDARG", "123456" };
+            ComplexParentDataMock data = new ComplexParentDataMock();
+            Assert.IsNull(data.Child2Data);
+
+            ArgumentsParser parser = new ArgumentsParser();
+            try
+            {
+                parser.Parse(data, args);
+                Assert.Fail("A WrongArgumentPositionException exception must be thrown.");
+            }
+            catch (Exception e)
+            {
+                Assert.IsTrue(e.Message == "Unknown argument Hello!.");
             }
         }
 

@@ -13,7 +13,7 @@ namespace Consolification.Core.Test.Mocks
         [CINamedArgument("/CHILD2", "Child 2")]
         public Child2DataMock Child2Data { get; private set; }
 
-        [CINamedArgument("/SECONDARG", "This is a second argument.")]
+        [CINamedArgument("/SECONDARG", "This is a second argument.", "value")]
         public string SecondArg { get; private set; }
     }
 }

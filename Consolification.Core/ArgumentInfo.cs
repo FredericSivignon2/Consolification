@@ -17,12 +17,15 @@ namespace Consolification.Core
     public class ArgumentInfo
     {
         #region Constructors
-        public ArgumentInfo(CISimpleArgumentAttribute argument)
+        public ArgumentInfo(CISimpleArgumentAttribute argument, int index)
         {
+            if (index < 0)
+                throw new ArgumentException("The index must be greater or equal to zero.");
             if (argument == null)
                 throw new ArgumentNullException("argument");
 
             SimpleArgument = argument;
+            SimpleArgumentIndex = index;
         }
 
         public ArgumentInfo(CINamedArgumentAttribute argument)
@@ -36,6 +39,7 @@ namespace Consolification.Core
 
         #region Public Properties
         public CISimpleArgumentAttribute SimpleArgument { get; private set; }
+        public int SimpleArgumentIndex { get; private set; }
         public CINamedArgumentAttribute NamedArgument { get; private set; }
         public PropertyInfo PInfo { get; set; }
         public CIMandatoryArgumentAttribute MandatoryArgument { get; set; }

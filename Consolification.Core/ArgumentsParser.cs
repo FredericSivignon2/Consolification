@@ -15,8 +15,7 @@ namespace Consolification.Core
         private ArgumentInfoCollection argumentsInfo = new ArgumentInfoCollection();
         private object data;
         private int currentArgIndex = 0;
-        private int currentSimpleArgumentIndex = 0;
-
+        
         #region Public Properties
         public ArgumentInfoCollection ArgumentsInfo
         {
@@ -57,7 +56,7 @@ namespace Consolification.Core
             {
                 ProcessClassAttributes(type, args);
                 RegisterAttributesFromClassProperties(type, this.argumentsInfo);
-                SetPropertiesValuesFromAttributes(args, this.argumentsInfo, data);
+                SetPropertiesValuesFromArguments(args, this.argumentsInfo, data);
 
                 ArgumentsParserValidator validator = new ArgumentsParserValidator(this, data);
                 validator.Validate();
@@ -95,6 +94,7 @@ namespace Consolification.Core
         private static void RegisterAttributesFromClassProperties(Type type, ArgumentInfoCollection argumentsInfo)
         {
             PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            int simpleArgumentIndex = 0;
 
             foreach (PropertyInfo pinfo in properties)
             {
@@ -118,7 +118,7 @@ namespace Consolification.Core
                 }
                 else
                 {
-                    ainfo = new ArgumentInfo(csaa);
+                    ainfo = new ArgumentInfo(csaa, simpleArgumentIndex++);
                 }
                
                 ainfo.PInfo = pinfo;
@@ -144,9 +144,10 @@ namespace Consolification.Core
             }
         }
 
-        private void SetPropertiesValuesFromAttributes(string[] args, ArgumentInfoCollection argumentsInfo, object data)
+        private void SetPropertiesValuesFromArguments(string[] args, ArgumentInfoCollection argumentsInfo, object data)
         {
             string argValue = "";
+            int currentSimpleArgumentIndex = 0;
 
             while (this.currentArgIndex < args.Length)
             {
@@ -154,22 +155,28 @@ namespace Consolification.Core
                 ArgumentInfo currentInfo = null;
 
                 // If the current argument is not registered as a valid argument name
+                // within the current argument information collection...
                 if (argumentsInfo.Contains(arg) == false)
                 {
+                    // ... Try to see if there is a simple argument for this collection
                     currentInfo = argumentsInfo.GetSimpleArgument(currentSimpleArgumentIndex);
                     if (currentInfo == null)
                     {
+                        // If not, search for the parent argument
                         ArgumentInfo argInfo = this.argumentsInfo.GetParentArgument(arg);
                         if (argInfo != null && argInfo.Found == false)
                         {
+                            // There is a parent argument, but it has not been already found
                             if (args.Contains<string>(argInfo.Name))
                                 throw new WrongArgumentPositionException(argInfo.Name, arg);
                             else
                                 throw new MissingParentArgumentException(argInfo.Name, arg);
                         }
-
-                        if (argumentsInfo == this.argumentsInfo)
+                        // If the argument does not exist in the entire hierarchy...
+                        if (this.argumentsInfo.DeepContains(arg) == false)
+                        {
                             throw new UnknownArgumentException(arg);
+                        }
 
                         // Not at this level, looks again at upper level
                         this.currentArgIndex--;
@@ -226,7 +233,7 @@ namespace Consolification.Core
                 {
                     this.currentArgIndex++;
                     // Set values for this user defined type
-                    SetPropertiesValuesFromAttributes(args, currentInfo.Children, currentInfo.UserTypeInstance);
+                    SetPropertiesValuesFromArguments(args, currentInfo.Children, currentInfo.UserTypeInstance);
                     // Associates the user defined type instance to the parent class instance
                     currentInfo.PInfo.SetValue(data, currentInfo.UserTypeInstance);
                 }

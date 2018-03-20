@@ -11,7 +11,7 @@ namespace Consolification.Core.Test.Mocks
     public class Child2DataMock
     {
         [CIMandatoryArgument]
-        [CISimpleArgument(0, "child2data", "Data for child 2.")]
+        [CISimpleArgument("child2data", "Data for child 2.")]
         public string Child2Data { get; private set; }
 
         [CINamedArgument("/CHILD1", "Child 1 from child 2.")]

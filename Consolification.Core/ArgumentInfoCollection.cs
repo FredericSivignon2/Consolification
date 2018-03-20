@@ -50,32 +50,6 @@ namespace Consolification.Core
                 return hierarchy.ToArray<ArgumentInfo>();
             }
         }
-
-        /// <summary>
-        /// Gets the maximum length of argument names (the length of the string composed of all name associated with one argument
-        /// where each argument is separated by a comman then a space) found in this collection.
-        /// </summary>
-        public int MaxArgumentsStringLength
-        {
-            get
-            {
-                int max = 0;
-                foreach (ArgumentInfo argInfo in this.argumentInfos)
-                {
-                    if (argInfo.SimpleArgument != null)
-                    {
-                        if (argInfo.SimpleArgument.HelpText.Length > max)
-                            max = argInfo.SimpleArgument.HelpText.Length;
-                    }
-                    else
-                    {
-                        if (argInfo.NamedArgument.NamesLength > max)
-                            max = argInfo.NamedArgument.NamesLength;
-                    }
-                }
-                return max;
-            }
-        }
         #endregion
 
         #region Public Methods
@@ -182,7 +156,7 @@ namespace Consolification.Core
             return this.argumentInfos.Find(argInfo =>
             {
                 if (argInfo.SimpleArgument != null)
-                    return argInfo.SimpleArgument.PositionIndex == positionIndex;
+                    return argInfo.SimpleArgumentIndex == positionIndex;
 
                 return false;
             });

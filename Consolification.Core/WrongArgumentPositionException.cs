@@ -10,6 +10,11 @@ namespace Consolification.Core
     [Serializable]
     public class WrongArgumentPositionException : Exception
     {
+        public WrongArgumentPositionException(string argName)
+            : base(string.Format("The argument '{0}' must not be placed at this position.", argName))
+        {
+        }
+
         public WrongArgumentPositionException(string parentArgument, string childArgument)
             : base(string.Format("The argument '{0}' must be placed before the argument '{1}'.", parentArgument, childArgument))
         {

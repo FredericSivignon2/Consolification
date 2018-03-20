@@ -9,10 +9,10 @@ namespace Consolification.Core.Test.Mocks
 {
     public class SimpleArgumentDataMock
     {
-        [CISimpleArgument(0)]
+        [CISimpleArgument]
         public string Source { get; private set; }
 
-        [CISimpleArgument(1)]
+        [CISimpleArgument]
         public string Destination { get; private set; }
     }
 }

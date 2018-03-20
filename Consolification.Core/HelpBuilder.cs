@@ -10,7 +10,7 @@ namespace Consolification.Core
     class HelpBuilder
     {
         private ArgumentsParser parser;
-        
+
         public HelpBuilder(ArgumentsParser parser)
         {
             if (parser == null)
@@ -26,7 +26,7 @@ namespace Consolification.Core
             lines.AddRange(GetHeaderLines());
             lines.AddRange(GetArgumentsDescriptionLines());
 
-           
+
 
             return lines.ToArray();
         }
@@ -57,7 +57,7 @@ namespace Consolification.Core
         }
 
         private void AppendHeaderArgs(StringBuilder usage, ArgumentInfo[] hierarchy)
-        { 
+        {
             foreach (ArgumentInfo argInfo in hierarchy)
             {
                 usage.Append(" ");
@@ -79,7 +79,7 @@ namespace Consolification.Core
                     if (argInfo.SimpleArgument != null)
                         usage.AppendFormat("[{0}", argInfo.SimpleArgument.HelpText);
                     else
-                    {                        
+                    {
                         if (string.IsNullOrWhiteSpace(argInfo.NamedArgument.ValueHelpText))
                             usage.AppendFormat("[{0}", argInfo.NamedArgument.Names[0]);
                         else
@@ -89,7 +89,7 @@ namespace Consolification.Core
                     usage.Append("]");
                 }
             }
-            
+
         }
 
         private string GetExeName()
@@ -105,7 +105,7 @@ namespace Consolification.Core
         private string[] GetArgumentsDescriptionLines()
         {
             List<string> lines = new List<string>();
-            
+
             AddArgumentDescriptionLines(lines, this.parser.ArgumentsInfo.Hierarchy);
 
             return lines.ToArray();
@@ -113,10 +113,15 @@ namespace Consolification.Core
 
         private void AddArgumentDescriptionLines(List<string> lines, ArgumentInfo[] argsInfo)
         {
+            AddArgumentDescriptionLines(lines, argsInfo, "");
+        }
+
+        private void AddArgumentDescriptionLines(List<string> lines, ArgumentInfo[] argsInfo, string indent)
+        {
             if (argsInfo.Length == 0)
                 return;
 
-            int maxArgNamesLength = this.parser.ArgumentsInfo.MaxArgumentsStringLength;
+            int maxArgNamesLength = GetMaxArgumentsStringLength(argsInfo);
             foreach (ArgumentInfo argInfo in argsInfo)
             {
                 if (argInfo.SimpleArgument != null)
@@ -131,10 +136,10 @@ namespace Consolification.Core
                 }
                 string line = GetHelpLineFromArgument(argInfo, maxArgNamesLength);
 
-                lines.Add(line);
-                AddArgumentDescriptionLines(lines, argInfo.Children.ToArray<ArgumentInfo>());
+                lines.Add(indent + line);
+                AddArgumentDescriptionLines(lines, argInfo.Children.ToArray<ArgumentInfo>(), indent + "    ");
             }
-            
+
         }
 
         private string GetHelpLineFromArgument(ArgumentInfo argInfo, int maxArgNamesLength)
@@ -145,7 +150,7 @@ namespace Consolification.Core
                 builder.Append(argInfo.SimpleArgument.HelpText);
 
                 int spaceLeft = maxArgNamesLength - argInfo.SimpleArgument.HelpText.Length;
-                for (int i = 0; i < spaceLeft + 1; i++)
+                for (int i = 0; i < spaceLeft + 3; i++)
                 {
                     builder.Append(" ");
                 }
@@ -172,6 +177,30 @@ namespace Consolification.Core
             }
 
             return builder.ToString();
+        }
+
+        /// <summary>
+        /// Gets the maximum length of argument names (the length of the string composed of all name associated with one argument
+        /// where each argument is separated by a comman then a space) found in this collection.
+        /// </summary>
+        public int GetMaxArgumentsStringLength(ArgumentInfo[] argumentInfos)
+        {
+            int max = 0;
+            foreach (ArgumentInfo argInfo in argumentInfos)
+            {
+                if (argInfo.SimpleArgument != null)
+                {
+                    if (argInfo.SimpleArgument.HelpText.Length > max)
+                        max = argInfo.SimpleArgument.HelpText.Length;
+                }
+                else
+                {
+                    if (argInfo.NamedArgument.NamesLength > max)
+                        max = argInfo.NamedArgument.NamesLength;
+                }
+            }
+            return max;
+
         }
     }
 }
