@@ -1,6 +1,6 @@
 # Consolification
 
-Consolification is a little framework to help you to write C# Console Application, by managing argument parsing, help text generation and much more.
+Consolification is a little framework to help you to write C# Console Applications, by managing argument parsing, help text generation and much more.
 
 #### The main features are:
 
@@ -21,7 +21,7 @@ As soon as you have create the Console Application (with a minimum .NET 4.6.2 ve
 [CIJob(typeof(MessageJob))]
 public class Data
 {
-  [CISimpleArgument(0, "message", "The message to display.")]
+  [CISimpleArgument("message", "The message to display.")]
   public string Message { get; private set; }
 }
 ```
