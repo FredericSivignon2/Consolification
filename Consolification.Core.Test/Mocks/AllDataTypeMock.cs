@@ -20,7 +20,7 @@ namespace Consolification.Core.Test.Mocks
         public byte MyByte2 { get; set; }
 
         [CINamedArgument("/SB")]
-        public byte MySByte { get; set; }
+        public sbyte MySByte { get; set; }
 
         [CINamedArgument("/C1")]
         [CIArgumentBoundary("a", "z")]

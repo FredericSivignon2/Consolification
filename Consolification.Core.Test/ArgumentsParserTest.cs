@@ -750,6 +750,27 @@ namespace Consolification.Core.Test
         }
 
         [TestMethod]
+        public void ArgumentsParser_FileDoesNotExist()
+        {
+            string filePath = "C:\abcdefgh.xyz";
+            try
+            {
+                string[] args = new string[] { "/FILELINES", filePath };
+                FileDataMock data = new FileDataMock();
+
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
+                Assert.Fail("A FileNotFoundException exception must be thrown.");
+            }
+            catch (ArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "Invalid specified value for the argument /FILELINES.");
+                Assert.IsTrue(e.InnerException is FileNotFoundException);
+                Assert.IsTrue(e.InnerException.Message == "The file path specified with the argument '/FILELINES' does not exist.");
+            }
+        }
+
+        [TestMethod]
         public void ArgumentsParser_FileContentAttribute_String()
         {
             string filePath = GetDummyTextFilePath();
@@ -1165,6 +1186,49 @@ namespace Consolification.Core.Test
             {
                 Assert.IsTrue(e.Message == "The mandatory argument 'source' is missing.");
             }
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_HelpAloneWithMandatory()
+        {
+            string[] args = new string[] { "/?" };
+            Child2DataMock data = new Child2DataMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            
+            parser.Parse(data, args);
+            Assert.IsTrue(parser.MustDisplayHelp);
+        }
+
+        [TestMethod]
+        public void ArgumentParser_SimpleAndNamed()
+        {
+            string[] args = new string[] { "--max", "65535" };
+            SimpleAndNamesDataMock data = new SimpleAndNamesDataMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+            Assert.IsNull(data.Source);
+            Assert.IsTrue(data.Max == 65535);
+        }
+
+        [TestMethod]
+        public void ArgumentParser_SimpleMandatoryAndNamed_MissingMandatory()
+        {
+            string[] args = new string[] { "--max", "65535" };
+            SimpleMandatoryAndNamedDataMock data = new SimpleMandatoryAndNamedDataMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            try
+            {
+                parser.Parse(data, args);
+                Assert.Fail("A MissingMandatoryArgumentException exception must be thrown.");
+            }
+            catch (MissingMandatoryArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "The mandatory argument 'source' is missing.");
+            }
+
         }
 
         #region Private Methods

@@ -117,18 +117,18 @@ namespace Consolification.Core
                         case "System.String":
                             string password = this.parser.PasswordReader.GetPassword(argumentInfo.Password.PasswordChar);
                             argumentInfo.PInfo.SetValue(this.data, password);
-                            this.parser.Console.WriteLine("");
-                            return;
+                            break;
 
                         case "System.Security.SecureString":
                             SecureString spassword = this.parser.PasswordReader.GetSecurePassword(argumentInfo.Password.PasswordChar);
                             argumentInfo.PInfo.SetValue(this.data, spassword);
-                            this.parser.Console.WriteLine("");
-                            return;
+                            break;                            
 
                         default:
                             throw new InvalidArgumentTypeException(string.Format("The type associated with the argument '{0}' is not valid for a password.", argumentInfo.NamedArgument.Name));
-                    }                    
+                    }
+                    this.parser.Console.WriteLine("");
+                    return;
                 }
                 else
                 {
@@ -139,10 +139,15 @@ namespace Consolification.Core
                 }
             }
 
-            if (argumentInfo.SimpleArgument != null)
-                throw new MissingMandatoryArgumentException(argumentInfo.SimpleArgument.HelpText);
-            else
-                throw new MissingMandatoryArgumentException(argumentInfo.NamedArgument.Name);
+            // If an argument is missing and if we must not display the command help (in this
+            // case, mandatory arguments are not NEEDED!) throw an exception.
+            if (parser.MustDisplayHelp == false)
+            {
+                if (argumentInfo.SimpleArgument != null)
+                    throw new MissingMandatoryArgumentException(argumentInfo.SimpleArgument.HelpText);
+                else
+                    throw new MissingMandatoryArgumentException(argumentInfo.NamedArgument.Name);
+            }
         }
         #endregion
     }

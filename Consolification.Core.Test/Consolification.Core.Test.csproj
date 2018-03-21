@@ -62,6 +62,8 @@
     <Compile Include="Mocks\HelpDataMock.cs" />
     <Compile Include="Mocks\InvalidDataMock.cs" />
     <Compile Include="Mocks\MandatoryDataMock.cs" />
+    <Compile Include="Mocks\SimpleAndNamedDataMock.cs" />
+    <Compile Include="Mocks\SimpleMandatoryAndNamedDataMock.cs" />
     <Compile Include="Mocks\SimpleParentDataMock.cs" />
     <Compile Include="Mocks\SimpleArgumentDataMock.cs" />
     <Compile Include="Mocks\SimpleHierarchyDataMock.cs" />
