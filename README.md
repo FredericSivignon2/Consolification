@@ -1,17 +1,21 @@
 # Consolification
 
+
+
 Consolification is a little framework to help you to write C# Console Applications, by managing argument parsing, help text generation and much more.
 
-#### The main features are:
+## The main features are:
 
 - Automatically set class property values from given Console Application argument values (by associating Property and argument names via dedicated attributes). 
 So, you don't have to parse given application arguments yourself.
+- All .NET built in types supported.
+- Argument format verification via Regex.
 - Manages mandatory arguments and complex application argument structure, with parents and children concept: A child argument is an argument that is relevant only if another 'parent' argument is also specified in the Console Application command line. You can have several level of children arguments. Consolification manages that for you, by refusing, for example, a given child argument if a parent is not specified etc. 
 - Automatically generate help text by using argument description provided within dedicated attributes.
 - Encapsulate your code logic within a dedicated Job class, so you do not have to take care about Exception handling, help display (for example in case of wrong argument specified).
 
 
-#### Example for a quick start:
+## Example for a quick start:
 
 For a quick example, we will simply create a small Console Application that just display the text given in an argument.
 As soon as you have create the Console Application (with a minimum .NET 4.6.2 version), add a dedicated class to handle data:
@@ -93,11 +97,31 @@ The word 'message' to name the related argument has been specified in the `CISim
 Of course, for a so simple example, Consolification is not really usefull. But wait and see what will be the benefits when things are being more complex.
 
 
-#### Consolification Attribute list:
+## Consolification Attribute list:
 
-- `CISimpleArgumentAttribute`: The attribute used in the example above.
+- `CIArgumentBoundaryAttribute`
+- `CIArgumentFormatAttribute`
+- `CIArgumentValueLengthAttribute`
+- `CIChildArgumentAttribute`
+- `CICommandDescriptionAttribute`
+- `CIFileContentAttribute`
+- `CIHelpArgumentAttribute`
+- `CIJobAttribute`
+- `CIMandatoryArgumentAttribute`
+- `CINamedArgumentAttribute`
+- `CIParentArgumentAttribute`
+- `CIPasswordAttribute`
+- `CIShortcutArgumentAttribute`
+- [`CISimpleArgumentAttribute`](CISimpleArgumentAttribute)
 
-- `CINamedArgumentAttribute`: Use this attribute to define an argument that has got a specific name. Imagines for example you have a Console Application for which you can pass two arguments like `/URL http://www.google.fr`. In this case, use the `CINamesdArgumentAttribute` like that in your corresponding data class:
+
+
+
+### CISimpleArgumentAttribute
+The attribute used in the example above.
+
+### CINamedArgumentAttribute
+Use this attribute to define an argument that has got a specific name. Imagines for example you have a Console Application for which you can pass two arguments like `/URL http://www.google.fr`. In this case, use the `CINamesdArgumentAttribute` like that in your corresponding data class:
 
 ```C#
  [CINamedArgument("/URL", "The URL of the request to perform.", "valid url")]
@@ -114,11 +138,14 @@ Notes that we have associated the `System.Uri` type to the URL property. But, we
 
 To view the complete list of supported types, see the section [Supported types](#consolification-supported-type-of-data-mapping)
 
-- `CIShortcutArgumentAttribute`: Similar to the `CINamedArgumentAttribute` except that you can also specify a shortcut name for your argument (for example, "/u" in addition to "/user" default argument name).
+### CIShortcutArgumentAttribute
+Similar to the `CINamedArgumentAttribute` except that you can also specify a shortcut name for your argument (for example, "/u" in addition to "/user" default argument name).
 
-- `CIArgumentBoundaryAttribute`: Allows you to ensure that a given argument is between specified values. This is especially useful for all types like byte, short, int, long, float, double, decimal etc.
+### CIArgumentBoundaryAttribute
+Allows you to ensure that a given argument is between specified values. This is especially useful for all types like byte, short, int, long, float, double, decimal etc.
 
-- `CIMandatoryArgumentAttribute`: Allows you to ensure that an argument is given to the Console Application. If not, a specific message is displayed to indicate the name of the missing argument and the help text is displayed.
+### CIMandatoryArgumentAttribute
+Allows you to ensure that an argument is given to the Console Application. If not, a specific message is displayed to indicate the name of the missing argument and the help text is displayed.
 
 Note that if your argument is also a child argument (See `CIChildArgumentAttribute`) and the corresponding parent argument is not mandatory and not specified in the command line, no error will be generated. The level of the argument is checked in the argument hierarchy to ensure that a mandatory argument error is generated only when needed!
 For example, imagine your Console Application can connect a remote system. By default, you can use it without specifying any credential. But, optionaly, you can specify authentication parameters. So, you will have to define an argument to specify that you want for example a basic authentication. Let's say "-basicauthentication". For that, you can use the following property with its attribute:
