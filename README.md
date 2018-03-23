@@ -108,11 +108,11 @@ Of course, for a so simple example, Consolification is not really usefull. But w
 - `CIHelpArgumentAttribute`
 - `CIJobAttribute`
 - `CIMandatoryArgumentAttribute`
-- `CINamedArgumentAttribute`
+- [`CINamedArgumentAttribute`](#CINamedArgumentAttribute)
 - `CIParentArgumentAttribute`
 - `CIPasswordAttribute`
-- `CIShortcutArgumentAttribute`
-- [`CISimpleArgumentAttribute`](CISimpleArgumentAttribute)
+- [`CIShortcutArgumentAttribute`](#CIShortcutArgumentAttribute)
+- [`CISimpleArgumentAttribute`](#CISimpleArgumentAttribute)
 
 
 
