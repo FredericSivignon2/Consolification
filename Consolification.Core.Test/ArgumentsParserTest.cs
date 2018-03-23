@@ -104,7 +104,7 @@ namespace Consolification.Core.Test
 			}
 			catch (ArgumentException e)
 			{
-				Assert.IsTrue(e.Message == "The value of the argument /C1 cannot be lower than a");
+				Assert.IsTrue(e.Message == "The value of the argument '/C1' cannot be lower than 'a'");
 			}
 		}
 
@@ -360,7 +360,78 @@ namespace Consolification.Core.Test
 			Assert.IsTrue(data.MyString1 == args[1]);
 		}
 
-		[TestMethod]
+        [TestMethod]
+        public void ArgumentsParser_StringArgument_TooLong()
+        {
+            string[] args = new string[2];
+            args[0] = "/S";
+            args[1] = "This is an argument with a too long text!";
+
+            AllDataTypeMock data = new AllDataTypeMock();
+            ArgumentsParser parser = new ArgumentsParser();
+            try
+            {
+                parser.Parse(data, args);
+                Assert.Fail("An ArgumentException expcetion must be thrown!");
+            }
+            catch (ArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "The length of the argument '/S' must be lower or equal to '20'.");
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_StringArgument_TooShort()
+        {
+            string[] args = new string[2];
+            args[0] = "/S";
+            args[1] = "Too short!";
+
+            AllDataTypeMock data = new AllDataTypeMock();
+            ArgumentsParser parser = new ArgumentsParser();
+            try
+            {
+                parser.Parse(data, args);
+                Assert.Fail("An ArgumentException expcetion must be thrown!");
+            }
+            catch (ArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "The length of the argument '/S' must be equal or greater than '12'.");
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_StringArgument_EmailOk()
+        {
+            string[] args = new string[] { "/EMAIL", "frederic.sivignon@gmail.com" };
+
+            AllDataTypeMock data = new AllDataTypeMock();
+            ArgumentsParser parser = new ArgumentsParser();
+            
+            parser.Parse(data, args);
+            Assert.IsTrue(data.EmailAddress == args[1]);
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_StringArgument_EmailBad()
+        {
+            string[] args = new string[] { "/EMAIL", "ThisIsBad" };
+
+            AllDataTypeMock data = new AllDataTypeMock();
+            ArgumentsParser parser = new ArgumentsParser();
+
+            try
+            {
+                parser.Parse(data, args);
+                Assert.Fail("An ArgumentException expcetion must be thrown!");
+            }
+            catch (ArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "The value of the argument '/EMAIL' has an invalid format.");
+            }
+        }
+
+        [TestMethod]
 		public void ArgumentsParser_MinMaxArgument_OK()
 		{
 			byte argValue = 12;

@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Consolification.Core
@@ -44,6 +45,8 @@ namespace Consolification.Core
         public PropertyInfo PInfo { get; set; }
         public CIMandatoryArgumentAttribute MandatoryArgument { get; set; }
         public CIArgumentBoundaryAttribute ArgumentBoundary { get; set; }
+        public CIArgumentValueLengthAttribute ArgumentValueLength { get; set; }
+        public CIArgumentFormatAttribute ArgumentFormat { get; set; }
         public CIJobAttribute Job { get; set; }
         public CIChildArgumentAttribute ChildArgument { get; set; }
         public CIParentArgumentAttribute ParentArgument { get; set; }
@@ -301,14 +304,15 @@ namespace Consolification.Core
             }
             catch (Exception e)
             {
-                throw new ArgumentException(string.Format("Invalid specified value for the argument {0}.", e));
+                throw new ArgumentException(string.Format("Invalid specified value for the argument '{0}'.", e));
             }
 
             if (ArgumentBoundary != null && !string.IsNullOrWhiteSpace(ArgumentBoundary.MinValue))
             {
                 T minVal = convertor(ArgumentBoundary.MinValue);
                 if (val.CompareTo(minVal) < 0)
-                    throw new ArgumentException(string.Format("The value of the argument {0} cannot be lower than {1}", NamedArgument.Name, minVal));
+                    throw new ArgumentException(string.Format("The value of the argument '{0}' cannot be lower than '{1}'", 
+                        NamedArgument.Name, minVal));
 
             }
 
@@ -316,7 +320,29 @@ namespace Consolification.Core
             {
                 T maxVal = convertor(ArgumentBoundary.MaxValue);
                 if (val.CompareTo(maxVal) > 0)
-                    throw new ArgumentException(string.Format("The value of the argument {0} cannot be greater than {1}", NamedArgument.Name, maxVal));
+                    throw new ArgumentException(string.Format("The value of the argument '{0}' cannot be greater than '{1}'", 
+                        NamedArgument.Name, maxVal));
+
+            }
+
+            if (ArgumentValueLength != null && typeof(T) == typeof(string))
+            {
+                string strVal = val as string;
+                if (strVal.Length < ArgumentValueLength.MinLength)
+                    throw new ArgumentException(string.Format("The length of the argument '{0}' must be equal or greater than '{1}'.", 
+                        NamedArgument.Name, ArgumentValueLength.MinLength));
+                if (strVal.Length > ArgumentValueLength.MaxLength)
+                    throw new ArgumentException(string.Format("The length of the argument '{0}' must be lower or equal to '{1}'.",
+                        NamedArgument.Name, ArgumentValueLength.MaxLength));
+            }
+
+            if (ArgumentFormat != null && typeof(T) == typeof(string))
+            {
+                string strVal = val as string;
+                if (!Regex.IsMatch(strVal, ArgumentFormat.Regex, ArgumentFormat.Options))
+                {
+                    throw new ArgumentException(string.Format("The value of the argument '{0}' has an invalid format.", NamedArgument.Name));
+                }
 
             }
 

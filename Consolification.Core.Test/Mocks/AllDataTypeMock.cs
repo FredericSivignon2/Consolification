@@ -52,7 +52,14 @@ namespace Consolification.Core.Test.Mocks
         public double MyDouble1 { get; set; }
         
         [CINamedArgument("/S")]
+        [CIArgumentValueLength(12, 20)]
         public string MyString1 { get; set; }
+
+        // Email address regex
+        [CINamedArgument("/EMAIL")]
+        [CIArgumentFormat(@"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
+                          @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$")]
+        public string EmailAddress { get; set; }
 
         [CINamedArgument("/STARTDATE")]
         public DateTime StartDate { get; set; }

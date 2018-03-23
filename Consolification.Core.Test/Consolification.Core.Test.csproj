@@ -45,6 +45,9 @@
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\MSTest.TestFramework.1.2.0\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="SemanticTypes.TypeSystem.Physics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=742e180f6c5ccd0d, processorArchitecture=MSIL">
+      <HintPath>..\packages\SemanticTypes.TypeSystem.Physics.1.1.1\lib\net35\SemanticTypes.TypeSystem.Physics.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
@@ -62,6 +65,7 @@
     <Compile Include="Mocks\HelpDataMock.cs" />
     <Compile Include="Mocks\InvalidDataMock.cs" />
     <Compile Include="Mocks\MandatoryDataMock.cs" />
+    <Compile Include="Mocks\SemanticTypeDataMock.cs" />
     <Compile Include="Mocks\SimpleAndNamedDataMock.cs" />
     <Compile Include="Mocks\SimpleMandatoryAndNamedDataMock.cs" />
     <Compile Include="Mocks\SimpleParentDataMock.cs" />

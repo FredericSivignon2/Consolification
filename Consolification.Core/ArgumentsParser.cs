@@ -124,6 +124,8 @@ namespace Consolification.Core
                 ainfo.PInfo = pinfo;
                 ainfo.MandatoryArgument = pinfo.GetCustomAttribute<CIMandatoryArgumentAttribute>();
                 ainfo.ArgumentBoundary = pinfo.GetCustomAttribute<CIArgumentBoundaryAttribute>();
+                ainfo.ArgumentValueLength = pinfo.GetCustomAttribute<CIArgumentValueLengthAttribute>();
+                ainfo.ArgumentFormat = pinfo.GetCustomAttribute<CIArgumentFormatAttribute>();
                 ainfo.Job = pinfo.GetCustomAttribute<CIJobAttribute>();
                 ainfo.ChildArgument = pinfo.GetCustomAttribute<CIChildArgumentAttribute>();
                 ainfo.ParentArgument = pinfo.GetCustomAttribute<CIParentArgumentAttribute>();
