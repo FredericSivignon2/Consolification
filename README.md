@@ -1,6 +1,6 @@
 # Consolification
 
-Consolification is a little framework to help you to write C# Console Application, by managing argument parsing, help text generation and much more.
+Consolification is a little framework to help you to write C# Console Applications, by managing argument parsing, help text generation and much more.
 
 #### The main features are:
 
@@ -21,14 +21,29 @@ As soon as you have create the Console Application (with a minimum .NET 4.6.2 ve
 [CIJob(typeof(MessageJob))]
 public class Data
 {
-  [CISimpleArgument(0, "message", "The message to display.")]
+  [CISimpleArgument("message", "The message to display.")]
   public string Message { get; private set; }
 }
 ```
 
 The first attribute `CIHelpArgument`, on the class `Data`, specifies that you need to provide the argument '/?' to view the corresponding help.
 The second class `Data` attribute `CIJob` indicates that the application logic is implemented within the class `MessageJob`.
-The attribute `CISimpleArgument` on the property `Message` indicates that the Message property will receive the value of the first argument provided to the application (index 0). The other attribute parameters are dedicated to the automatically generated help text. We'll see that later.
+The attribute `CISimpleArgument` on the property `Message` indicates that the Message property will receive the value of the first argument provided to the application. The other attribute parameters are dedicated to the automatically generated help text. We'll see that later.
+
+Then, we'll have to create the job class that will display the message.
+
+```C#
+class MessageJob : IJob<Data>
+{
+    public int Run(JobContext<Data> context)
+    {
+        context.Console.WriteLine(context.Data.Message);
+        return 0;
+    }
+}
+```
+The job implements the IJob generic interface from which you specify the class that handles arguments related data (`Data` in our small example).
+From the `JobContext` instance, you have access to a `IConsoleWrapper`interface to interact with the console. The `Data` class instance, initialized with argumentsvalues given to the application, can be retrieved via the `JobContext<T>.Data` property.
 
 Then, simply modify the Program class with the Main method like that:
 
@@ -44,7 +59,7 @@ class Program
 ```
 
 
-Now, you just have to execute your application by giving a message as the single available argument (except the /? argument defined via the `CIHelpArgument` attribute.
+Now, you just have to execute your application by giving a message as the single available argument (except the /? argument defined via the `CIHelpArgument` attribute).
 
 For example, if your Console Application executable  is named Example.exe, juste type in the console:
 
@@ -62,10 +77,10 @@ Now, if you type: `> Example /?` the output will be the automatically generated 
 ```Batchfile
 Usage: Example [/?] [message]
 
-message The message to display.
+message   The message to display.
 ```
 
-The brackets [] indicates optional arguments. If you specify that Message is a mandatory argument, by using the CIMandatoryArgumentAttribute, the help displayed will be:
+The brackets [] indicates optional arguments. If you specify that Message is a mandatory argument, by using the `CIMandatoryArgumentAttribute`, the help displayed will be:
 
 ```Batchfile
 Usage: Example [/?] message
@@ -73,7 +88,7 @@ Usage: Example [/?] message
 message The message to display.
 ```
 
-The word 'message' to name the related argument has been specified in the CISimpleArgumentAttribute as second parameter. And the corresponding description ('The message to display') is taken from the last parameter of this same attribute.
+The word 'message' to name the related argument has been specified in the `CISimpleArgumentAttribute` as second parameter. And the corresponding description ('The message to display') is taken from the last parameter of this same attribute.
 
 Of course, for a so simple example, Consolification is not really usefull. But wait and see what will be the benefits when things are being more complex.
 
@@ -91,11 +106,11 @@ Of course, for a so simple example, Consolification is not really usefull. But w
 
 The URL property, from our previous example, will receive the value `http://www.google.fr` and of course, not `/URL` like with a CISimpleArgumentAttribute. 
 When you display the correpsonding help, the following information will be displayed in the usage line:
-`[URL <valid url>`  ('valid url' comes from the last argument of `CINamedArgumentAttribute`.
+`[URL <valid url>]`  ('valid url' comes from the last argument of `CINamedArgumentAttribute`.
 And the /URL argument description line will look like:
-`/URL The URL of the request to perform.`
+`/URL   The URL of the request to perform.`
 
-Notes that we have associate the `System.Uri` type to the URL property. But, we could have used the `System.String` type also. But with `System.Uri` type, a specific validation is performed automatically by the type constructor itself, so, it's better in this case, to ensure that user will specify a valid URI.
+Notes that we have associated the `System.Uri` type to the URL property. But, we could have used the `System.String` type also. But with `System.Uri` type, a specific validation is performed automatically by the type constructor itself, so, it's better in this case, to ensure that user will specify a valid URI.
 
 To view the complete list of supported types, see the section [Supported types](#consolification-supported-type-of-data-mapping)
 
