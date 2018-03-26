@@ -9,10 +9,12 @@ Consolification is a little framework to help you to write C# Console Applicatio
 - Automatically set class property values from given Console Application argument values (by associating Property and argument names via dedicated attributes). 
 So, you don't have to parse given application arguments yourself.
 - All .NET built in types supported.
-- Argument format verification via Regex.
+- Support of user types to create arguments hierarchy.
 - Manages mandatory arguments and complex application argument structure, with parents and children concept: A child argument is an argument that is relevant only if another 'parent' argument is also specified in the Console Application command line. You can have several level of children arguments. Consolification manages that for you, by refusing, for example, a given child argument if a parent is not specified etc. 
 - Automatically generate help text by using argument description provided within dedicated attributes.
 - Encapsulate your code logic within a dedicated Job class, so you do not have to take care about Exception handling, help display (for example in case of wrong argument specified).
+- Argument format verification via Regex.
+
 
 
 ## Example for a quick start:
@@ -99,20 +101,20 @@ Of course, for a so simple example, Consolification is not really usefull. But w
 
 ## Consolification Attribute list:
 
-- [`CIArgumentBoundaryAttribute`](#CIArgumentBoundaryAttribute)
-- [`CIArgumentFormatAttribute`](#CIArgumentFormatAttribute)
-- [`CIArgumentValueLengthAttribute`](#CIArgumentValueLengthAttribute)
-- [`CIChildArgumentAttribute`](#CIChildArgumentAttribute)
-- [`CICommandDescriptionAttribute`](#CICommandDescriptionAttribute)
-- [`CIFileContentAttribute`](#CIFileContentAttribute)
-- [`CIHelpArgumentAttribute`](#CIHelpArgumentAttribute)
-- [`CIJobAttribute`](#CIJobAttribute)
-- [`CIMandatoryArgumentAttribute`](#CIMandatoryArgumentAttribute)
-- [`CINamedArgumentAttribute`](#CINamedArgumentAttribute)
-- [`CIParentArgumentAttribute`](#CIParentArgumentAttribute)
-- [`CIPasswordAttribute`](#CIPasswordAttribute)
-- [`CIShortcutArgumentAttribute`](#CIShortcutArgumentAttribute)
-- [`CISimpleArgumentAttribute`](#CISimpleArgumentAttribute)
+- [`CIArgumentBoundaryAttribute`](#ciargumentboundaryattribute)
+- [`CIArgumentFormatAttribute`](#ciargumentformatattribute)
+- [`CIArgumentValueLengthAttribute`](#ciargumentvalueLengthattribute)
+- [`CIChildArgumentAttribute`](#cichildargumentattribute)
+- [`CICommandDescriptionAttribute`](#cicommanddescriptionattribute)
+- [`CIFileContentAttribute`](#cifilecontentattribute)
+- [`CIHelpArgumentAttribute`](#cihelpargumentattribute)
+- [`CIJobAttribute`](#cijobattribute)
+- [`CIMandatoryArgumentAttribute`](#cimandatoryargumentattribute)
+- [`CINamedArgumentAttribute`](#cinamedargumentattribute)
+- [`CIParentArgumentAttribute`](#ciparentargumentattribute)
+- [`CIPasswordAttribute`](#cipasswordattribute)
+- [`CIShortcutArgumentAttribute`](#cishortcutargumentattribute)
+- [`CISimpleArgumentAttribute`](#cisimpleargumentattribute)
 
 
 ### CIArgumentBoundaryAttribute
@@ -203,7 +205,7 @@ To view the complete list of supported types, see the section [Supported types](
 ### CISimpleArgumentAttribute
 The attribute used in the example above. 
 
-### CIShortcutArgumentAttribute
+### CIShortcutArgumentAttribute attribute
 Similar to the `CINamedArgumentAttribute` except that you can also specify a shortcut name for your argument (for example, "/u" in addition to "/user" default argument name).
 
 
