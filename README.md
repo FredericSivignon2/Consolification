@@ -139,18 +139,18 @@ Use this attribute to control the length of an argument value, when this value i
 This attribute is used to declare an argument as a child argument. A child argument is an argument that is relevant only if corresponding parent argument is present.
 In conjonction with the `CIParentArgumentAttribute` attribute, it provides a similar mechanism to the [user types and argument hierarchy support](#user-types-and-argument-hierarchy), except that you can have a parent argument with a name and a corresponding value:
 
-'''
-mycommand /parentarg1 <parent value1> /childA /childB <child valueB> 
-'''
+```bash
+mycommand /parentarg1 "parent value1" /childA /childB "child valueB" 
+```
  
 In this example, /childA and /childB arguments are relevant only if /parentarg1 is present. But /parentarg1 also have a value.
 
  
 When you use a user type to define children arguments, you can only have an argument with a name, so something like that:
 
-'''
-mycommand /parentarg1 /childA /childB <child valueB> 
-'''
+```bash
+mycommand /parentarg1 /childA /childB "child valueB"
+```
  
 Here, /parentarg1 does not have an associated value. It's only an indicator that specify that we can have /childA and/or /childB arguments in the command line.
  
