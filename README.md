@@ -115,34 +115,35 @@ Of course, for a so simple example, Consolification is not really usefull. But w
 - [`CISimpleArgumentAttribute`](#CISimpleArgumentAttribute)
 
 
+### CIArgumentBoundaryAttribute
+Use this attribute to control the value of all argument for which the corresponding mapped type implements the `System.IComparable` interface, like all numerical value type (`System.Int32`, `System.Int64`, `System.Decimal` ...).
+If the value of the correpsonding argument is lower or greater than values specified within this attribute, an error like the following  will be displayed:
 
-
-### CISimpleArgumentAttribute
-The attribute used in the example above.
-
-### CINamedArgumentAttribute
-Use this attribute to define an argument that has got a specific name. Imagines for example you have a Console Application for which you can pass two arguments like `/URL http://www.google.fr`. In this case, use the `CINamesdArgumentAttribute` like that in your corresponding data class:
-
-```C#
- [CINamedArgument("/URL", "The URL of the request to perform.", "valid url")]
- public Uri URL { get; private set; }
+```
+ERROR while parsing arguments.
+ The value of the argument '<ARG NAME>' cannot be greater than '<MAX VAL>'
 ```
 
-The URL property, from our previous example, will receive the value `http://www.google.fr` and of course, not `/URL` like with a CISimpleArgumentAttribute. 
-When you display the correpsonding help, the following information will be displayed in the usage line:
-`[URL <valid url>]`  ('valid url' comes from the last argument of `CINamedArgumentAttribute`.
-And the /URL argument description line will look like:
-`/URL   The URL of the request to perform.`
+### CIArgumentFormatAttribute
+Use this attribute to control the format of an argument value, when this value is mapped to a string. 
 
-Notes that we have associated the `System.Uri` type to the URL property. But, we could have used the `System.String` type also. But with `System.Uri` type, a specific validation is performed automatically by the type constructor itself, so, it's better in this case, to ensure that user will specify a valid URI.
+### CIArgumentValueLengthAttribute
+Use this attribute to control the length of an argument value, when this value is mapped to a string.
 
-To view the complete list of supported types, see the section [Supported types](#consolification-supported-type-of-data-mapping)
+### CIChildArgumentAttribute
 
-### CIShortcutArgumentAttribute
-Similar to the `CINamedArgumentAttribute` except that you can also specify a shortcut name for your argument (for example, "/u" in addition to "/user" default argument name).
+### CICommandDescriptionAttribute
 
-### CIArgumentBoundaryAttribute
-Allows you to ensure that a given argument is between specified values. This is especially useful for all types like byte, short, int, long, float, double, decimal etc.
+
+### CIFileContentAttribute
+
+
+### CIHelpArgumentAttribute
+
+
+
+### CIJobAttribute
+
 
 ### CIMandatoryArgumentAttribute
 Allows you to ensure that an argument is given to the Console Application. If not, a specific message is displayed to indicate the name of the missing argument and the help text is displayed.
@@ -172,6 +173,40 @@ public string Password { get; private set }
 ```
 
 Now, `-user` and `-password` are mandatory only if `-basicauthentication` is specified. 
+
+
+
+### CINamedArgumentAttribute
+Use this attribute to define an argument that has got a specific name. Imagines for example you have a Console Application for which you can pass two arguments like `/URL http://www.google.fr`. In this case, use the `CINamesdArgumentAttribute` like that in your corresponding data class:
+
+```C#
+ [CINamedArgument("/URL", "The URL of the request to perform.", "valid url")]
+ public Uri URL { get; private set; }
+```
+
+The URL property, from our previous example, will receive the value `http://www.google.fr` and of course, not `/URL` like with a CISimpleArgumentAttribute. 
+When you display the correpsonding help, the following information will be displayed in the usage line:
+`[URL <valid url>]`  ('valid url' comes from the last argument of `CINamedArgumentAttribute`.
+And the /URL argument description line will look like:
+`/URL   The URL of the request to perform.`
+
+Notes that we have associated the `System.Uri` type to the URL property. But, we could have used the `System.String` type also. But with `System.Uri` type, a specific validation is performed automatically by the type constructor itself, so, it's better in this case, to ensure that user will specify a valid URI.
+
+To view the complete list of supported types, see the section [Supported types](#consolification-supported-type-of-data-mapping)
+
+
+### CIParentArgumentAttribute
+
+
+### CIPasswordAttribute
+
+### CISimpleArgumentAttribute
+The attribute used in the example above. 
+
+### CIShortcutArgumentAttribute
+Similar to the `CINamedArgumentAttribute` except that you can also specify a shortcut name for your argument (for example, "/u" in addition to "/user" default argument name).
+
+
 
 
 
