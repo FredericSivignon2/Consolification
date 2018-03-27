@@ -107,13 +107,40 @@ There are two possibilities to easily implement this argument hierarchy within t
 
 ### Creating user type
 
-To implement the something similar to the NET command, you can create a data class that will look like the following example:
+To implement something similar to the NET command, to stay with our previous example, we can create a data class that will look like the following example:
 ```C#
 puclic class NetData
 {
- 
+    [CINamedArgumentAttribute("ACCOUNTS")]
+    public AccountsData Accounts { get; private set; }
+    
+    [CINamedArgumentAttribute("COMPUTER")]
+    public ComputerData Computer { get; private set; }
+    
+    ...
 }
+
+public class AccountsData
+{
+    [CINamedArgumentAttribute("/FORCELOGOFF")]
+    public String ForceLogOff { get; private set;
+    
+    [CINamedArgumentAttribute("/MINPWLEN")]
+    public int MinPasswordLength { get; private set;
+    
+    ...
+}
+
 ```
+
+The NetData class exposes all commands that come just after the `NET` executable name. For each one, a dedicated type is created (like the AccountsData class) to embed all arguments related to the parent arguments.
+When executed, if the `ACCOUNTS` argument is specified, the `NetData.Accounts` property won't be null.
+
+
+***Si ACCOUNTS specified, we cannot specify COMPUTER etc... add exclusif attribute to avoid the possibility to have accounts and computer etc...
+
+
+
 
 
 ### Use CIParentArgumentAttribute and CIChildArgumentAttribute
