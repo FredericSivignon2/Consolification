@@ -100,6 +100,25 @@ Of course, for a so simple example, Consolification is not really usefull. But w
 
 ## User types and argument hierarchy
 
+For advanced Console Applications, you often need a large bunch of arguments. Imagine for example you need to create a Console Application similar to the `NET` DOS command. This command provides several major features, to manage Windows network services, network shares, display network settings etc. All those major features are grouped behind arguments (ACCOUNTS, COMPUTER, CONFIG, START...). When you use one of those arguments, you can also specify other arguments dedicated to those 'parents' arguments (like /ADD for the COMPUTER parent argument). In Consolification library, '/ADD' is called a child argument. And COMPUTER is its parent. Meaning that, /ADD can only appear if you have use the COMPUTER argument.
+There are two possibilities to easily implement this argument hierarchy within the Consolification library:
+1) Create user types.
+2) Use the [`CIParentArgumentAttribute`](#ciparentargumentattribute) and the [`CIChildArgumentAttribute`](#cichildargumentattribute) attributes.
+
+### Creating user type
+
+To implement the something similar to the NET command, you can create a data class that will look like the following example:
+```C#
+puclic class NetData
+{
+ 
+}
+```
+
+
+### Use CIParentArgumentAttribute and CIChildArgumentAttribute
+
+
 
 
 ## Consolification Attribute list:
