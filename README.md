@@ -136,15 +136,18 @@ public class AccountsData
 The NetData class exposes all commands that come just after the `NET` executable name. For each one, a dedicated type is created (like the AccountsData class) to embed all arguments related to the parent arguments.
 When executed, if the `ACCOUNTS` argument is specified, the `NetData.Accounts` property won't be null.
 
-
-***Si ACCOUNTS specified, we cannot specify COMPUTER etc... add exclusif attribute to avoid the possibility to have accounts and computer etc...
-
-
-
+Not that, in this case, you would like to avoid to have `ACCOUNTS` argument used in conjonction with `COMPUTER` argument (or with any other argument at this level). The [`CIExclusiveArgumentAttribute`](#ciexclusiveargumentattribute) attribute is dedicated to that purpose.
 
 
 ### Use CIParentArgumentAttribute and CIChildArgumentAttribute
 
+The [`CIParentArgumentAttribute`](#ciparentargumentattribute) and [`CIChildArgumentAttribute`](#cichildargumentattribute) attributes offer similar behaviors than using user types. It is less elegant, but it allows you to have an argument and its value as a parent argument. With a user type, you only have the argument name (with the [`CINamedArgumentAttribute`](#cinamedargumentattribute)) or an argument itself (with the [`CISimpleArgumentAttribute`](#cisimpleargumentattribute)). For example, in the following command line:
+
+```BASH
+mycommand /ARG1 valeurArg1 /CHILDARG1
+```
+
+If `/CHILDARG1` is a child argument of `/ARG1` and `valeurArg1` the `/ARG1` value, you cannot obtain this argument configuration by using a user type. With a user type to embed the `/CHILDARG1` argument, you cannot have a value associated with `/ARG1`. As the value if the instance of the user type child class itself.
 
 
 
@@ -155,6 +158,7 @@ When executed, if the `ACCOUNTS` argument is specified, the `NetData.Accounts` p
 - [`CIArgumentValueLengthAttribute`](#ciargumentvalueLengthattribute)
 - [`CIChildArgumentAttribute`](#cichildargumentattribute)
 - [`CICommandDescriptionAttribute`](#cicommanddescriptionattribute)
+- [`CIExclusiveArgumentAttribute`](#ciexclusiveargumentattribute)
 - [`CIFileContentAttribute`](#cifilecontentattribute)
 - [`CIHelpArgumentAttribute`](#cihelpargumentattribute)
 - [`CIJobAttribute`](#cijobattribute)
@@ -167,6 +171,8 @@ When executed, if the `ACCOUNTS` argument is specified, the `NetData.Accounts` p
 
 
 ### CIArgumentBoundaryAttribute
+:white_check_mark: This attribute can be applied to properties only.
+
 Use this attribute to control the value of all argument for which the corresponding mapped type implements the `System.IComparable` interface, like all numerical value type (`System.Int32`, `System.Int64`, `System.Decimal` ...).
 If the value of the correpsonding argument is lower or greater than values specified within this attribute, an error like the following  will be displayed:
 
@@ -176,12 +182,18 @@ ERROR while parsing arguments.
 ```
 
 ### CIArgumentFormatAttribute
+:white_check_mark: This attribute can be applied to properties only.
+
 Use this attribute to control the format of an argument value, when this value is mapped to a string. 
 
 ### CIArgumentValueLengthAttribute
+:white_check_mark: This attribute can be applied to properties only.
+
 Use this attribute to control the length of an argument value, when this value is mapped to a string.
 
 ### CIChildArgumentAttribute
+:white_check_mark: This attribute can be applied to properties only.
+
 This attribute is used to declare an argument as a child argument. A child argument is an argument that is relevant only if corresponding parent argument is present.
 In conjonction with the `CIParentArgumentAttribute` attribute, it provides a similar mechanism to the [user types and argument hierarchy support](#user-types-and-argument-hierarchy), except that you can have a parent argument with a name and a corresponding value:
 
@@ -202,19 +214,30 @@ Here, /parentarg1 does not have an associated value. It's only an indicator that
  
 
 ### CICommandDescriptionAttribute
+:white_check_mark: This attribute can be applied to classes only.
+
+Provides a description of the related command. This description is used within the auto generated help to provide a summary of what the related command does.
+
+
+### CIExclusiveArgumentAttribute
+:white_check_mark: This attribute can be applied to properties only.
 
 
 ### CIFileContentAttribute
+:white_check_mark: This attribute can be applied to properties only.
 
 
 ### CIHelpArgumentAttribute
-
+:white_check_mark: This attribute can be applied to classes only.
 
 
 ### CIJobAttribute
+:white_check_mark: This attribute can be applied to classes only.
 
 
 ### CIMandatoryArgumentAttribute
+:white_check_mark: This attribute can be applied to properties only.
+
 Allows you to ensure that an argument is given to the Console Application. If not, a specific message is displayed to indicate the name of the missing argument and the help text is displayed.
 
 Note that if your argument is also a child argument (See `CIChildArgumentAttribute`) and the corresponding parent argument is not mandatory and not specified in the command line, no error will be generated. The level of the argument is checked in the argument hierarchy to ensure that a mandatory argument error is generated only when needed!
@@ -246,6 +269,8 @@ Now, `-user` and `-password` are mandatory only if `-basicauthentication` is spe
 
 
 ### CINamedArgumentAttribute
+:white_check_mark: This attribute can be applied to properties only.
+
 Use this attribute to define an argument that has got a specific name. Imagines for example you have a Console Application for which you can pass two arguments like `/URL http://www.google.fr`. In this case, use the `CINamesdArgumentAttribute` like that in your corresponding data class:
 
 ```C#
@@ -265,16 +290,23 @@ To view the complete list of supported types, see the section [Supported types](
 
 
 ### CIParentArgumentAttribute
+:white_check_mark: This attribute can be applied to properties only.
 
 
 See [`CIChildArgumentAttribute`](#cichildargumentattribute).
 
 ### CIPasswordAttribute
+:white_check_mark: This attribute can be applied to properties only.
+
 
 ### CISimpleArgumentAttribute
+:white_check_mark: This attribute can be applied to properties only.
+
 The attribute used in the example above. 
 
 ### CIShortcutArgumentAttribute attribute
+:white_check_mark: This attribute can be applied to properties only.
+
 Similar to the `CINamedArgumentAttribute` except that you can also specify a shortcut name for your argument (for example, "/u" in addition to "/user" default argument name).
 
 
