@@ -10,5 +10,9 @@ namespace Consolification.QuickExample
         [CISimpleArgument("message", "The message to display.")]
         [CIMandatoryArgument]
         public string Message { get; private set; }
+
+        [CINamedArgument("--v", "This is a value.", "val")]
+        [CIArgumentBoundary("5", "20")]
+        public int Value { get; private set; }
     }
 }

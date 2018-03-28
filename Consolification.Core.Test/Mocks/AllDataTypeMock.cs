@@ -9,14 +9,17 @@ namespace Consolification.Core.Test.Mocks
 {
     public class AllDataTypeMock
     {
+        [CIExclusiveArgument]
         [CINamedArgument("/A")]
         public bool MyBoolean1 { get; set; }
 
         [CINamedArgument("/B")]
+        [CIExclusiveArgument(1)]
         public byte MyByte1 { get; set; }
 
         [CINamedArgument("/B2")]
         [CIArgumentBoundary("10", "40")]
+        [CIExclusiveArgument(1)]
         public byte MyByte2 { get; set; }
 
         [CINamedArgument("/SB")]

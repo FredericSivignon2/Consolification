@@ -1302,6 +1302,150 @@ namespace Consolification.Core.Test
 
         }
 
+        [TestMethod]
+        public void ArgumentParser_ExclusiveArgument_ExclusiveFirst()
+        {
+            string[] args = new string[] { "/A", "/C1", "a" };
+            AllDataTypeMock data = new AllDataTypeMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            try
+            {
+                parser.Parse(data, args);
+                Assert.Fail("A ExclusiveArgumentException exception must be thrown.");
+            }
+            catch (ExclusiveArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "The argument '/A' cannot be used in conjonction with '/C1'.");
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentParser_ExclusiveArgument_ExclusiveSecond()
+        {
+            string[] args = new string[] { "/C1", "a", "/A" };
+            AllDataTypeMock data = new AllDataTypeMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            try
+            {
+                parser.Parse(data, args);
+                Assert.Fail("A ExclusiveArgumentException exception must be thrown.");
+            }
+            catch (ExclusiveArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "The argument '/A' cannot be used in conjonction with '/C1'.");
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentParser_ExclusiveArgumentHierarchy_OK()
+        {
+            string[] args = new string[] { "/D1", "1", "/D4", "123456" };
+            ExParentDataMock data = new ExParentDataMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+            Assert.IsTrue(data.Data1 == 1);
+            Assert.IsTrue(data.Data4 == 123456);
+        }
+
+        [TestMethod]
+        public void ArgumentParser_ExcluArgHierarchy_2ExclusivesDiffGroup()
+        {
+            string[] args = new string[] { "/D1", "1", "/D3", "3" };
+            ExParentDataMock data = new ExParentDataMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+            Assert.IsTrue(data.Data1 == 1);
+            Assert.IsTrue(data.Data3 == 3);
+        }
+
+        [TestMethod]
+        public void ArgumentParser_ExcluArgHierarchy_2ExclusivesDiffGroupOther()
+        {
+            string[] args = new string[] { "/D1", "1", "/D3", "3", "/D4", "4" };
+            ExParentDataMock data = new ExParentDataMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            try
+            {
+                parser.Parse(data, args);
+                Assert.Fail("A ExclusiveArgumentException exception must be thrown.");
+            }
+            catch (ExclusiveArgumentException e)
+            {
+                // D3 is in group 0 (not specified), so it cannot be used with D4.
+                // D1 & D2 are in group 1
+                Assert.IsTrue(e.Message == "The argument '/D3' cannot be used in conjonction with '/D4'.");
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentParser_ExcluArgHierarchy_2ExclusivesSameGroup()
+        {
+            string[] args = new string[] { "/D1", "1", "/D2", "2" };
+            ExParentDataMock data = new ExParentDataMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            try
+            {
+                parser.Parse(data, args);
+                Assert.Fail("A ExclusiveArgumentException exception must be thrown.");
+            }
+            catch (ExclusiveArgumentException e)
+            {
+                // D1 & D2 are in group 1
+                Assert.IsTrue(e.Message == "The argument '/D2' cannot be used in conjonction with '/D1'.");
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentParser_ExcluArgHierarchy_2ExclusivesDiffLevel()
+        {
+            string[] args = new string[] { "/D1", "1", "/CHILD", "/DC1", "1" };
+            ExParentDataMock data = new ExParentDataMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+            Assert.IsTrue(data.Data1 == 1);
+            Assert.IsNotNull(data.Child);
+            Assert.IsTrue(data.Child.DataC1 == 1);
+        }
+
+        [TestMethod]
+        public void ArgumentParser_ExcluArgHierarchy_3ExclusivesDiffLevel()
+        {
+            string[] args = new string[] { "/D1", "1", "/CHILD", "/DC1", "1", "/DC2", "2" };
+            ExParentDataMock data = new ExParentDataMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            try
+            {
+                parser.Parse(data, args);
+                Assert.Fail("A ExclusiveArgumentException exception must be thrown.");
+            }
+            catch (ExclusiveArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "The argument '/DC2' cannot be used in conjonction with '/DC1'.");
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentParser_ExcluArgHierarchy_3ExclusivesDiffLevelOK()
+        {
+            string[] args = new string[] { "/D1", "1", "/CHILD", "/DC1", "1", "/DC3", "3" };
+            ExParentDataMock data = new ExParentDataMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+            Assert.IsTrue(data.Data1 == 1);
+            Assert.IsNotNull(data.Child);
+            Assert.IsTrue(data.Child.DataC1 == 1);
+            Assert.IsTrue(data.Child.DataC3 == 3);
+        }
+
         #region Private Methods
         private string GetDummyTextFilePath()
         {

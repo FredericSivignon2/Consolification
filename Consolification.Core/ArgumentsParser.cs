@@ -131,6 +131,7 @@ namespace Consolification.Core
                 ainfo.ParentArgument = pinfo.GetCustomAttribute<CIParentArgumentAttribute>();
                 ainfo.FileContent = pinfo.GetCustomAttribute<CIFileContentAttribute>();
                 ainfo.Password = pinfo.GetCustomAttribute<CIPasswordAttribute>();
+                ainfo.Exclusive = pinfo.GetCustomAttribute<CIExclusiveArgumentAttribute>();
 
                 if (pinfo.PropertyType.IsUserType())
                 {
@@ -150,6 +151,7 @@ namespace Consolification.Core
         {
             string argValue = "";
             int currentSimpleArgumentIndex = 0;
+            ArgumentExclusivityController exController = new ArgumentExclusivityController();
 
             while (this.currentArgIndex < args.Length)
             {
@@ -206,6 +208,8 @@ namespace Consolification.Core
                     {
                         throw new UnknownArgumentException(arg);
                     }
+                    exController.NewArgument(currentInfo);
+
                     if (currentInfo.PInfo == null)
                     {
                         this.currentArgIndex++;

@@ -59,6 +59,8 @@
     <Compile Include="Mocks\ComplexHierarchyDataMock.cs" />
     <Compile Include="Mocks\ComplexParentDataMock.cs" />
     <Compile Include="Mocks\ConsoleWrapperMock.cs" />
+    <Compile Include="Mocks\ExChildDataMock.cs" />
+    <Compile Include="Mocks\ExParentDataMock.cs" />
     <Compile Include="Mocks\JobDataMock.cs" />
     <Compile Include="Mocks\DuplicateDataMock.cs" />
     <Compile Include="Mocks\FileDataMock.cs" />

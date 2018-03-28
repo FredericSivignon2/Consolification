@@ -52,6 +52,8 @@ namespace Consolification.Core
         public CIParentArgumentAttribute ParentArgument { get; set; }
         public CIFileContentAttribute FileContent { get; set; }
         public CIPasswordAttribute Password { get; set; }
+
+        public CIExclusiveArgumentAttribute Exclusive { get; set; }
         public bool Found { get; set; }
 
         public bool UserType { get; set; }
@@ -66,6 +68,9 @@ namespace Consolification.Core
             {
                 if (NamedArgument != null)
                     return NamedArgument.Name;
+
+                if (SimpleArgument != null)
+                    return SimpleArgument.HelpText;
 
                 return string.Empty;
             }
