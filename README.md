@@ -101,9 +101,7 @@ Of course, for a so simple example, Consolification is not really usefull. But w
 ## User types and argument hierarchy
 
 For advanced Console Applications, you often need a large bunch of arguments. Imagine for example you need to create a Console Application similar to the `NET` DOS command. This command provides several major features, to manage Windows network services, network shares, display network settings etc. All those major features are grouped behind arguments (ACCOUNTS, COMPUTER, CONFIG, START...). When you use one of those arguments, you can also specify other arguments dedicated to those 'parents' arguments (like /ADD for the COMPUTER parent argument). In Consolification library, '/ADD' is called a child argument. And COMPUTER is its parent. Meaning that, /ADD can only appear if you have use the COMPUTER argument.
-There are two possibilities to easily implement this argument hierarchy within the Consolification library:
-1) Create user types.
-2) Use the [`CIParentArgumentAttribute`](#ciparentargumentattribute) and the [`CIChildArgumentAttribute`](#cichildargumentattribute) attributes.
+To easily implement this argument hierarchy within the Consolification library, you have to create dedicated classes and embed those classes to your main data class as public properties.
 
 ### Creating user type
 
@@ -136,18 +134,23 @@ public class AccountsData
 The NetData class exposes all commands that come just after the `NET` executable name. For each one, a dedicated type is created (like the AccountsData class) to embed all arguments related to the parent arguments.
 When executed, if the `ACCOUNTS` argument is specified, the `NetData.Accounts` property won't be null.
 
-Not that, in this case, you would like to avoid to have `ACCOUNTS` argument used in conjonction with `COMPUTER` argument (or with any other argument at this level). The [`CIExclusiveArgumentAttribute`](#ciexclusiveargumentattribute) attribute is dedicated to that purpose.
+Not that, in this case, you would like to avoid to have `ACCOUNTS` argument used in conjonction with `COMPUTER` argument (or with any other argument at this level). The [`CIExclusiveArgumentAttribute`](#ciexclusiveargumentattribute) attribute is dedicated to that purpose. So, your NetData class will look like that:
 
-
-### Use CIParentArgumentAttribute and CIChildArgumentAttribute
-
-The [`CIParentArgumentAttribute`](#ciparentargumentattribute) and [`CIChildArgumentAttribute`](#cichildargumentattribute) attributes offer similar behaviors than using user types. It is less elegant, but it allows you to have an argument and its value as a parent argument. With a user type, you only have the argument name (with the [`CINamedArgumentAttribute`](#cinamedargumentattribute)) or an argument itself (with the [`CISimpleArgumentAttribute`](#cisimpleargumentattribute)). For example, in the following command line:
-
-```BASH
-mycommand /ARG1 valeurArg1 /CHILDARG1
+following example:
+```C#
+puclic class NetData
+{
+    [CINamedArgumentAttribute("ACCOUNTS")]
+    [CIExclusiveArgument]
+    public AccountsData Accounts { get; private set; }
+    
+    [CINamedArgumentAttribute("COMPUTER")]
+    [CIExclusiveArgument]
+    public ComputerData Computer { get; private set; }
+    
+    ...
+}
 ```
-
-If `/CHILDARG1` is a child argument of `/ARG1` and `valeurArg1` the `/ARG1` value, you cannot obtain this argument configuration by using a user type. With a user type to embed the `/CHILDARG1` argument, you cannot have a value associated with `/ARG1`. As the value if the instance of the user type child class itself.
 
 
 
