@@ -6,10 +6,6 @@ namespace Consolification.Core
     [Serializable]
     internal class InvalidArgumentTypeException : Exception
     {
-        public InvalidArgumentTypeException()
-        {
-        }
-
         public InvalidArgumentTypeException(string message) : base(message)
         {
         }

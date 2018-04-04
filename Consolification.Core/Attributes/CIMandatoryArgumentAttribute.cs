@@ -51,6 +51,7 @@ namespace Consolification.Core.Attributes
         /// Gets a string that contains the message to display when prompting the user.
         /// </summary>
         public string PromptMessage { get; private set; }
+
         #endregion
     }
 }

@@ -14,6 +14,30 @@ namespace Consolification.Core
     /// </summary>
     class ArgumentsParserValidator
     {
+        private class MandatoryGroupInfo
+        {
+            private List<ArgumentInfo> argumentInfos = new List<ArgumentInfo>();
+
+            public MandatoryGroupInfo(ArgumentInfo argumentInfo)
+            {
+                this.argumentInfos.Add(argumentInfo);
+            }
+
+            public void Add(ArgumentInfo argumentInfo)
+            {
+                this.argumentInfos.Add(argumentInfo);
+            }
+
+            public bool Found { get; set; } = false;
+            public ArgumentInfo[] ArgumentInfos
+            {
+                get
+                {
+                    return this.argumentInfos.ToArray<ArgumentInfo>();
+                }
+            }
+        }
+
         #region Data Members
         private ArgumentsParser parser;
         private object data;
@@ -41,62 +65,115 @@ namespace Consolification.Core
         {
             foreach (ArgumentInfo argumentInfo in argumentsInfo)
             {
-                ArgumentInfo curArgInfo = argumentInfo;
-                if (curArgInfo.Found == true)
-                {
-                    // While the current argument is a child argument
-                    while (curArgInfo.ChildArgument != null)
-                    {
-                        ArgumentInfo parentArgInfo = GetParent(argumentsInfo, curArgInfo);
-                        if (parentArgInfo.Found == false)
-                            throw new MissingParentArgumentException(parentArgInfo.NamedArgument.Name);
-
-                        curArgInfo = parentArgInfo;
-                    }
-                }
+               
             }
         }
 
         private void ValidateMandatoryArguments(ArgumentInfoCollection argumentsInfo)
         {
+            Dictionary<int, MandatoryGroupInfo> groupedMandatories = new Dictionary<int, MandatoryGroupInfo>();
             foreach (ArgumentInfo argumentInfo in argumentsInfo)
             {
                 if (argumentInfo.Found == false)
                 {
-                    if (argumentInfo.ChildArgument != null)
+                    ArgumentInfo parentArgInfo = argumentInfo.ParentArgumentInfo;
+                    if (parentArgInfo != null)
                     {
-                        ArgumentInfo parentArgInfo = GetParent(argumentsInfo, argumentInfo);
                         // If the parent has been found,
                         if (parentArgInfo.Found && argumentInfo.MandatoryArgument != null)
                         {
-                            ProcessMandatoryMissing(argumentInfo);
+                          
+                                ProcessMandatoryMissing(argumentInfo);
+                        }
+                        // If the parent has been found,
+                        if (parentArgInfo.Found && argumentInfo.GroupedMandatoryArgument != null)
+                        {
+                                ProcessGroupedMandatories(groupedMandatories, argumentInfo);
+                           
                         }
                     }
                     else // The current argument is not a child argument
                     {
-                        if (argumentInfo.Found == false && argumentInfo.MandatoryArgument != null)
+                        if (argumentInfo.MandatoryArgument != null)
                         {
-                            ProcessMandatoryMissing(argumentInfo);
                             
+                                ProcessMandatoryMissing(argumentInfo);                            
                         }
+                        if (argumentInfo.GroupedMandatoryArgument != null)
+                        {
+                            ProcessGroupedMandatories(groupedMandatories, argumentInfo);
+                        }
+                    }
+                }
+                else
+                {
+                    if (argumentInfo.GroupedMandatoryArgument != null)
+                    {
+                        if (groupedMandatories.ContainsKey(argumentInfo.GroupedMandatoryArgument.GroupId))
+                        {
+                            groupedMandatories[argumentInfo.GroupedMandatoryArgument.GroupId].Found = true;
+                        }
+                        else
+                        {
+                            MandatoryGroupInfo groupInfo = ProcessGroupedMandatories(groupedMandatories, argumentInfo);
+                            groupInfo.Found = true;
+                        }
+                    }
+                }
+                ValidateMandatoryArguments(argumentInfo.Children);
+            }
+
+            if (groupedMandatories.Count > 0)
+            {
+                foreach (MandatoryGroupInfo mgInfo in groupedMandatories.Values)
+                {
+                    if (mgInfo.Found == false)
+                    {
+                        ProcessGroupedMandatoryMissing(mgInfo.ArgumentInfos);
                     }
                 }
             }
         }
 
-        private ArgumentInfo GetParent(ArgumentInfoCollection argumentsInfo, ArgumentInfo argumentInfo)
+        private static MandatoryGroupInfo ProcessGroupedMandatories(Dictionary<int, MandatoryGroupInfo> groupedMandatories, ArgumentInfo argumentInfo)
         {
-            if (argumentInfo.ChildArgument == null)
-                throw new InvalidOperationException("argumentInfo.ChildArgument could not be null for this method!");
-
-            ArgumentInfo parentArgInfo = argumentsInfo.GetParent(argumentInfo.ChildArgument.ParentId);
-            if (parentArgInfo == null)
+            MandatoryGroupInfo groupInfo = null;
+            int groupId = argumentInfo.GroupedMandatoryArgument.GroupId;
+            if (!groupedMandatories.ContainsKey(groupId))
             {
-                throw new UnknownParentArgumentAttributeException(argumentInfo.ChildArgument.ParentId, argumentInfo.PInfo.Name);
+                groupInfo = new MandatoryGroupInfo(argumentInfo);
+                groupedMandatories.Add(groupId, groupInfo);
             }
-            return parentArgInfo;
-        }      
-        
+            else
+            {
+                groupInfo = groupedMandatories[groupId];
+                groupInfo.Add(argumentInfo);
+            }
+            return groupInfo;
+        }
+
+        private void ProcessGroupedMandatoryMissing(ArgumentInfo[] argumentInfos)
+        {
+            // If an argument is missing and if we must not display the command help (in this
+            // case, mandatory arguments are not NEEDED!) throw an exception.
+            if (parser.MustDisplayHelp == false)
+            {
+                StringBuilder argList = new StringBuilder();
+                foreach (ArgumentInfo argumentInfo in argumentInfos)
+                {
+                    if (argList.Length > 0)
+                        argList.Append(", ");
+
+                    if (argumentInfo.SimpleArgument != null)
+                        argList.Append(argumentInfo.SimpleArgument.HelpText);
+                    else
+                        argList.Append(argumentInfo.NamedArgument.Name);
+                }
+
+               throw new GroupedMandatoryArgumentException(argList.ToString());
+            }
+        }
+
         private void ProcessMandatoryMissing(ArgumentInfo argumentInfo)
         {
             if (argumentInfo.MandatoryArgument.PromptUser)

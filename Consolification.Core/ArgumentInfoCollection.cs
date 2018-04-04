@@ -18,9 +18,18 @@ namespace Consolification.Core
     {
         #region Data Members
         private List<ArgumentInfo> argumentInfos = new List<ArgumentInfo>();
-        // List of top parent items
-        private List<ArgumentInfo> hierarchy;
+       
         #endregion
+
+        public ArgumentInfoCollection()
+        {
+
+        }
+
+        public ArgumentInfoCollection(ArgumentInfo parentArgumentInfo)
+        {
+            ParentArgumentInfo = parentArgumentInfo;
+        }
 
         #region Public Properties
         public int Count
@@ -37,19 +46,8 @@ namespace Consolification.Core
                 return this.argumentInfos[index];
             }
         }
-        /// <summary>
-        /// Gets an array of ArgumentInfo for which all elements are top parent argument
-        /// (meaning that those arguments are not children arguments).
-        /// </summary>
-        public ArgumentInfo[] Hierarchy
-        {
-            get
-            {
-                if (hierarchy == null)
-                    ComputeHierarchy();
-                return hierarchy.ToArray<ArgumentInfo>();
-            }
-        }
+        
+        public ArgumentInfo ParentArgumentInfo { get; private set; }
         #endregion
 
         #region Public Methods
@@ -64,7 +62,11 @@ namespace Consolification.Core
 
         public void AddRange(ArgumentInfoCollection items)
         {
-            this.argumentInfos.AddRange(items.argumentInfos);
+            foreach (ArgumentInfo argumentInfo in items)
+            {
+                argumentInfo.ParentArgumentInfo = this.ParentArgumentInfo;
+                this.argumentInfos.Add(argumentInfo);
+            }
         }
 
         /// <summary>
@@ -89,6 +91,34 @@ namespace Consolification.Core
             return DeepContains(name, this.argumentInfos);
         }
 
+        /*public void ComputeHierarchy()
+        {
+            List<ArgumentInfo> hierarchy = new List<ArgumentInfo>();
+
+            Dictionary<int, List<ArgumentInfo>> tempParentInfo = new Dictionary<int, List<ArgumentInfo>>();
+            foreach (ArgumentInfo argInfo in argumentInfos)
+            {
+                // If the current argument is not a parent and not a child, put it on top level
+                if (argInfo.ParentArgument == null && argInfo.ChildArgument == null)
+                {
+                    this.hierarchy.Add(argInfo);
+                    continue;
+                }
+
+                ArgumentInfo argInfoParent = null;
+                if (argInfo.ChildArgument != null)
+                {
+                    argInfoParent = GetParent(argInfo.ChildArgument.ParentId);
+                    argInfoParent.Children.Add(argInfo);
+                }
+                else
+                if (argInfo.ParentArgument != null)
+                {
+                    this.hierarchy.Add(argInfo);
+                }
+            }
+        }*/
+
         private bool DeepContains(string name, List<ArgumentInfo> args)
         {
             return args.Exists(argInfo =>
@@ -104,6 +134,11 @@ namespace Consolification.Core
                     return false;
             });
         }
+        public List<ArgumentInfo> ToList()
+        {
+            return new List<ArgumentInfo>(this.argumentInfos);
+        }
+
         /// <summary>
         /// Gets a boolean value that indicates whether this instance contains an argument
         /// for which the name is equal to the specified string. Also look into
@@ -178,22 +213,13 @@ namespace Consolification.Core
             });
         }
 
-        /// <summary>
-        /// Gets the parent ArgumentInfo if any.
-        /// </summary>
-        /// <param name="parentId">The identifier of the parent argument.</param>
-        /// <returns>An ArgumentInfo that reprensents the parent argument if any. Otheriwe, returns null.</returns>
-        public ArgumentInfo GetParent(int parentId)
-        {
-            return GetParent(this.argumentInfos, parentId);
-        }
+        
         #endregion
 
         #region Overridden
         public override string ToString()
         {
-            return string.Format("Count = {0} (Hierarchy count: {1}", this.argumentInfos.Count,
-                this.hierarchy == null ? "N/A" : this.hierarchy.Count.ToString());
+            return string.Format("Count = {0}", this.argumentInfos.Count);
         }
 
         #endregion
@@ -211,52 +237,9 @@ namespace Consolification.Core
         #endregion
 
         #region Private Methods
-        private ArgumentInfo GetParent(List<ArgumentInfo> argumentInfos, int parentId)
-        {
-            ArgumentInfo argInfo = argumentInfos.Find((argumentInfo) =>
-                   {
-                       return argumentInfo.ParentArgument != null && argumentInfo.ParentArgument.Id == parentId;
-                   });
+        
 
-            if (argInfo != null)
-                return argInfo;
-
-            foreach (ArgumentInfo curArgInfo in argumentInfos)
-            {
-                argInfo = GetParent(curArgInfo.Children.argumentInfos, parentId);
-                if (argInfo != null)
-                    return argInfo;
-            }
-            return null;
-        }
-
-        private void ComputeHierarchy()
-        {
-            hierarchy = new List<ArgumentInfo>();
-
-            Dictionary<int, List<ArgumentInfo>> tempParentInfo = new Dictionary<int, List<ArgumentInfo>>();
-            foreach (ArgumentInfo argInfo in this.argumentInfos)
-            {
-                // If the current argument is not a parent and not a child, put it on top level
-                if (argInfo.ParentArgument == null && argInfo.ChildArgument == null)
-                {
-                    this.hierarchy.Add(argInfo);
-                    continue;
-                }
-
-                ArgumentInfo argInfoParent = null;
-                if (argInfo.ChildArgument != null)
-                {
-                    argInfoParent = GetParent(argInfo.ChildArgument.ParentId);
-                    argInfoParent.Children.Add(argInfo);
-                }
-                else
-                if (argInfo.ParentArgument != null)
-                {
-                    this.hierarchy.Add(argInfo);
-                }
-            }
-        }
+        
         #endregion
     }
 }

@@ -13,11 +13,9 @@ namespace Consolification
         public Uri URL { get; private set; }
 
         [CIShortcutArgument("/user", "/u", "The user to authenticate the request.", "value")]
-        [CIParentArgument(1)]
         public string User { get; private set; }
 
         [CIShortcutArgument("/password", "/p", "This user password to authenticate the request.", "value")]
-        [CIChildArgument(1)]
         [CIMandatoryArgument(true, "User password: ")]
         [CIPassword]
         public string Password { get; private set; }

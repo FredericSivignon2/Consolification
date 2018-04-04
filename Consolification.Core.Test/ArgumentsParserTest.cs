@@ -513,7 +513,7 @@ namespace Consolification.Core.Test
 		public void ArgumentsParser_Hierarchy_NoArg()
 		{
 			string[] args = new string[0];
-			SimpleHierarchyDataMock data = new SimpleHierarchyDataMock();
+            ComplexParentDataMock data = new ComplexParentDataMock();
 
 			// We must not have any exception as the mandatory argument is 
 			// a child of a parent argument that is itself not mandatory and not present.
@@ -524,9 +524,9 @@ namespace Consolification.Core.Test
 		[TestMethod]
 		public void ArgumentsParser_Hierarchy_TopParentArgOnly()
 		{
-			string[] args = new string[] { "/TOP", "1" };
+			string[] args = new string[] { "/SECONDARG", "abc" };
 
-			SimpleHierarchyDataMock data = new SimpleHierarchyDataMock();
+            ComplexParentDataMock data = new ComplexParentDataMock();
 
 			// We must not have any exception as the mandatory argument is 
 			// a child of a parent argument that is itself not mandatory and not present.
@@ -537,9 +537,9 @@ namespace Consolification.Core.Test
 		[TestMethod]
 		public void ArgumentsParser_Hierarchy_TopAndMidParentsArgOnly()
 		{
-			string[] args = new string[] { "/TOP", "1", "/MID", "2" };
+			string[] args = new string[] { "/CHILD2" };
 
-			SimpleHierarchyDataMock data = new SimpleHierarchyDataMock();
+            ComplexParentDataMock data = new ComplexParentDataMock();
 
 			try
 			{
@@ -549,77 +549,47 @@ namespace Consolification.Core.Test
 			}
 			catch (MissingMandatoryArgumentException e)
 			{
-				Assert.IsTrue(e.Message.Contains("The mandatory argument '/CHILD2' is missing."));
+				Assert.IsTrue(e.Message.Contains("The mandatory argument 'child2data' is missing."));
 			}
 		}
 
-		[TestMethod]
-		public void ArgumentsParser_Hierarchy_MidParentArgOnly()
-		{
-			string[] args = new string[] { "/MID", "2" };
+        // Same test than above, but with other top level args
+        [TestMethod]
+        public void ArgumentsParser_Hierarchy_TopAndMidParentsArgOnly2()
+        {
+            string[] args = new string[] { "/CHILD2", "/SECONDARG", "abcdef" };
 
-			SimpleHierarchyDataMock data = new SimpleHierarchyDataMock();
+            ComplexParentDataMock data = new ComplexParentDataMock();
+
+            try
+            {
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
+                Assert.Fail("A MissingArgumentException exception must be thrown as /MID is present and there is a child mandatory argument.");
+            }
+            catch (MissingMandatoryArgumentException e)
+            {
+                Assert.IsTrue(e.Message.Contains("The mandatory argument 'child2data' is missing."));
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_Hierarchy_MidParentArgOnly()
+		{
+			string[] args = new string[] { "/STRARG1", "abv" };
+
+            VeryComplexParentDataMock data = new VeryComplexParentDataMock();
 
 			try
 			{
 				ArgumentsParser parser = new ArgumentsParser();
-				parser.Parse(data, args);
+                parser.Parse(data, args);
 				Assert.Fail("A MissingArgumentException exception must be thrown as /MID is present but its parent is not present.");
 			}
 			catch (MissingParentArgumentException e)
 			{
-				Assert.IsTrue(e.Message.Contains("The parent argument '/TOP' is missing."));
+				Assert.IsTrue(e.Message.Contains("The parent argument '/VERYCOMPLEX' is missing for the argument '/STRARG1'."));
 			}
-		}
-
-		[TestMethod]
-		public void ArgumentsParser_Hierarchy_Child2ArgOnly()
-		{
-			string[] args = new string[] { "/CHILD2", "22" };
-
-			SimpleHierarchyDataMock data = new SimpleHierarchyDataMock();
-
-			try
-			{
-				ArgumentsParser parser = new ArgumentsParser();
-				parser.Parse(data, args);
-				Assert.Fail("A MissingArgumentException exception must be thrown as /MID & /TOP are not present.");
-			}
-			catch (MissingParentArgumentException e)
-			{
-				Assert.IsTrue(e.Message.Contains("The parent argument '/MID' is missing."));
-			}
-		}
-
-		[TestMethod]
-		public void ArgumentsParser_Hierarchy_TopAndChild1ParentArgOnly()
-		{
-			string[] args = new string[] { "/TOP", "1", "/CHILD1", "C1" };
-
-			SimpleHierarchyDataMock data = new SimpleHierarchyDataMock();
-
-			// We must not have any exception as the mandatory argument is 
-			// a child of a parent argument that is itself not mandatory and not present.
-			ArgumentsParser parser = new ArgumentsParser();
-			parser.Parse(data, args);
-		}
-
-		[TestMethod]
-		public void ArgumentsParser_Hierarchy_AllArgs()
-		{
-			string[] args = new string[] { "/TOP", "1", "/CHILD1", "C1", "/MID", "32", "/CHILD1", "C1", "/CHILD2", "C2", "/CHILD3", "C3" };
-
-			SimpleHierarchyDataMock data = new SimpleHierarchyDataMock();
-
-			// Everything must be fine!
-			ArgumentsParser parser = new ArgumentsParser();
-			parser.Parse(data, args);
-
-			Assert.IsTrue(data.TopArg == "1");
-			Assert.IsTrue(data.MidArg == "32");
-			Assert.IsTrue(data.ChildArg1 == "C1");
-			Assert.IsTrue(data.ChildArg2 == "C2");
-			Assert.IsTrue(data.ChildArg3 == "C3");
 		}
 
 		[TestMethod]
@@ -638,62 +608,6 @@ namespace Consolification.Core.Test
 			{
 				Assert.IsTrue(e.Message.Contains("One of the argument specified with the property Duplicated2 has been already registered."));
 			}
-		}
-
-		[TestMethod]
-		public void ArgumentsParser_ComplexHierarchy()
-		{
-			string[] args = new string[] { "/ARG1", "/TOPA", "topa" };
-			ComplexHierarchyDataMock data = new ComplexHierarchyDataMock();
-
-			ArgumentsParser parser = new ArgumentsParser();
-			parser.Parse(data, args);
-			ArgumentInfo[] argsInfo = parser.ArgumentsInfo.Hierarchy;
-
-			/// ARG1
-			/// TOPA (1)
-			///     CHILDTOPA1
-			///     MID (2)
-			///         CHILDMID1
-			///         CHILDMID2
-			///         BACK (3)
-			///             CHILDBACK2
-			///             CHILDBACK1
-			/// TOPB (4)
-			///     MIDB (5)
-			///         CHILDMIDB2
-			///         CHILDMIDB1
-			///     CHILDTOPB1
-			///     CHILDTOPB2
-			/// ARG2
-			/// 
-
-			Assert.IsTrue(argsInfo.Length == 5);
-			Assert.IsTrue(argsInfo[0].NamedArgument.Name == "/?");
-			Assert.IsTrue(argsInfo[1].NamedArgument.Name == "/ARG1");
-			Assert.IsTrue(argsInfo[2].NamedArgument.Name == "/TOPA");
-			Assert.IsTrue(argsInfo[2].Children.Count == 2);
-			Assert.IsTrue(argsInfo[2].Children[0].NamedArgument.Name == "/CHILDTOPA1");
-			Assert.IsTrue(argsInfo[2].Children[1].NamedArgument.Name == "/MID");
-			Assert.IsTrue(argsInfo[2].Children[1].Children.Count == 3);
-			Assert.IsTrue(argsInfo[2].Children[1].Children[0].NamedArgument.Name == "/CHILDMID1");
-			Assert.IsTrue(argsInfo[2].Children[1].Children[1].NamedArgument.Name == "/CHILDMID2");
-			Assert.IsTrue(argsInfo[2].Children[1].Children[2].NamedArgument.Name == "/BACK");
-			Assert.IsTrue(argsInfo[2].Children[1].Children[2].Children.Count == 2);
-			Assert.IsTrue(argsInfo[2].Children[1].Children[2].Children[0].NamedArgument.Name == "/CHILDBACK2");
-			Assert.IsTrue(argsInfo[2].Children[1].Children[2].Children[1].NamedArgument.Name == "/CHILDBACK1");
-
-			Assert.IsTrue(argsInfo[3].NamedArgument.Name == "/TOPB");
-			Assert.IsTrue(argsInfo[3].Children.Count == 3);
-			Assert.IsTrue(argsInfo[3].Children[0].NamedArgument.Name == "/MIDB");
-			Assert.IsTrue(argsInfo[3].Children[0].Children.Count == 2);
-			Assert.IsTrue(argsInfo[3].Children[0].Children[0].NamedArgument.Name == "/CHILDMIDB2");
-			Assert.IsTrue(argsInfo[3].Children[0].Children[1].NamedArgument.Name == "/CHILDMIDB1");
-
-			Assert.IsTrue(argsInfo[3].Children[1].NamedArgument.Name == "/CHILDTOPB1");
-			Assert.IsTrue(argsInfo[3].Children[2].NamedArgument.Name == "/CHILDTOPB2");
-
-			Assert.IsTrue(argsInfo[4].NamedArgument.Name == "/ARG2");
 		}
 
 		[TestMethod]
@@ -1048,9 +962,9 @@ namespace Consolification.Core.Test
         [TestMethod]
         public void ArgumentsParser_EmbeddedChild1DataMissingChild1()
         {
-            string[] args = new string[] { "/PARENTVALUE", "1", "/CHILDVALUE1", "abcdef" };
-            SimpleParentDataMock data = new SimpleParentDataMock();
-            Assert.IsNull(data.Child1);
+            string[] args = new string[] { "/INTARG1", "1" };
+            VeryComplexParentDataMock data = new VeryComplexParentDataMock();
+            Assert.IsNull(data.ChildData);
 
             try
             {
@@ -1060,7 +974,97 @@ namespace Consolification.Core.Test
             }
             catch (MissingParentArgumentException e)
             {
-                Assert.IsTrue(e.Message == "The parent argument '/CHILD1' is missing for the argument '/CHILDVALUE1'.");
+                Assert.IsTrue(e.Message == "The parent argument '/VERYCOMPLEX' is missing for the argument '/INTARG1'.");
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_EmbeddedChild2ParentMissing()
+        {
+            string[] args = new string[] { "/INTARG2", "1" };
+            VeryComplexParentDataMock data = new VeryComplexParentDataMock();
+            Assert.IsNull(data.ChildData);
+
+            try
+            {
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
+                Assert.Fail("A MissingParentArgumentException must be thrown.");
+            }
+            catch (MissingParentArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "The parent argument '/CHILDVC2' is missing for the argument '/INTARG2'.");
+            }
+        }
+
+        //
+        // VeryComplexParentDataMock
+        //      ComplexParentDataMock /COMPLEX
+        //          Child2DataMock /CHILD2
+        //              Child2Data child2data
+        //              Child1DataMock /CHILD1
+        //                  ChildValue1 /CHILDVALUE1
+        //          SecondArg  /SECONDARG
+        //      VeryComplexChildDataMock /VERYCOMPLEX
+        //          IntArg1 /INTARG1
+        //          StrArg1 /STRARG1
+        //          VeryComplexChild2DataMock  /CHILDVC2
+        //              IntArg2 /INTARG2
+        //              StrArg2 /STRARG2
+        //
+        [TestMethod]
+        public void ArgumentsParser_EmbeddedChild2MandatoryMissing()
+        {
+            string[] args = new string[] { "/COMPLEX", "/CHILD2", "ghjkl", "/VERYCOMPLEX", "/INTARG1", "256", "/CHILDVC2", "/STRARG2", "abcdef" };
+            VeryComplexParentDataMock data = new VeryComplexParentDataMock();
+            Assert.IsNull(data.ChildData);
+
+            try
+            {
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
+                Assert.Fail("A MissingParentArgumentException must be thrown.");
+            }
+            catch (MissingMandatoryArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "The mandatory argument '/INTARG2' is missing.");
+            }
+        }
+        
+            [TestMethod]
+        public void ArgumentsParser_DuplicateArgumentsComplex()
+        {
+            string[] args = new string[] { "/COMPLEX", "/INTARG1", "256" };
+            BadVeryComplexDataMock data = new BadVeryComplexDataMock();
+            
+            try
+            {
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
+                Assert.Fail("A MissingParentArgumentException must be thrown.");
+            }
+            catch (DuplicateArgumentDefinitionException e)
+            {
+                Assert.IsTrue(e.Message == "The definition of the argument '/INTARG2' already exists.");
+            }
+        }
+
+        [TestMethod]
+        public void ArgumentsParser_VeryComplexParent_ValueMissing()
+        {
+            string[] args = new string[] { "/VERYCOMPLEX", "/INTARG1" };
+            VeryComplexParentDataMock data = new VeryComplexParentDataMock();
+            Assert.IsNull(data.ChildData);
+
+            try
+            {
+                ArgumentsParser parser = new ArgumentsParser();
+                parser.Parse(data, args);
+                Assert.Fail("A MissingParentArgumentException must be thrown.");
+            }
+            catch (MissingArgumentValueException e)
+            {
+                Assert.IsTrue(e.Message == "The value of the argument '/INTARG1' is missing.");
             }
         }
 
@@ -1444,6 +1448,52 @@ namespace Consolification.Core.Test
             Assert.IsNotNull(data.Child);
             Assert.IsTrue(data.Child.DataC1 == 1);
             Assert.IsTrue(data.Child.DataC3 == 3);
+        }
+
+        [TestMethod]
+        public void ArgumentParser_MandatoryArgumentGroup_OK1()
+        {
+            string[] args = new string[] { "-ARG1", "1", "-ARG3", "3" };
+            MandatoryGroupDataMock data = new MandatoryGroupDataMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+
+            Assert.IsTrue(data.Arg1 == 1);
+            Assert.IsTrue(data.Arg2 == 0);
+            Assert.IsTrue(data.Arg3 == 3);
+        }
+
+        [TestMethod]
+        public void ArgumentParser_MandatoryArgumentGroup_OK2()
+        {
+            string[] args = new string[] { "-ARG2", "2", "-ARG3", "3" };
+            MandatoryGroupDataMock data = new MandatoryGroupDataMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            parser.Parse(data, args);
+
+            Assert.IsTrue(data.Arg1 == 0);
+            Assert.IsTrue(data.Arg2 == 2);
+            Assert.IsTrue(data.Arg3 == 3);
+        }
+
+        [TestMethod]
+        public void ArgumentParser_MandatoryArgumentGroup_Missing()
+        {
+            string[] args = new string[] { "-ARG3", "3" };
+            MandatoryGroupDataMock data = new MandatoryGroupDataMock();
+
+            ArgumentsParser parser = new ArgumentsParser();
+            try
+            {
+                parser.Parse(data, args);
+                Assert.Fail("A ExclusiveArgumentException exception must be thrown.");
+            }
+            catch (GroupedMandatoryArgumentException e)
+            {
+                Assert.IsTrue(e.Message == "One of the following arguments is missing: -ARG1, -ARG2");
+            }         
         }
 
         #region Private Methods

@@ -54,9 +54,9 @@
   <ItemGroup>
     <Compile Include="ArgumentsParserTest.cs" />
     <Compile Include="Mocks\BadJobDataMock.cs" />
+    <Compile Include="Mocks\BadVeryComplexDataMock.cs" />
     <Compile Include="Mocks\Child1DataMock.cs" />
     <Compile Include="Mocks\Child2DataMock.cs" />
-    <Compile Include="Mocks\ComplexHierarchyDataMock.cs" />
     <Compile Include="Mocks\ComplexParentDataMock.cs" />
     <Compile Include="Mocks\ConsoleWrapperMock.cs" />
     <Compile Include="Mocks\ExChildDataMock.cs" />
@@ -67,15 +67,18 @@
     <Compile Include="Mocks\HelpDataMock.cs" />
     <Compile Include="Mocks\InvalidDataMock.cs" />
     <Compile Include="Mocks\MandatoryDataMock.cs" />
+    <Compile Include="Mocks\MandatoryGroupDataMock.cs" />
     <Compile Include="Mocks\SemanticTypeDataMock.cs" />
     <Compile Include="Mocks\SimpleAndNamedDataMock.cs" />
     <Compile Include="Mocks\SimpleMandatoryAndNamedDataMock.cs" />
     <Compile Include="Mocks\SimpleParentDataMock.cs" />
     <Compile Include="Mocks\SimpleArgumentDataMock.cs" />
-    <Compile Include="Mocks\SimpleHierarchyDataMock.cs" />
     <Compile Include="Mocks\JobMock.cs" />
     <Compile Include="Mocks\AllDataTypeMock.cs" />
     <Compile Include="Mocks\UserCredetentialDataMock.cs" />
+    <Compile Include="Mocks\VeryComplexChild2DataMock.cs" />
+    <Compile Include="Mocks\VeryComplexChildDataMock.cs" />
+    <Compile Include="Mocks\VeryComplexParentDataMock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ConsolificationEngineTest.cs" />
     <Compile Include="HelpBuilderTest.cs" />

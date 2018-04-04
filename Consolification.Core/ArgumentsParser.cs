@@ -91,7 +91,7 @@ namespace Consolification.Core
             MainJob = type.GetCustomAttribute<CIJobAttribute>();
         }
 
-        private static void RegisterAttributesFromClassProperties(Type type, ArgumentInfoCollection argumentsInfo)
+        private void RegisterAttributesFromClassProperties(Type type, ArgumentInfoCollection argumentsInfo)
         {
             PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
             int simpleArgumentIndex = 0;
@@ -123,12 +123,11 @@ namespace Consolification.Core
                
                 ainfo.PInfo = pinfo;
                 ainfo.MandatoryArgument = pinfo.GetCustomAttribute<CIMandatoryArgumentAttribute>();
+                ainfo.GroupedMandatoryArgument = pinfo.GetCustomAttribute<CIGroupedMandatoryArgumentAttribute>();
                 ainfo.ArgumentBoundary = pinfo.GetCustomAttribute<CIArgumentBoundaryAttribute>();
                 ainfo.ArgumentValueLength = pinfo.GetCustomAttribute<CIArgumentValueLengthAttribute>();
                 ainfo.ArgumentFormat = pinfo.GetCustomAttribute<CIArgumentFormatAttribute>();
                 ainfo.Job = pinfo.GetCustomAttribute<CIJobAttribute>();
-                ainfo.ChildArgument = pinfo.GetCustomAttribute<CIChildArgumentAttribute>();
-                ainfo.ParentArgument = pinfo.GetCustomAttribute<CIParentArgumentAttribute>();
                 ainfo.FileContent = pinfo.GetCustomAttribute<CIFileContentAttribute>();
                 ainfo.Password = pinfo.GetCustomAttribute<CIPasswordAttribute>();
                 ainfo.Exclusive = pinfo.GetCustomAttribute<CIExclusiveArgumentAttribute>();
@@ -141,6 +140,12 @@ namespace Consolification.Core
                     ArgumentInfoCollection childrenInfo = new ArgumentInfoCollection();
                     RegisterAttributesFromClassProperties(pinfo.PropertyType, childrenInfo);
                     ainfo.Children.AddRange(childrenInfo);
+                }
+
+                if (ainfo.NamedArgument != null &&
+                     this.argumentsInfo.DeepContains(ainfo.Name))
+                {
+                    throw new DuplicateArgumentDefinitionException(ainfo.Name);
                 }
 
                 argumentsInfo.Add(ainfo);
@@ -220,7 +225,7 @@ namespace Consolification.Core
                         currentInfo.UserType == false)
                     {
                         if (this.currentArgIndex >= args.Length - 1)
-                            throw new ArgumentException("Missing value for the argument {0}", arg);
+                            throw new MissingArgumentValueException(arg);
 
                         // If the value is a known argument, it means the value is missing!
                         string value = args[++this.currentArgIndex];

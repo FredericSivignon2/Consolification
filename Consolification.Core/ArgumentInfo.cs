@@ -27,6 +27,8 @@ namespace Consolification.Core
 
             SimpleArgument = argument;
             SimpleArgumentIndex = index;
+
+            Children = new ArgumentInfoCollection(this);
         }
 
         public ArgumentInfo(CINamedArgumentAttribute argument)
@@ -35,6 +37,8 @@ namespace Consolification.Core
                 throw new ArgumentNullException("argument");
 
             NamedArgument = argument;
+
+            Children = new ArgumentInfoCollection(this);
         }
         #endregion
 
@@ -44,12 +48,11 @@ namespace Consolification.Core
         public CINamedArgumentAttribute NamedArgument { get; private set; }
         public PropertyInfo PInfo { get; set; }
         public CIMandatoryArgumentAttribute MandatoryArgument { get; set; }
+        public CIGroupedMandatoryArgumentAttribute GroupedMandatoryArgument { get; set; }
         public CIArgumentBoundaryAttribute ArgumentBoundary { get; set; }
         public CIArgumentValueLengthAttribute ArgumentValueLength { get; set; }
         public CIArgumentFormatAttribute ArgumentFormat { get; set; }
         public CIJobAttribute Job { get; set; }
-        public CIChildArgumentAttribute ChildArgument { get; set; }
-        public CIParentArgumentAttribute ParentArgument { get; set; }
         public CIFileContentAttribute FileContent { get; set; }
         public CIPasswordAttribute Password { get; set; }
 
@@ -60,7 +63,9 @@ namespace Consolification.Core
 
         public object UserTypeInstance { get; set; }
 
-        public ArgumentInfoCollection Children { get; } = new ArgumentInfoCollection();
+        public ArgumentInfo ParentArgumentInfo { get; set; }
+
+        public ArgumentInfoCollection Children { get; private set; } 
 
         public string Name
         {

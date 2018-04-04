@@ -30,6 +30,6 @@ namespace Consolification.Core.Attributes
             GroupId = groupId;
         }
 
-        public int GroupId { get; set; }
+        public int GroupId { get; private set; }
     }
 }

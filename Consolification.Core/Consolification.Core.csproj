@@ -51,8 +51,8 @@
     <Compile Include="ArgumentsParserValidator.cs" />
     <Compile Include="Attributes\CIArgumentFormatAttribute.cs" />
     <Compile Include="Attributes\CIArgumentValueLengthAttribute.cs" />
-    <Compile Include="Attributes\CIChildArgumentAttribute.cs" />
     <Compile Include="Attributes\CIExclusiveArgumentAttribute.cs" />
+    <Compile Include="Attributes\CIGroupedMandatoryArgumentAttribute.cs" />
     <Compile Include="Attributes\CINamedArgumentAttribute.cs" />
     <Compile Include="ArgumentInfoCollection.cs" />
     <Compile Include="Attributes\CIArgumentBoundaryAttribute.cs" />
@@ -64,15 +64,15 @@
     <Compile Include="ArgumentInfo.cs" />
     <Compile Include="Attributes\CIPasswordAttribute.cs" />
     <Compile Include="Attributes\CIShortcutArgumentAttribute.cs" />
-    <Compile Include="Attributes\CIParentArgumentAttribute.cs" />
     <Compile Include="Attributes\CISimpleArgumentAttribute.cs" />
     <Compile Include="ConsolificationEngine.cs" />
     <Compile Include="ArgumentsParser.cs" />
     <Compile Include="DefaultPasswordReader.cs" />
     <Compile Include="DefaultConsoleWrapper.cs" />
-    <Compile Include="DuplicateParentArgumentAttributeException.cs" />
+    <Compile Include="DuplicateArgumentDefinitionException.cs" />
     <Compile Include="ExceptionExtension.cs" />
     <Compile Include="ExclusiveArgumentException.cs" />
+    <Compile Include="GroupedMandatoryArgumentException.cs" />
     <Compile Include="HelpBuilder.cs" />
     <Compile Include="InvalidArgumentTypeException.cs" />
     <Compile Include="IPasswordReader.cs" />
@@ -84,7 +84,6 @@
     <Compile Include="MissingParentArgumentException.cs" />
     <Compile Include="MissingMandatoryArgumentException.cs" />
     <Compile Include="TypeExtension.cs" />
-    <Compile Include="UnknownParentArgumentAttributeException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnknownArgumentException.cs" />
     <Compile Include="WrongArgumentPositionException.cs" />

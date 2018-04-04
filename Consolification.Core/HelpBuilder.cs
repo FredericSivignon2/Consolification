@@ -62,7 +62,7 @@ namespace Consolification.Core
             usage.Append("Usage: ");
             usage.Append(GetExeName());
 
-            AppendHeaderArgs(usage, this.parser.ArgumentsInfo.Hierarchy);
+            AppendHeaderArgs(usage, this.parser.ArgumentsInfo.ToArray<ArgumentInfo>());
 
             lines.Add(usage.ToString());
             lines.Add(string.Empty);
@@ -120,7 +120,7 @@ namespace Consolification.Core
         {
             List<string> lines = new List<string>();
 
-            AddArgumentDescriptionLines(lines, this.parser.ArgumentsInfo.Hierarchy);
+            AddArgumentDescriptionLines(lines, this.parser.ArgumentsInfo.ToArray<ArgumentInfo>());
 
             return lines.ToArray();
         }
