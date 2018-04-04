@@ -303,6 +303,7 @@ Like the `CIMandatoryArgumentAttribute`, it specifies that the related argument 
 this attribute, it is associated to a "group" (see constructor group identifier parameter) that tells that only 
 one argument associated with this group is mandatory.
 
+Usage example:
 ```C#
   [CINamedArgument("-ARG1")]
   [CIGroupedMandatoryArgumentAttribute(1)]
@@ -323,10 +324,21 @@ In this example, if -ARG3 is not specifeid, an error code is returned by the Con
 ### CIHelpArgumentAttribute
 :white_check_mark: This attribute can be applied to classes only.
 
+Specifies the name of the argument used to display the command help.
+
+Usage example:
+```C#
+[CIHelpArgument("/?")]
+public class Data
+{
+ ...
+```
 
 ### CIJobAttribute
 :white_check_mark: This attribute can be applied to classes only.
 
+ Specifies which Job class will be instantiated and executed when the ConsolificationEngine.Start() method is called.
+ You should put all your command logic within a Job.
 
 ### CIMandatoryArgumentAttribute
 :white_check_mark: This attribute can be applied to properties only.
