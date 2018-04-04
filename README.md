@@ -159,15 +159,14 @@ puclic class NetData
 - [`CIArgumentBoundaryAttribute`](#ciargumentboundaryattribute)
 - [`CIArgumentFormatAttribute`](#ciargumentformatattribute)
 - [`CIArgumentValueLengthAttribute`](#ciargumentvalueLengthattribute)
-- [`CIChildArgumentAttribute`](#cichildargumentattribute)
 - [`CICommandDescriptionAttribute`](#cicommanddescriptionattribute)
 - [`CIExclusiveArgumentAttribute`](#ciexclusiveargumentattribute)
 - [`CIFileContentAttribute`](#cifilecontentattribute)
+- [`CIGroupedMandatoryArgumentAttribute`](#cigroupedmandatoryargumentattribute)
 - [`CIHelpArgumentAttribute`](#cihelpargumentattribute)
 - [`CIJobAttribute`](#cijobattribute)
 - [`CIMandatoryArgumentAttribute`](#cimandatoryargumentattribute)
 - [`CINamedArgumentAttribute`](#cinamedargumentattribute)
-- [`CIParentArgumentAttribute`](#ciparentargumentattribute)
 - [`CIPasswordAttribute`](#cipasswordattribute)
 - [`CIShortcutArgumentAttribute`](#cishortcutargumentattribute)
 - [`CISimpleArgumentAttribute`](#cisimpleargumentattribute)
@@ -177,6 +176,19 @@ puclic class NetData
 :white_check_mark: This attribute can be applied to properties only.
 
 Use this attribute to control the value of all argument for which the corresponding mapped type implements the `System.IComparable` interface, like all numerical value type (`System.Int32`, `System.Int64`, `System.Decimal` ...).
+
+Usage example:
+```C#
+[CIArgumentBoundary("1", "86400")]
+public int SecondsInDay { get; set; }
+
+...
+
+[CIArgumentBoundary("a", "z")]
+public char MyLowerChar { get; set; }
+
+```
+
 If the value of the correpsonding argument is lower or greater than values specified within this attribute, an error like the following  will be displayed:
 
 ```
@@ -188,32 +200,26 @@ ERROR while parsing arguments.
 :white_check_mark: This attribute can be applied to properties only.
 
 Use this attribute to control the format of an argument value, when this value is mapped to a string. 
+The first argument of this attribute is a regular expression in the form of a string.
+
+Usage example:
+```C#
+ [CIArgumentFormat(@"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
+                   @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$")]
+ public string EmailAddress { get; set; }
+
+```
 
 ### CIArgumentValueLengthAttribute
 :white_check_mark: This attribute can be applied to properties only.
 
 Use this attribute to control the length of an argument value, when this value is mapped to a string.
 
-### CIChildArgumentAttribute
-:white_check_mark: This attribute can be applied to properties only.
-
-This attribute is used to declare an argument as a child argument. A child argument is an argument that is relevant only if corresponding parent argument is present.
-In conjonction with the `CIParentArgumentAttribute` attribute, it provides a similar mechanism to the [user types and argument hierarchy support](#user-types-and-argument-hierarchy), except that you can have a parent argument with a name and a corresponding value:
-
-```bash
-mycommand /parentarg1 "parent value1" /childA /childB "child valueB" 
+Usage example:
+```C#
+[CIArgumentValueLength(12, 20)]
+public string MyString1 { get; set; }
 ```
- 
-In this example, /childA and /childB arguments are relevant only if /parentarg1 is present. But /parentarg1 also have a value.
-
- 
-When you use a user type to define children arguments, you can only have an argument with a name, so something like that:
-
-```bash
-mycommand /parentarg1 /childA /childB "child valueB"
-```
- 
-Here, /parentarg1 does not have an associated value. It's only an indicator that specify that we can have /childA and/or /childB arguments in the command line.
  
 
 ### CICommandDescriptionAttribute
@@ -221,6 +227,12 @@ Here, /parentarg1 does not have an associated value. It's only an indicator that
 
 Provides a description of the related command. This description is used within the auto generated help to provide a summary of what the related command does.
 
+Usage example:
+```C#
+[CICommandDescription("Performs an HTTP request and get some result statistics.")]
+public class RequestData
+{
+```
 
 ### CIExclusiveArgumentAttribute
 :white_check_mark: This attribute can be applied to properties only.
