@@ -237,10 +237,88 @@ public class RequestData
 ### CIExclusiveArgumentAttribute
 :white_check_mark: This attribute can be applied to properties only.
 
+Ensures that other arguments at the same level cannot be specified if the associated argument is itself specified in the command line.
+By default, the GroupId property is set to 0, meaning that the associated argument is exclusive to all other arguments at the same level. If you specify a specific GroupId, it will be exclusive only for other argument for which a CIExclusiveArgumentAttribute attribute is specified with the same GroupId.
+
+Usage example:
+```C#
+ [CINamedArgument("/D1")]
+ [CIExclusiveArgument(1)]
+ public int Data1 { get; private set; }
+
+ [CINamedArgument("/D2")]
+ [CIExclusiveArgument(1)]
+ public int Data2 { get; private set; }
+
+ [CINamedArgument("/D3")]
+ [CIExclusiveArgument]
+ public int Data3 { get; private set; }
+
+ [CINamedArgument("/D4")]
+ public int Data4 { get; private set; }
+```
+
+In this example, if /D1 is specified, you cannot also specify /D2. 
+If you specify /D3, /D4 cannot be specified. But /D1 or /D2 cannot specified with /D4 (not the same group id).
 
 ### CIFileContentAttribute
 :white_check_mark: This attribute can be applied to properties only.
 
+Specifies that argument value is a path of a file for which content must be automatically loaded into the corresponding property value.
+
+This attribute can be associated with the following property types:
+     1) `System.String`: The entire file content is put into a string.
+     2) `System.String[]`: Each file line (only relevant for text file) is a string of the resulting array.
+     3) `System.Byte[]`: The entire file content is put into a byte array.
+     4) `System.Char[]`: The entire file content is put into a char array.
+     5) `System.IO.FileStream`: An FileStream stream is opened from the corresponding file.
+
+Usage example:
+```C#
+ [CINamedArgument("/FILE")]
+ [CIFileContent]
+ public byte[] FileByteArray { get; set; }
+
+ [CINamedArgument("/FILELINES")]
+ [CIFileContent]
+ public string[] FileLines { get; set; }
+
+ [CINamedArgument("/FILESTRING")]
+ [CIFileContent("UTF8")]
+ public string FileString { get; set; }
+
+ [CINamedArgument("/FILECHAR")]
+ [CIFileContent]
+ public char[] FileCharArray { get; set; }
+
+ [CINamedArgument("/FILESTREAM")]
+ [CIFileContent]
+ public FileStream FileStream { get; set; }
+```
+
+### CIGroupedMandatoryArgumentAttribute
+:white_check_mark: This attribute can be applied to properties only.
+
+Like the `CIMandatoryArgumentAttribute`, it specifies that the related argument is mandatory. But, unlike 
+this attribute, it is associated to a "group" (see constructor group identifier parameter) that tells that only 
+one argument associated with this group is mandatory.
+
+```C#
+  [CINamedArgument("-ARG1")]
+  [CIGroupedMandatoryArgumentAttribute(1)]
+  public int Arg1 { get; private set; }
+
+  [CINamedArgument("-ARG2")]
+  [CIGroupedMandatoryArgumentAttribute(1)]
+  public int Arg2 { get; private set; }
+
+  [CINamedArgument("-ARG3")]
+  [CIMandatoryArgumentAttribute]
+  public int Arg3 { get; private set; }
+```
+
+In this example, if -ARG3 is not specifeid, an error code is returned by the ConsolificationEngine. Same thing if
+-ARG1 and -ARG2 are not specified. But if -ARG1 or/and -ARG2 are specified, it's ok. You are not obliged to specify both -ARG1 and -ARG2.
 
 ### CIHelpArgumentAttribute
 :white_check_mark: This attribute can be applied to classes only.
