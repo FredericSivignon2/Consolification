@@ -101,9 +101,7 @@ Of course, for a so simple example, Consolification is not really usefull. But w
 ## User types and argument hierarchy
 
 For advanced Console Applications, you often need a large bunch of arguments. Imagine for example you need to create a Console Application similar to the `NET` DOS command. This command provides several major features, to manage Windows network services, network shares, display network settings etc. All those major features are grouped behind arguments (ACCOUNTS, COMPUTER, CONFIG, START...). When you use one of those arguments, you can also specify other arguments dedicated to those 'parents' arguments (like /ADD for the COMPUTER parent argument). In Consolification library, '/ADD' is called a child argument. And COMPUTER is its parent. Meaning that, /ADD can only appear if you have use the COMPUTER argument.
-There are two possibilities to easily implement this argument hierarchy within the Consolification library:
-1) Create user types.
-2) Use the [`CIParentArgumentAttribute`](#ciparentargumentattribute) and the [`CIChildArgumentAttribute`](#cichildargumentattribute) attributes.
+To easily implement this argument hierarchy within the Consolification library, you have to create dedicated classes and embed those classes to your main data class as public properties.
 
 ### Creating user type
 
@@ -136,15 +134,23 @@ public class AccountsData
 The NetData class exposes all commands that come just after the `NET` executable name. For each one, a dedicated type is created (like the AccountsData class) to embed all arguments related to the parent arguments.
 When executed, if the `ACCOUNTS` argument is specified, the `NetData.Accounts` property won't be null.
 
+Not that, in this case, you would like to avoid to have `ACCOUNTS` argument used in conjonction with `COMPUTER` argument (or with any other argument at this level). The [`CIExclusiveArgumentAttribute`](#ciexclusiveargumentattribute) attribute is dedicated to that purpose. So, your NetData class will look like that:
 
-***Si ACCOUNTS specified, we cannot specify COMPUTER etc... add exclusif attribute to avoid the possibility to have accounts and computer etc...
-
-
-
-
-
-### Use CIParentArgumentAttribute and CIChildArgumentAttribute
-
+following example:
+```C#
+puclic class NetData
+{
+    [CINamedArgumentAttribute("ACCOUNTS")]
+    [CIExclusiveArgument]
+    public AccountsData Accounts { get; private set; }
+    
+    [CINamedArgumentAttribute("COMPUTER")]
+    [CIExclusiveArgument]
+    public ComputerData Computer { get; private set; }
+    
+    ...
+}
+```
 
 
 
@@ -153,21 +159,36 @@ When executed, if the `ACCOUNTS` argument is specified, the `NetData.Accounts` p
 - [`CIArgumentBoundaryAttribute`](#ciargumentboundaryattribute)
 - [`CIArgumentFormatAttribute`](#ciargumentformatattribute)
 - [`CIArgumentValueLengthAttribute`](#ciargumentvalueLengthattribute)
-- [`CIChildArgumentAttribute`](#cichildargumentattribute)
 - [`CICommandDescriptionAttribute`](#cicommanddescriptionattribute)
+- [`CIExclusiveArgumentAttribute`](#ciexclusiveargumentattribute)
 - [`CIFileContentAttribute`](#cifilecontentattribute)
+- [`CIGroupedMandatoryArgumentAttribute`](#cigroupedmandatoryargumentattribute)
 - [`CIHelpArgumentAttribute`](#cihelpargumentattribute)
 - [`CIJobAttribute`](#cijobattribute)
 - [`CIMandatoryArgumentAttribute`](#cimandatoryargumentattribute)
 - [`CINamedArgumentAttribute`](#cinamedargumentattribute)
-- [`CIParentArgumentAttribute`](#ciparentargumentattribute)
 - [`CIPasswordAttribute`](#cipasswordattribute)
 - [`CIShortcutArgumentAttribute`](#cishortcutargumentattribute)
 - [`CISimpleArgumentAttribute`](#cisimpleargumentattribute)
 
 
 ### CIArgumentBoundaryAttribute
+:white_check_mark: This attribute can be applied to properties only.
+
 Use this attribute to control the value of all argument for which the corresponding mapped type implements the `System.IComparable` interface, like all numerical value type (`System.Int32`, `System.Int64`, `System.Decimal` ...).
+
+Usage example:
+```C#
+[CIArgumentBoundary("1", "86400")]
+public int SecondsInDay { get; set; }
+
+...
+
+[CIArgumentBoundary("a", "z")]
+public char MyLowerChar { get; set; }
+
+```
+
 If the value of the correpsonding argument is lower or greater than values specified within this attribute, an error like the following  will be displayed:
 
 ```
@@ -176,45 +197,62 @@ ERROR while parsing arguments.
 ```
 
 ### CIArgumentFormatAttribute
+:white_check_mark: This attribute can be applied to properties only.
+
 Use this attribute to control the format of an argument value, when this value is mapped to a string. 
+The first argument of this attribute is a regular expression in the form of a string.
+
+Usage example:
+```C#
+ [CIArgumentFormat(@"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
+                   @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$")]
+ public string EmailAddress { get; set; }
+
+```
 
 ### CIArgumentValueLengthAttribute
+:white_check_mark: This attribute can be applied to properties only.
+
 Use this attribute to control the length of an argument value, when this value is mapped to a string.
 
-### CIChildArgumentAttribute
-This attribute is used to declare an argument as a child argument. A child argument is an argument that is relevant only if corresponding parent argument is present.
-In conjonction with the `CIParentArgumentAttribute` attribute, it provides a similar mechanism to the [user types and argument hierarchy support](#user-types-and-argument-hierarchy), except that you can have a parent argument with a name and a corresponding value:
-
-```bash
-mycommand /parentarg1 "parent value1" /childA /childB "child valueB" 
+Usage example:
+```C#
+[CIArgumentValueLength(12, 20)]
+public string MyString1 { get; set; }
 ```
- 
-In this example, /childA and /childB arguments are relevant only if /parentarg1 is present. But /parentarg1 also have a value.
-
- 
-When you use a user type to define children arguments, you can only have an argument with a name, so something like that:
-
-```bash
-mycommand /parentarg1 /childA /childB "child valueB"
-```
- 
-Here, /parentarg1 does not have an associated value. It's only an indicator that specify that we can have /childA and/or /childB arguments in the command line.
  
 
 ### CICommandDescriptionAttribute
+:white_check_mark: This attribute can be applied to classes only.
+
+Provides a description of the related command. This description is used within the auto generated help to provide a summary of what the related command does.
+
+Usage example:
+```C#
+[CICommandDescription("Performs an HTTP request and get some result statistics.")]
+public class RequestData
+{
+```
+
+### CIExclusiveArgumentAttribute
+:white_check_mark: This attribute can be applied to properties only.
 
 
 ### CIFileContentAttribute
+:white_check_mark: This attribute can be applied to properties only.
 
 
 ### CIHelpArgumentAttribute
-
+:white_check_mark: This attribute can be applied to classes only.
 
 
 ### CIJobAttribute
+:white_check_mark: This attribute can be applied to classes only.
 
 
 ### CIMandatoryArgumentAttribute
+:white_check_mark: This attribute can be applied to properties only.
+
 Allows you to ensure that an argument is given to the Console Application. If not, a specific message is displayed to indicate the name of the missing argument and the help text is displayed.
 
 Note that if your argument is also a child argument (See `CIChildArgumentAttribute`) and the corresponding parent argument is not mandatory and not specified in the command line, no error will be generated. The level of the argument is checked in the argument hierarchy to ensure that a mandatory argument error is generated only when needed!
@@ -246,6 +284,8 @@ Now, `-user` and `-password` are mandatory only if `-basicauthentication` is spe
 
 
 ### CINamedArgumentAttribute
+:white_check_mark: This attribute can be applied to properties only.
+
 Use this attribute to define an argument that has got a specific name. Imagines for example you have a Console Application for which you can pass two arguments like `/URL http://www.google.fr`. In this case, use the `CINamesdArgumentAttribute` like that in your corresponding data class:
 
 ```C#
@@ -265,16 +305,23 @@ To view the complete list of supported types, see the section [Supported types](
 
 
 ### CIParentArgumentAttribute
+:white_check_mark: This attribute can be applied to properties only.
 
 
 See [`CIChildArgumentAttribute`](#cichildargumentattribute).
 
 ### CIPasswordAttribute
+:white_check_mark: This attribute can be applied to properties only.
+
 
 ### CISimpleArgumentAttribute
+:white_check_mark: This attribute can be applied to properties only.
+
 The attribute used in the example above. 
 
 ### CIShortcutArgumentAttribute attribute
+:white_check_mark: This attribute can be applied to properties only.
+
 Similar to the `CINamedArgumentAttribute` except that you can also specify a shortcut name for your argument (for example, "/u" in addition to "/user" default argument name).
 
 
