@@ -334,18 +334,49 @@ public class Data
  ...
 ```
 
+From this example, you have to type your command executable name plus the argument "/?" to display the associated help file.
+
 ### CIJobAttribute
 :white_check_mark: This attribute can be applied to classes only.
 
  Specifies which Job class will be instantiated and executed when the ConsolificationEngine.Start() method is called.
  You should put all your command logic within a Job.
+ 
+ Usage example:
+```C#
+ [CIJob(typeof(RequestJob))]
+ public class RequestData
+ {
+ ...
+```
+
+The job associated with this data class, RequestJob, can be defined like that:
+
+```C#
+public class RequestJob : IJob<RequestData>
+{
+        public int Run(JobContext<RequestData> context)
+        {
+            RequestData data = context.Data;         
+            try
+            {       
+				          // Your execution logic here
+            }
+            catch (Exception exp)
+            {
+                context.Console.WriteLine("ERROR: Failed to execute HTTP request.", exp);
+                return -1;
+            }
+        }
+```
+
 
 ### CIMandatoryArgumentAttribute
 :white_check_mark: This attribute can be applied to properties only.
 
 Allows you to ensure that an argument is given to the Console Application. If not, a specific message is displayed to indicate the name of the missing argument and the help text is displayed.
 
-Note that if your argument is also a child argument (See `CIChildArgumentAttribute`) and the corresponding parent argument is not mandatory and not specified in the command line, no error will be generated. The level of the argument is checked in the argument hierarchy to ensure that a mandatory argument error is generated only when needed!
+Note that if your argument is also a child argument (See [`User types and argument hierarchy`](#usertypesandargumenthierarchy)) and the corresponding parent argument is not mandatory and not specified in the command line, no error will be generated. The level of the argument is checked in the argument hierarchy to ensure that a mandatory argument error is generated only when needed!
 For example, imagine your Console Application can connect a remote system. By default, you can use it without specifying any credential. But, optionaly, you can specify authentication parameters. So, you will have to define an argument to specify that you want for example a basic authentication. Let's say "-basicauthentication". For that, you can use the following property with its attribute:
 ```C#
 [CIShortcutArgumentAttribute("-basicauthentication", "-ba")]
@@ -394,29 +425,42 @@ Notes that we have associated the `System.Uri` type to the URL property. But, we
 To view the complete list of supported types, see the section [Supported types](#consolification-supported-type-of-data-mapping)
 
 
-### CIParentArgumentAttribute
-:white_check_mark: This attribute can be applied to properties only.
-
-
-See [`CIChildArgumentAttribute`](#cichildargumentattribute).
-
 ### CIPasswordAttribute
 :white_check_mark: This attribute can be applied to properties only.
 
+Specifies the corresponding argument value is a password. In that case, if the user must be prompted to enter the value, all characters read will be replaced by a specific character ('*' by default) in the console display.
 
-### CISimpleArgumentAttribute
-:white_check_mark: This attribute can be applied to properties only.
+ Usage example:
+```C#
+ [CIShortcutArgument("/password", "/p", "This user password to authenticate the request.", "value")]
+ [CIMandatoryArgument(true, "User password: ")]
+ [CIPassword]
+ public string Password { get; private set; }
+```
 
-The attribute used in the example above. 
-
-### CIShortcutArgumentAttribute attribute
+### CIShortcutArgumentAttribute
 :white_check_mark: This attribute can be applied to properties only.
 
 Similar to the `CINamedArgumentAttribute` except that you can also specify a shortcut name for your argument (for example, "/u" in addition to "/user" default argument name).
 
+ Usage example:
+```C#
+ [CIShortcutArgument("/user", "/u")]
+ public string UserName { get; private set; }
+```
 
+### CISimpleArgumentAttribute
+:white_check_mark: This attribute can be applied to properties only.
 
+Defines a simple argument (meaning that there is no name associated with this argument.
+Think about the 'SOURCE' and 'DESTINATION' arguments in the DOS 'COPY' command. 
 
+ Usage example:
+```C#
+ [CISimpleArgument("source", "Specifies the file or files to be copied.")]
+ [CIMandatoryArgument]
+ public string Source { get; private set; }
+```
 
 
 #### Consolification supported type of data mapping
