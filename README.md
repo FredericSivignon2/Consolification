@@ -2,7 +2,7 @@
 
 
 
-Consolification is a little framework to help you to write C# Console Applications, by managing argument parsing, help text generation and much more.
+Consolification is a little framework to help you to write C# Console Applications, by managing argument parsing, argument hierarchy, mandatory values, help text generation and much more.
 
 ## The main features are:
 
@@ -20,7 +20,7 @@ So, you don't have to parse given application arguments yourself.
 ## Example for a quick start:
 
 For a quick example, we will simply create a small Console Application that just display the text given in an argument.
-As soon as you have create the Console Application (with a minimum .NET 4.6.2 version), add a dedicated class to handle data:
+As soon as you have create the Console Application (with a minimum .NET 4.5 version), add a dedicated class to handle data:
  
 ```C#
 [CIHelpArgument("/?")]
@@ -94,7 +94,7 @@ Usage: Example [/?] message
 message The message to display.
 ```
 
-The word 'message' to name the related argument has been specified in the `CISimpleArgumentAttribute` as second parameter. And the corresponding description ('The message to display') is taken from the last parameter of this same attribute.
+The word 'message' to name the related argument has been specified in the `CISimpleArgumentAttribute` as first parameter. And the corresponding description ('The message to display') is taken from the last parameter of this same attribute.
 
 Of course, for a so simple example, Consolification is not really usefull. But wait and see what will be the benefits when things are being more complex.
 
@@ -109,10 +109,10 @@ To implement something similar to the NET command, to stay with our previous exa
 ```C#
 puclic class NetData
 {
-    [CINamedArgumentAttribute("ACCOUNTS")]
+    [CINamedArgument("ACCOUNTS")]
     public AccountsData Accounts { get; private set; }
     
-    [CINamedArgumentAttribute("COMPUTER")]
+    [CINamedArgument("COMPUTER")]
     public ComputerData Computer { get; private set; }
     
     ...
@@ -120,10 +120,10 @@ puclic class NetData
 
 public class AccountsData
 {
-    [CINamedArgumentAttribute("/FORCELOGOFF")]
+    [CINamedArgument("/FORCELOGOFF")]
     public String ForceLogOff { get; private set;
     
-    [CINamedArgumentAttribute("/MINPWLEN")]
+    [CINamedArgument("/MINPWLEN")]
     public int MinPasswordLength { get; private set;
     
     ...
@@ -140,11 +140,11 @@ following example:
 ```C#
 puclic class NetData
 {
-    [CINamedArgumentAttribute("ACCOUNTS")]
+    [CINamedArgument("ACCOUNTS")]
     [CIExclusiveArgument]
     public AccountsData Accounts { get; private set; }
     
-    [CINamedArgumentAttribute("COMPUTER")]
+    [CINamedArgument("COMPUTER")]
     [CIExclusiveArgument]
     public ComputerData Computer { get; private set; }
     
@@ -152,6 +152,27 @@ puclic class NetData
 }
 ```
 
+Ok perfect. But wait, what happen if I do not provide any argument to the application? Depending of your corresponding IJob implementation, the application won't work as expected as arguments 'ACCOUNTS', 'COMPUTER'... are mandatories.
+You cannot use the `CIMandatoryArgument` attribute for all those arguments because each one will be mandatory. It's not what we want. We want to that at least one argument among the list of available 'parent' arguments is presnet. To achieve that, the `CIGroupedMandatoryArgument` an be use:
+
+```C#
+puclic class NetData
+{
+    [CINamedArgument("ACCOUNTS")]
+    [CIExclusiveArgument]
+    [CIGroupedMandatoryArgument(1)]
+    public AccountsData Accounts { get; private set; }
+    
+    [CINamedArgument("COMPUTER")]
+    [CIExclusiveArgument]
+    [CIGroupedMandatoryArgument(1)]
+    public ComputerData Computer { get; private set; }
+    
+    ...
+}
+```
+
+The `CIGroupedMandatoryArgument` attribute associated to each property indicates that we must have at least one argument specified among the list of arguments identified by the same group identifier.
 
 
 ## Consolification Attribute list:
