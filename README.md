@@ -396,8 +396,8 @@ public class RequestJob : IJob<RequestData>
 :white_check_mark: This attribute can be applied to properties only.
 
 Allows you to ensure that an argument is given to the Console Application. If not, a specific message is displayed to indicate the name of the missing argument and the help text is displayed.
-
-Note that if your argument is also a child argument (See [`User types and argument hierarchy`](#usertypesandargumenthierarchy)) and the corresponding parent argument is not mandatory and not specified in the command line, no error will be generated. The level of the argument is checked in the argument hierarchy to ensure that a mandatory argument error is generated only when needed!
+												usertypesandargumenthierarchy
+Note that if your argument is also a child argument (See [`User types and argument hierarchy`](#user-types-and-argument-hierarchy) ) and the corresponding parent argument is not mandatory and not specified in the command line, no error will be generated. The level of the argument is checked in the argument hierarchy to ensure that a mandatory argument error is generated only when needed!
 For example, imagine your Console Application can connect a remote system. By default, you can use it without specifying any credential. But, optionaly, you can specify authentication parameters. So, you will have to define an argument to specify that you want for example a basic authentication. Let's say "-basicauthentication". For that, you can use the following property with its attribute:
 ```C#
 [CIShortcutArgumentAttribute("-basicauthentication", "-ba")]
@@ -407,22 +407,36 @@ public bool BasicAuthentication { get; private set }
 
 When the property type is a boolean, there is no specific value to give next to the argument itself (like we have with the /URL previous argument). If the argument is specified in the command line, the corresponding boolean value is set to true. Otherwise, it is set to false. 
 
-Then, you have of course to also add two properties to handle user name and password for your basic authentication. But, the arguments corresponding to those properties are required only if -basicauthentication is specified. So, you have to specify that `user` and `password` arguments are children arguments of the `-basicauthentication` argument:
+Then, you have of course to also add two properties to handle user name and password for your basic authentication. But, the arguments corresponding to those properties are required only if -basicauthentication is specified. So, you have to specify that `user` and `password` arguments are children arguments of the `/basicauth` (or `-b`) argument:
 
 ```C#
-[CIShortcutArgumentAttribute("-user", "-u")]
-[CIChildArgument(0)]
-[CIMandatoryArgument]
-public string User { get; private set }
+    [CIHelpArgument("/?")]
+    [CICommandDescription("Performs an HTTP request and get some result statistics.")]
+    [CIJob(typeof(RequestJob))]
+    public class RequestData
+    {
+        ...
 
-[CIShortcutArgumentAttribute("-password", "-p")]
-[CIChildArgument(0)]
-[CIMandatoryArgument]
-public string Password { get; private set }
+        [CIShortcutArgument("/basicauth", "/b", "Use BASIC authentication.")]
+        public Credentials BasicAuthentication { get; private set; }
+    }
+    
+    public class Credentials
+    {
+        [CIShortcutArgument("/user", "/u", "The user to authenticate the request.", "value")]
+        [CIMandatoryArgument(true, "User name: ")]
+        public string User { get; private set; }
+
+        [CIShortcutArgument("/password", "/p", "This user password to authenticate the request.", "value")]
+        [CIMandatoryArgument(true, "User password: ")]
+        [CIPassword]
+        public string Password { get; private set; }
+    }
 ```
 
-Now, `-user` and `-password` are mandatory only if `-basicauthentication` is specified. 
+Now, `/user` and `/password` are mandatory only if `/basicauth` is specified (as the `Credentials` type is used for the `BasicAuthentication`property within the `RequestData` main class data.
 
+Note there is also 2 optionals parameters given to the `CIMandatoryArgument` attributes. If those parameters are not specified, an error is generated if the corresponding argument is not specified when required. But, if you specify those arguments like in the example above, and if the corresponding argument is not specified, the value of this argument will be prompted in the console, by using the specified message (second parameter).
 
 
 ### CINamedArgumentAttribute
@@ -483,6 +497,4 @@ Think about the 'SOURCE' and 'DESTINATION' arguments in the DOS 'COPY' command.
  public string Source { get; private set; }
 ```
 
-
-#### Consolification supported type of data mapping
 
